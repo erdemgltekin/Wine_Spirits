@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Wine_Spirits</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Wine_Spirits.styles.css" asp-append-version="true" />
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i data-lucide="wine" class="sidebar-brand-icon"></i>
+                <span>Wine & Spirits</span>
+
+            </div>
+            <button class="topbar-menu-btn d-lg-none" onclick="toggleSidebar()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a asp-page="/Index" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString() == "/Index" ? "active" : "")">
+                <i data-lucide="home" class="sidebar-nav-item-icon"></i>
+                <span>Ana Sayfa</span>
+            </a>
+            <a asp-page="/Products/Product" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Products") == true ? "active" : "")">
+                <i data-lucide="package" class="sidebar-nav-item-icon"></i>
+                <span>Ürünler</span>
+            </a>
+            <a asp-page="/Warehouses/Warehouse" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Warehouses") == true ? "active" : "")">
+                <i data-lucide="warehouse" class="sidebar-nav-item-icon"></i>
+                <span>Depolar</span>
+            </a>
+            <a asp-page="/StockControllers/StockController" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/StockControllers") == true ? "active" : "")">
+                <i data-lucide="arrow-left-right" class="sidebar-nav-item-icon"></i>
+                <span>Stok Hareketleri</span>
+            </a>
+            <a asp-page="/StockReports/StockReport" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/StockReports") == true ? "active" : "")">
+                <i data-lucide="bar-chart-3" class="sidebar-nav-item-icon"></i>
+                <span>Stok Raporu</span>
+            </a>
+            <a asp-page="/Orders/Order" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Orders") == true ? "active" : "")">
+                <i data-lucide="shopping-cart" class="sidebar-nav-item-icon"></i>
+                <span>Siparişler</span>
+            </a>
+            <a asp-page="/Customers/Customer" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Customers") == true ? "active" : "")">
+                <i data-lucide="users" class="sidebar-nav-item-icon"></i>
+                <span>Müşteriler</span>
+            </a>
+            <a asp-page="/Suppliers/Supplier" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Suppliers") == true ? "active" : "")">
+                <i data-lucide="truck" class="sidebar-nav-item-icon"></i>
+                <span>Tedarikçiler</span>
+            </a>
+            <a asp-page="/Reports/Report" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Reports") == true ? "active" : "")">
+                <i data-lucide="file-text" class="sidebar-nav-item-icon"></i>
+                <span>Raporlar</span>
+            </a>
+            <a asp-page="/Settings/Setting" class="sidebar-nav-item @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("/Settings") == true ? "active" : "")">
+                <i data-lucide="settings" class="sidebar-nav-item-icon"></i>
+                <span>Ayarlar</span>
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="topbar">
+            <!-- Top Bar -->
+            <button class="topbar-menu-btn" onclick="toggleSidebar()">
+                <i data-lucide="menu"></i>
+            </button>
+        </header>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2026 - Wine_Spirits - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            </div>
+        </footer>
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

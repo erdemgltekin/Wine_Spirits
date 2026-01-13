@@ -1,0 +1,54 @@
+﻿@page
+@model Wine_Spirits.Pages.Products.ProductModel
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="container-fluid">
+    <!-- Add Product -->
+    <div class="d-flex justify-content-end">
+        <a asp-page="Create" class="btn btn-primary">
+            <i data-lucide="plus"></i>
+            Yeni Ürün Ekle
+        </a>
+    </div>
+    <!-- Search Box -->
+    <div class="card">
+        <div class="d-flex gap-3">
+            <div class="search-input flex-grow-1">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" class="form-control" id="searchInput" placeholder="Ürün Ara (ID, Ürün Adı, Kategori)..." />
+            </div>
+        </div>
+    </div>
+    <!-- Product List-->
+    <div class="table-container">
+        <table class="table table-stripped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ÜRÜN ADI</th>
+                    <th>KATEGORİ</th>
+                    <th>MENŞEİ</th>
+                    <th>YIL</th>
+                    <th>FİYAT</th>
+                    <th>TOPLAM SİPARİŞ</th>
+                    <th>İŞLEMLER</th>
+                </tr>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
