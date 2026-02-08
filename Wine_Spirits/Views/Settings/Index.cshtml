@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Sistem Ayarları";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h3 mb-4 text-gray-800">Sistem Ayarları</h1>
+    <p class="mb-4 text-muted">Uygulama yapılandırmalarını ve tanımlamalarını buradan yönetebilirsiniz.</p>
+
+    <div class="settings-grid">
+        <!-- Countries Card -->
+        <a asp-controller="Countries" asp-action="Index" class="settings-item-card">
+            <i data-lucide="globe"></i>
+            <h5 class="fw-bold mb-2">Ülkeler</h5>
+            <p class="text-muted small mb-0">Sistemdeki ülke tanımlamalarını yönetin.</p>
+        </a>
+
+        <!-- Categories Card -->
+        <a asp-controller="ProductCategories" asp-action="Index" class="settings-item-card">
+            <i data-lucide="layers"></i>
+            <h5 class="fw-bold mb-2">Kategoriler</h5>
+            <p class="text-muted small mb-0">Ürün kategori ve gruplarını düzenleyin.</p>
+        </a>
+
+        <!-- Units Card -->
+        <a asp-controller="Units" asp-action="Index" class="settings-item-card">
+            <i data-lucide="ruler"></i>
+            <h5 class="fw-bold mb-2">Birimler</h5>
+            <p class="text-muted small mb-0">Ölçü birimlerini tanımlayın ve yönetin.</p>
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

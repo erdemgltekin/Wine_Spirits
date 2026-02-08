@@ -1,0 +1,61 @@
+@model Wine_Spirits.Models.WareHouse
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    if (isAjax) { Layout = null; } else { Layout = "_Layout"; }
+}
+
+<div class="@(isAjax ? "" : "container py-5")">
+    <div class="@(isAjax ? "" : "form-card")">
+        <div class="card shadow-none border-0 bg-transparent">
+            <div class="card-body p-0">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2 small"></div>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Name" class="form-label">Depo Adı</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i data-lucide="building" style="width: 16px;"></i></span>
+                                <input asp-for="Name" class="form-control" placeholder="Örn: Merkez Lojistik Deposu" required />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label asp-for="Location" class="form-label">Depo Konumu / Adres</label>
+                            <div class="input-group">
+                                <span class="input-group-text pt-2"><i data-lucide="map-pin" style="width: 16px;"></i></span>
+                                <textarea asp-for="Location" class="form-control" rows="3" placeholder="Şehir, İlçe ve açık adres bilgisi..." required></textarea>
+                            </div>
+                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="drawer-footer">
+                        @if (isAjax) {
+                            <button type="button" class="btn btn-light px-4 border" onclick="SidePanel.close()">
+                                <i data-lucide="x" class="me-2" style="width: 16px;"></i> Vazgeç
+                            </button>
+                        } else {
+                            <a asp-action="Index" class="btn btn-light px-4 border">
+                                <i data-lucide="arrow-left" class="me-2" style="width: 16px;"></i> Vazgeç
+                            </a>
+                        }
+                        <button type="submit" class="btn btn-indigo flex-grow-1 shadow-sm fw-bold">
+                            <i data-lucide="check" class="me-2" style="width: 18px;"></i> Depoyu Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!isAjax) {
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script>lucide.createIcons();</script>
+    }
+}

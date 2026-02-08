@@ -1,0 +1,140 @@
+@model IEnumerable<Wine_Spirits.Models.Product>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
+        <div>
+            <h1 class="h3 mb-1 fw-bold text-dark">Ürün Yönetimi</h1>
+            <p class="text-muted small mb-0">
+                <i data-lucide="package" class="me-1" style="width: 14px;"></i>
+                Toplam @Model.Count() kayıtlı ürün listeleniyor.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-indigo px-4 shadow-sm d-flex align-items-center" data-drawer="true" data-title="Yeni Ürün Ekle">
+                <i data-lucide="plus" class="me-2" style="width: 18px;"></i>
+                Hızlı Ürün Ekle
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats & Filters -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 ps-3">
+                            <i data-lucide="search" class="text-muted" style="width: 18px;"></i>
+                        </span>
+                        <input type="text" id="productSearchInput" class="form-control border-start-0 ps-0" placeholder="Ürün adı, kategori veya tedarikçi ara..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div id="productsTableContainer">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="productsTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th class="ps-4 py-3">Ürün Bilgisi</th>
+                            <th class="py-3">Kategori</th>
+                            <th class="py-3">Menşei</th>
+                            <th class="py-3">Birim Fiyat</th>
+                            <th class="py-3">Stok Durumu</th>
+                            <th class="text-end pe-4 py-3">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">@(item.ProductDefinition?.Name ?? "Tanımsız Ürün")</div>
+                                    <div class="small text-muted" style="font-size: 11px;">@item.Supplier?.Name</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-indigo border fw-normal" style="color: #6366f1;">@item.ProductCategory?.Name</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i data-lucide="globe" class="me-1 text-muted" style="width: 14px;"></i>
+                                        @item.Country?.Name
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-dark">@item.Price.ToString("C2")</td>
+                                <td>
+                                    @{
+                                        var stockClass = "bg-success";
+                                        var labelClass = "text-success";
+                                        if (item.StockQuantity <= 0) { stockClass = "bg-danger"; labelClass = "text-danger"; }
+                                        else if (item.StockQuantity < 20) { stockClass = "bg-warning"; labelClass = "text-warning"; }
+                                    }
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 6px; width: 60px;">
+                                            <div class="progress-bar @stockClass" role="progressbar" style="width: @Math.Min(100, item.StockQuantity)%"></div>
+                                        </div>
+                                        <span class="small fw-bold @labelClass">@item.StockQuantity @item.Unit?.Name</span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn btn-edit" data-drawer="true" data-title="Ürün Düzenle" title="Düzenle">
+                                            <i data-lucide="pencil" style="width: 18px;"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn btn-delete" title="Sil">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i data-lucide="package-search" class="text-muted" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h5 class="text-dark">Henüz kayıtlı ürün bulunmuyor.</h5>
+                    <p class="text-muted">Yeni bir ürün ekleyerek başlayabilirsiniz.</p>
+                    <a asp-action="Create" class="btn btn-indigo px-4" data-drawer="true" data-title="Yeni Ürün Ekle">
+                        Yeni Ürün Oluştur
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Local Filter Logic
+        $(document).ready(function() {
+            $('#productSearchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $("#productsTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        // Initialize Lucide Icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+}

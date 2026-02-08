@@ -1,0 +1,126 @@
+@model IEnumerable<Wine_Spirits.Models.Customer>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Müşteri Yönetimi";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
+        <div>
+            <h1 class="h3 mb-1 fw-bold text-dark">Müşteri Yönetimi</h1>
+            <p class="text-muted small mb-0">
+                <i data-lucide="users" class="me-1" style="width: 14px;"></i>
+                Toplam @Model.Count() kayıtlı müşteri listeleniyor.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-indigo px-4 shadow-sm d-flex align-items-center" data-drawer="true" data-title="Yeni Müşteri Tanımla">
+                <i data-lucide="user-plus" class="me-2" style="width: 18px;"></i>
+                Müşteri Ekle
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats & Filters -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 ps-3">
+                            <i data-lucide="search" class="text-muted" style="width: 18px;"></i>
+                        </span>
+                        <input type="text" id="customerSearchInput" class="form-control border-start-0 ps-0" placeholder="Müşteri adı, soyadı veya e-posta ara..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div id="customersTableContainer">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="customersTable">
+                    <thead>
+                        <tr class="bg-light">
+                            <th class="ps-4 py-3">Müşteri Bilgisi</th>
+                            <th class="py-3">İletişim</th>
+                            <th class="py-3">Adres</th>
+                            <th class="py-3">Vergi Bilgileri</th>
+                            <th class="text-end pe-4 py-3">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-indigo-50 text-indigo rounded-circle p-2 me-3" style="background: #eef2ff;">
+                                            <i data-lucide="user" style="width: 20px;"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@item.Name @item.Lastname</div>
+                                            <div class="small text-muted" style="font-size: 11px;">#@item.Id.ToString().Substring(0,8)</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small text-dark">@item.Email</div>
+                                    <div class="small text-muted">@item.Phone</div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small">@item.Adress</span>
+                                </td>
+                                <td>
+                                    <div class="small fw-medium text-dark">@item.TaxOffice</div>
+                                    <div class="small text-muted">No: @item.TaxNumber</div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn btn-edit" data-drawer="true" data-title="Müşteri Bilgilerini Düzenle" title="Düzenle">
+                                            <i data-lucide="pencil" style="width: 18px;"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn btn-delete" title="Sil">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i data-lucide="user-x" class="text-muted opacity-25" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h5 class="text-dark">Henüz kayıtlı müşteri bulunmuyor.</h5>
+                    <a asp-action="Create" class="btn btn-indigo px-4" data-drawer="true" data-title="Yeni Müşteri Tanımla">
+                        İlk Müşteriyi Ekle
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#customerSearchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $("#customersTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

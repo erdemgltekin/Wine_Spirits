@@ -1,0 +1,77 @@
+@model IEnumerable<Wine_Spirits.Models.Unit>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
+
+@{
+    ViewData["Title"] = "Birimler";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Area -->
+    <!-- [Modern UI]: Başlık ve aksiyon butonunu flex yapısı ile hizaladık. -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Birim Yönetimi</h1>
+            <p class="text-muted small mb-0">Sistemdeki ölçü birimlerini buradan yönetebilirsiniz.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i data-lucide="plus-circle" class="me-1"></i> Yeni Birim
+        </a>
+    </div>
+
+    <!-- Content Card -->
+    <!-- [Bootstrap]: 'card' sınıfı ile içeriği çerçeveleyip modern bir görünüm sağlıyoruz. -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <!-- [Table Design]: 'table-hover' satırların üzerine gelince renk değişimi sağlar. 'align-middle' dikey ortalama yapar. -->
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3" style="width: 70%;">Birim Adı</th>
+                            <th class="text-end pe-4 py-3">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- [Razor Loop]: Veritabanından gelen listeyi manuel olarak döngüye sokuyoruz. -->
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-medium text-dark">
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group gap-2">
+                                        <!-- Edit Button -->
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light text-primary border-0" title="Düzenle">
+                                            <i data-lucide="edit-3" style="width: 18px"></i>
+                                        </a>
+                                        <!-- Delete Button -->
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light text-danger border-0" title="Sil">
+                                            <i data-lucide="trash-2" style="width: 18px"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Empty State Check -->
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="text-muted mb-2">Henüz kayıtlı birim bulunmuyor.</div>
+                    <a asp-action="Create" class="btn btn-sm btn-outline-primary">İlk kaydı oluştur</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

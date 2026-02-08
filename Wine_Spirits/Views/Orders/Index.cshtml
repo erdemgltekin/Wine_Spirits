@@ -1,0 +1,59 @@
+@model IEnumerable<Wine_Spirits.Models.Order>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Siparişler";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Sipariş Yönetimi</h1>
+            <p class="text-muted small mb-0">Gelen siparişleri ve durumlarını buradan takip edebilirsiniz.</p>
+        </div>
+        <a href="#" class="btn btn-primary shadow-sm">
+            <i data-lucide="plus" class="me-2 text-white-50"></i> Yeni Sipariş
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Sipariş Listesi</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Tarih</th>
+                        <th>Müşteri</th>
+                        <th>Açıklama</th>
+                        <th>Depo</th>
+                        <th class="text-end pe-4">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 text-muted">@item.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="fw-medium">@item.Customer?.Name @item.Customer?.Lastname</td>
+                            <td>@item.Description</td>
+                            <td><span class="badge bg-light text-dark border">@item.Warehouse?.Name</span></td>
+                            <td class="text-end pe-4">
+                                <a href="#" class="btn btn-sm btn-outline-primary">Detay</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger ms-1">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

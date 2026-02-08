@@ -1,0 +1,82 @@
+@model Wine_Spirits.Models.Product
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Ürün Detayı";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                    <h5 class="card-title text-center mb-0">Ürün Bilgileri</h5>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="row g-4">
+                        <!-- Çift Sütunlu Bilgi Gösterimi -->
+                        <div class="col-md-6 border-end">
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Ürün Adı</label>
+                                <div class="fw-bold fs-5">@(Model.ProductDefinition?.Name ?? "Tanımsız Ürün")</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Kategori</label>
+                                <div class="fw-medium">@Model.ProductCategory?.Name</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Menşei</label>
+                                <div class="fw-medium">@Model.Country?.Name</div>
+                            </div>
+                             <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Üretim Yılı</label>
+                                <div class="fw-medium">@Model.Year</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 ps-md-4">
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Fiyat</label>
+                                <div class="fw-bold fs-5 text-success">@Model.Price.ToString("C2")</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Stok Durumu</label>
+                                <div class="fw-medium">
+                                    @Model.StockQuantity @Model.Unit?.Name
+                                    @if(Model.StockQuantity < 10)
+                                    {
+                                        <span class="badge bg-warning text-dark ms-2">Az Stok</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase">Tedarikçi</label>
+                                <div class="fw-medium">@Model.Supplier?.Name</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary py-2">
+                            <i data-lucide="edit-3" class="me-1" style="width: 18px; vertical-align: text-bottom;"></i>
+                            Düzenle
+                        </a>
+                        <a asp-action="Index" class="btn btn-link text-decoration-none text-muted">
+                            <i data-lucide="arrow-left" class="me-1" style="width: 18px; vertical-align: text-bottom;"></i>
+                            Listeye Dön
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

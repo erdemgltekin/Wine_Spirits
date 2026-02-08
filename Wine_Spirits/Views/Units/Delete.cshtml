@@ -1,0 +1,51 @@
+@model Wine_Spirits.Models.Unit
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@{
+    ViewData["Title"] = "Birim Sil";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <!-- [Danger Zone]: Silme işlemi geri alınamaz olduğu için kırmızı tonlar veya uyarıcı tasarım tercih edilir. -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5 text-center">
+                    
+                    <div class="mb-4 text-danger">
+                        <i data-lucide="alert-triangle" style="width: 64px; height: 64px;"></i>
+                    </div>
+
+                    <h4 class="mb-3">Emin misiniz?</h4>
+                    <p class="text-muted mb-4">
+                        <strong>@Model.Name</strong> birimini silmek üzeresiniz. <br/>
+                        Bu işlem geri alınamaz ve bu birimi kullanan ürünler etkilenebilir.
+                    </p>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger py-2">
+                                <i data-lucide="trash-2" class="me-1" style="width: 18px; vertical-align: text-bottom;"></i>
+                                Evet, Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-light text-muted">
+                                İptal Et
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}
+

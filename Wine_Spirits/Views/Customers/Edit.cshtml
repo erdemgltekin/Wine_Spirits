@@ -1,0 +1,91 @@
+@model Wine_Spirits.Models.Customer
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="p-2">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+        <div class="row g-3">
+            <!-- Customer Name -->
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label fw-bold text-dark small">Ad</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="user" class="text-muted" style="width: 16px;"></i>
+                    </span>
+                    <input asp-for="Name" class="form-control border-start-0 ps-0" required />
+                </div>
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <!-- Lastname -->
+            <div class="col-md-6">
+                <label asp-for="Lastname" class="form-label fw-bold text-dark small">Soyad</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="user-plus" class="text-muted" style="width: 16px;"></i>
+                    </span>
+                    <input asp-for="Lastname" class="form-control border-start-0 ps-0" required />
+                </div>
+                <span asp-validation-for="Lastname" class="text-danger small"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label fw-bold text-dark small">E-Posta</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="mail" class="text-muted" style="width: 16px;"></i>
+                    </span>
+                    <input asp-for="Email" type="email" class="form-control border-start-0 ps-0" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-6">
+                <label asp-for="Phone" class="form-label fw-bold text-dark small">Telefon</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="phone" class="text-muted" style="width: 16px;"></i>
+                    </span>
+                    <input asp-for="Phone" class="form-control border-start-0 ps-0" required />
+                </div>
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+
+            <!-- Address (Adress in Model) -->
+            <div class="col-12">
+                <label asp-for="Adress" class="form-label fw-bold text-dark small">Adres Detayları</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="map-pin" class="text-muted" style="width: 16px;"></i>
+                    </span>
+                    <textarea asp-for="Adress" class="form-control border-start-0 ps-0" rows="2" required></textarea>
+                </div>
+                <span asp-validation-for="Adress" class="text-danger small"></span>
+            </div>
+
+             <!-- Tax Info -->
+            <div class="col-md-6">
+                <label asp-for="TaxOffice" class="form-label fw-bold text-dark small">Vergi Dairesi</label>
+                <input asp-for="TaxOffice" class="form-control bg-light py-1" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="TaxNumber" class="form-label fw-bold text-dark small">Vergi No</label>
+                <input asp-for="TaxNumber" type="number" class="form-control bg-light py-1" />
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <button type="submit" class="btn btn-indigo flex-grow-1 py-2 fw-bold shadow-sm">
+                <i data-lucide="save" class="me-2" style="width: 18px;"></i>
+                Değişiklikleri Kaydet
+            </button>
+            <button type="button" class="btn btn-light px-4 py-2 border text-muted" id="closeSidePanel">
+                Vazgeç
+            </button>
+        </div>
+    </form>
+</div>
