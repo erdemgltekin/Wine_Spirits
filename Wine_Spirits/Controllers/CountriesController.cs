@@ -17,7 +17,7 @@ public class CountriesController : Controller
     // GET: Countries
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Countries.ToListAsync());
+        return View(await _context.Country.ToListAsync());
     }
 
     // GET: Countries/Create
@@ -49,7 +49,7 @@ public class CountriesController : Controller
     {
         if (id == null) return NotFound();
 
-        var country = await _context.Countries.FindAsync(id);
+        var country = await _context.Country.FindAsync(id);
         if (country == null) return NotFound();
 
         return View(country);
@@ -84,7 +84,7 @@ public class CountriesController : Controller
     {
         if (id == null) return NotFound();
 
-        var country = await _context.Countries
+        var country = await _context.Country
             .FirstOrDefaultAsync(m => m.Id == id);
         
         if (country == null) return NotFound();
@@ -97,10 +97,10 @@ public class CountriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var country = await _context.Countries.FindAsync(id);
+        var country = await _context.Country.FindAsync(id);
         if (country != null)
         {
-            _context.Countries.Remove(country);
+            _context.Country.Remove(country);
         }
         
         await _context.SaveChangesAsync();
@@ -109,6 +109,6 @@ public class CountriesController : Controller
 
     private bool CountryExists(Guid id)
     {
-        return _context.Countries.Any(e => e.Id == id);
+        return _context.Country.Any(e => e.Id == id);
     }
 }

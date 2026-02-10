@@ -16,7 +16,7 @@ public class ManagementController : Controller
     // GET: /Management/Backoffice
     public async Task<IActionResult> Backoffice()
     {
-        var pendingRequests = await _context.SupportRequests
+        var pendingRequests = await _context.SupportRequest
             .Where(r => r.Status == 0)
             .OrderByDescending(r => r.CreatedDate)
             .ToListAsync();
@@ -27,7 +27,7 @@ public class ManagementController : Controller
     [HttpPost]
     public async Task<IActionResult> ApproveRequest(Guid id)
     {
-        var request = await _context.SupportRequests.FindAsync(id);
+        var request = await _context.SupportRequest.FindAsync(id);
         if (request == null) return NotFound();
 
         try
@@ -35,16 +35,16 @@ public class ManagementController : Controller
             switch (request.RequestType)
             {
                 case "Tanım":
-                    _context.ProductDefinitions.Add(new ProductDefinition { Name = request.SuggestedName });
+                    _context.ProductDefinition.Add(new ProductDefinition { Name = request.SuggestedName });
                     break;
                 case "Kategori":
-                    _context.ProductCategories.Add(new ProductCategory { Name = request.SuggestedName });
+                    _context.ProductCategory.Add(new ProductCategory { Name = request.SuggestedName });
                     break;
                 case "Ülke":
-                    _context.Countries.Add(new Country { Name = request.SuggestedName });
+                    _context.Country.Add(new Country { Name = request.SuggestedName });
                     break;
                 case "Birim":
-                    _context.Units.Add(new Unit { Name = request.SuggestedName });
+                    _context.Unit.Add(new Unit { Name = request.SuggestedName });
                     break;
             }
 
@@ -62,7 +62,7 @@ public class ManagementController : Controller
     [HttpPost]
     public async Task<IActionResult> RejectRequest(Guid id)
     {
-        var request = await _context.SupportRequests.FindAsync(id);
+        var request = await _context.SupportRequest.FindAsync(id);
         if (request == null) return NotFound();
 
         request.Status = 2; // Reddedildi

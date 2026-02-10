@@ -15,7 +15,7 @@ namespace Wine_Spirits.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var orders = _context.Orders
+            var orders = _context.Order
                 .Include(o => o.Customer)
                 .Include(o => o.Warehouse);
             return View(await orders.ToListAsync());

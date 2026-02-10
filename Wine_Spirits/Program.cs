@@ -28,7 +28,7 @@ app.UseAuthorization();
 // 2. ADIM: MVC Rota şablonunu tanımla (Eğitim: URL'den Controller/Action eşleşmesini bu sağlar)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

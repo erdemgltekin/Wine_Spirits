@@ -16,7 +16,7 @@ namespace Wine_Spirits.Controllers
         // GET: Warehouses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WareHouses.ToListAsync());
+            return View(await _context.WareHouse.ToListAsync());
         }
 
         // GET: Warehouses/Create
@@ -48,7 +48,7 @@ namespace Wine_Spirits.Controllers
                 return NotFound();
             }
 
-            var wareHouse = await _context.WareHouses.FindAsync(id);
+            var wareHouse = await _context.WareHouse.FindAsync(id);
             if (wareHouse == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace Wine_Spirits.Controllers
                 return NotFound();
             }
 
-            var wareHouse = await _context.WareHouses
+            var wareHouse = await _context.WareHouse
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (wareHouse == null)
             {
@@ -112,10 +112,10 @@ namespace Wine_Spirits.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var wareHouse = await _context.WareHouses.FindAsync(id);
+            var wareHouse = await _context.WareHouse.FindAsync(id);
             if (wareHouse != null)
             {
-                _context.WareHouses.Remove(wareHouse);
+                _context.WareHouse.Remove(wareHouse);
             }
 
             await _context.SaveChangesAsync();
@@ -124,7 +124,7 @@ namespace Wine_Spirits.Controllers
 
         private bool WareHouseExists(Guid id)
         {
-            return _context.WareHouses.Any(e => e.Id == id);
+            return _context.WareHouse.Any(e => e.Id == id);
         }
     }
 }

@@ -30,7 +30,7 @@
             
             <nav class="sidebar-menu">
                 <!-- Main Menu -->
-                <a asp-controller="Home" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")">
                     <i data-lucide="layout-dashboard"></i> Anasayfa
                 </a>
                 
@@ -91,7 +91,7 @@
 
     <footer class="border-top footer text-muted bg-white py-3 mt-auto">
         <div class="container text-center">
-            &copy; 2026 - Wine & Spirits SaaS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+            &copy; 2026 - Wine & Spirits SaaS - <a asp-area="" asp-controller="Dashboard" asp-action="Privacy">Gizlilik</a>
         </div>
     </footer>
 

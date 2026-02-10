@@ -28,7 +28,7 @@ public class SupportController : Controller
             CreatedDate = DateTime.Now
         };
 
-        _context.SupportRequests.Add(request);
+        _context.SupportRequest.Add(request);
         await _context.SaveChangesAsync();
 
         return Json(new { success = true, message = "Talebiniz yöneticiye iletildi. Teşekkürler!" });

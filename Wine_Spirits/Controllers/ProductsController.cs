@@ -18,7 +18,7 @@ public class ProductsController : Controller
     public async Task<IActionResult> Index()
     {
         // Include: ProductDefinition dahil edildi.
-        var wineSpiritsContext = _context.Products
+        var wineSpiritsContext = _context.Product
             .Include(p => p.ProductDefinition)
             .Include(p => p.Country)
             .Include(p => p.ProductCategory)
@@ -38,7 +38,7 @@ public class ProductsController : Controller
             return NotFound();
         }
 
-        var product = await _context.Products
+        var product = await _context.Product
             .Include(p => p.ProductDefinition)
             .Include(p => p.Country)
             .Include(p => p.ProductCategory)
@@ -56,11 +56,11 @@ public class ProductsController : Controller
     // GET: Products/Create
     public IActionResult Create()
     {
-        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name");
-        ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
-        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name");
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name");
-        ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name");
+        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinition.OrderBy(x => x.Name), "Id", "Name");
+        ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name");
+        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategory, "Id", "Name");
+        ViewData["SupplierId"] = new SelectList(_context.Supplier, "Id", "Name");
+        ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name");
         
         // Üretim yılı listesi (1990 - Güncel Yıl, Azalan)
         ViewBag.Years = Enumerable.Range(1990, DateTime.Now.Year - 1989)
@@ -94,11 +94,11 @@ public class ProductsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
-        ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", product.CountryId);
-        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name", product.ProductCategoryId);
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name", product.SupplierId);
-        ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
+        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinition.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
+        ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", product.CountryId);
+        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategory, "Id", "Name", product.ProductCategoryId);
+        ViewData["SupplierId"] = new SelectList(_context.Supplier, "Id", "Name", product.SupplierId);
+        ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name", product.UnitId);
         
         ViewBag.Years = Enumerable.Range(1990, DateTime.Now.Year - 1989)
                                   .OrderByDescending(x => x)
@@ -117,14 +117,14 @@ public class ProductsController : Controller
     {
         if (id == null) return NotFound();
 
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Product.FindAsync(id);
         if (product == null) return NotFound();
 
-        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
-        ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", product.CountryId);
-        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name", product.ProductCategoryId);
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name", product.SupplierId);
-        ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
+        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinition.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
+        ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", product.CountryId);
+        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategory, "Id", "Name", product.ProductCategoryId);
+        ViewData["SupplierId"] = new SelectList(_context.Supplier, "Id", "Name", product.SupplierId);
+        ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name", product.UnitId);
 
         ViewBag.Years = Enumerable.Range(1990, DateTime.Now.Year - 1989)
                                   .OrderByDescending(x => x)
@@ -165,11 +165,11 @@ public class ProductsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
-        ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", product.CountryId);
-        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name", product.ProductCategoryId);
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name", product.SupplierId);
-        ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
+        ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinition.OrderBy(x => x.Name), "Id", "Name", product.ProductDefinitionId);
+        ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", product.CountryId);
+        ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategory, "Id", "Name", product.ProductCategoryId);
+        ViewData["SupplierId"] = new SelectList(_context.Supplier, "Id", "Name", product.SupplierId);
+        ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name", product.UnitId);
 
         ViewBag.Years = Enumerable.Range(1990, DateTime.Now.Year - 1989)
                                   .OrderByDescending(x => x)
@@ -190,7 +190,7 @@ public class ProductsController : Controller
             return NotFound();
         }
 
-        var product = await _context.Products
+        var product = await _context.Product
             .Include(p => p.ProductDefinition)
             .Include(p => p.Country)
             .Include(p => p.ProductCategory)
@@ -210,10 +210,10 @@ public class ProductsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Product.FindAsync(id);
         if (product != null)
         {
-            _context.Products.Remove(product);
+            _context.Product.Remove(product);
         }
 
         await _context.SaveChangesAsync();
@@ -222,6 +222,6 @@ public class ProductsController : Controller
 
     private bool ProductExists(Guid id)
     {
-        return _context.Products.Any(e => e.Id == id);
+        return _context.Product.Any(e => e.Id == id);
     }
 }

@@ -39,7 +39,9 @@ function openReturnModal(orderId, itemIndex, maxQuantity) {
 function formatCurrency(amount) {
     return new Intl.NumberFormat('tr-TR', {
         style: 'currency',
-        currency: 'TRY'
+        currency: 'TRY',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
     }).format(amount);
 }
 
