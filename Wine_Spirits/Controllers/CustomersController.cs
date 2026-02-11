@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
 
@@ -16,7 +15,10 @@ namespace Wine_Spirits.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customer.ToListAsync());
+            var customers = await _context.Customer.ToListAsync();
+            ViewData["TotalCustomers"] = customers.Count;
+            ViewData["ActiveCustomers"] = customers.Count(c => !string.IsNullOrEmpty(c.Email));
+            return View(customers);
         }
 
         // GET: Customers/Create

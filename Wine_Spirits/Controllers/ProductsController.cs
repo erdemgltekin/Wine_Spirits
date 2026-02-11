@@ -2,16 +2,66 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
+using System.Text.Json;
 
 namespace Wine_Spirits.Controllers;
 
 public class ProductsController : Controller
 {
     private readonly WineSpiritsContext _context;
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false
+    };
 
     public ProductsController(WineSpiritsContext context)
     {
         _context = context;
+    }
+
+    /// <summary>
+    /// Tüm ürünleri filtreler ve JSON olarak döndürür.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetProductsData()
+    {
+        var products = await _context.Product
+            .Include(p => p.ProductDefinition)
+            .Include(p => p.ProductCategory)
+            .Include(p => p.Unit)
+            .Include(p => p.Supplier)
+            .Include(p => p.Country)
+            .OrderByDescending(p => p.Year)
+            .Select(p => new
+            {
+                p.Id,
+                Name = p.ProductDefinition != null ? p.ProductDefinition.Name : "Tanımsız Ürün",
+                CategoryName = p.ProductCategory != null ? p.ProductCategory.Name : "Genel",
+                CategoryId = p.ProductCategoryId,
+                p.Price,
+                p.StockQuantity,
+                UnitName = p.Unit != null ? p.Unit.Name : "Adet",
+                SupplierName = p.Supplier != null ? p.Supplier.Name : "-",
+                CountryName = p.Country != null ? p.Country.Name : "-",
+                p.Year
+            })
+            .ToListAsync();
+
+        return new JsonResult(products, _jsonOptions);
+    }
+
+    /// <summary>
+    /// Filtreleme için kategorileri getirir.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetCategories()
+    {
+        var categories = await _context.ProductCategory
+            .OrderBy(c => c.Name)
+            .Select(c => new { c.Id, c.Name })
+            .ToListAsync();
+        return new JsonResult(categories, _jsonOptions);
     }
 
     // GET: Products

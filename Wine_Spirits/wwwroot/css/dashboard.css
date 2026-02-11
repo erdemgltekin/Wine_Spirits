@@ -1,0 +1,184 @@
+﻿/* ========================================
+   Dashboard CSS - Production Ready
+   ========================================
+   KÖK NEDEN ANALİZİ:
+   1. .ws-stat-card'a padding VERİLMEMELİ (card-body p-4 zaten veriyor)
+   2. canvas'a height: 100% !important VERİLMEMELİ (Chart.js kendi yönetir)
+   3. overflow: visible tehlikelidir, hidden olmalı
+   4. Duplicate kurallar temizlendi
+   ======================================== */
+
+/* Ana Kapsayıcı */
+.dashboard-v2-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ========================================
+   STAT KARTLARI
+   ======================================== */
+
+/* Kart dış kapsayıcı - PADDING VERMEDEN sadece çerçeve */
+.ws-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    /* Taşmayı engeller */
+}
+
+/* Stat kartı - PADDING YOK, card-body halledecek */
+.ws-stat-card {
+    color: #1e293b;
+    /* ❌ padding: 1.5rem KALDIRILDI - çift padding bozuyordu */
+}
+
+/* Stat kartındaki rakam */
+.ws-stat-card .h4 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* İkon kutusu */
+.ws-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ws-icon-box i,
+.ws-icon-box svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ========================================
+   GRAFİK ALANLARI
+   ======================================== */
+
+/* Grafik kapsayıcıları - sabit yükseklik */
+.ws-chart-main {
+    position: relative;
+    height: 320px;
+    width: 100%;
+}
+
+.ws-chart-small {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.ws-chart-medium {
+    position: relative;
+    height: 240px;
+    width: 100%;
+}
+
+/* ❌ canvas { height: 100% !important } KALDIRILDI
+   Chart.js responsive:true + maintainAspectRatio:false yeterli */
+
+/* ========================================
+   TABLO STİLLERİ
+   ======================================== */
+
+.ws-table-container {
+    overflow-x: auto;
+}
+
+.table thead th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ========================================
+   YARDIMCI SINIFLAR
+   ======================================== */
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.text-indigo-600 {
+    color: #4f46e5 !important;
+}
+
+.bg-indigo-50 {
+    background-color: #eef2ff !important;
+}
+
+.bg-emerald-50 {
+    background-color: #ecfdf5 !important;
+}
+
+.text-emerald-600 {
+    color: #059669 !important;
+}
+
+.bg-blue-50 {
+    background-color: #eff6ff !important;
+}
+
+.text-blue-600 {
+    color: #2563eb !important;
+}
+
+.bg-rose-50 {
+    background-color: #fff1f2 !important;
+}
+
+.text-rose-600 {
+    color: #e11d48 !important;
+}
+
+/* ========================================
+   LOADING ANİMASYONU
+   ======================================== */
+
+.ws-stat-card.ws-loading {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.ws-stat-card {
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.ws-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Filtre butonları */
+[data-range] {
+    transition: all 0.2s ease;
+    border-radius: 6px !important;
+    font-size: 12px;
+    padding: 4px 12px;
+}

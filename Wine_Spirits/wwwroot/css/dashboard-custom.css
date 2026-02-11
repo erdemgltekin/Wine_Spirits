@@ -1,0 +1,133 @@
+/*
+    Dashboard Custom SaaS Styles
+    - Sidebar Toggle Support
+    - Modern Flexbox/Grid Layouts
+    - Responsive Improvements
+*/
+
+:root {
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --transition-speed: 0.3s;
+}
+
+/* Sidebar Toggle Classes */
+.sidebar {
+    width: var(--sidebar-width);
+    transition: width var(--transition-speed) ease;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .sidebar-logo span,
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .p-3 span,
+.sidebar.collapsed .text-xs,
+.sidebar.collapsed .sidebar-divider {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-logo {
+    justify-content: center;
+    padding: 1.5rem 0;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 0.75rem 0;
+}
+
+.sidebar.collapsed .nav-link i {
+    margin-right: 0 !important;
+}
+
+/* Page Content Adjustment */
+.main-content {
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-speed) ease;
+}
+
+.layout-wrapper:has(.sidebar.collapsed) .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Stat Card Hover Effects */
+.ws-stat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ws-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+/* Toggle Button Style - High Contrast & Jilet Gibi */
+#sidebarToggle {
+    background: #1e293b !important;
+    /* Koyu Lacivert Kontrast */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    position: relative;
+}
+
+#sidebarToggle:hover {
+    background: #334155 !important;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+#sidebarToggle:active {
+    transform: scale(0.9);
+}
+
+/* Sidebar transition stability */
+.sidebar {
+    will-change: width;
+    z-index: 1000;
+}
+
+.main-content {
+    will-change: margin-left;
+}
+
+/* Stat Card Pulse Animation for Loading */
+@keyframes pulse-opacity {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+.ws-stat-card.ws-loading {
+    animation: pulse-opacity 1.5s infinite ease-in-out;
+}

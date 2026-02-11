@@ -1,0 +1,23 @@
+@model dynamic
+
+<div class="ws-card ws-stat-card">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="ws-icon-box @Model.IconClass">
+            <i data-lucide="@Model.Icon"></i>
+        </div>
+        @if (Model.Trend != null)
+        {
+            <div class="text-xs @Model.TrendClass">
+                @Model.Trend
+            </div>
+        }
+    </div>
+    <div>
+        <div class="text-muted small fw-medium mb-1">@Model.Label</div>
+        <div class="h4 fw-bold mb-0">@Model.Value</div>
+        @if (Model.Info != null)
+        {
+            <div class="text-xs text-muted mt-1">@Model.Info</div>
+        }
+    </div>
+</div>

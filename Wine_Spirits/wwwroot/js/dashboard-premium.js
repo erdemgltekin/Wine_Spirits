@@ -1,147 +1,126 @@
 /**
- * DashboardPremium Object: Figma tasarımlarına uygun gelişmiş grafik ve UI mantığı.
- * Bu dosya ana satış grafiğini, kategori renk eşleşmelerini ve premium etkileşimleri yönetir.
+ * DashboardPremium: Analitik Görselleştirme Motoru
  */
 const DashboardPremium = {
     charts: {},
     config: {
         colors: {
-            sales: '#6366f1', // Indigo
-            profit: '#10b981', // Emerald
-            grid: '#f1f5f9'
+            sales: '#6366f1', profit: '#10b981',
+            grid: '#f1f5f9', text: '#64748b'
         }
     },
 
-    /**
-     * Dashboard analitiklerini başlatır
-     * @param {Object} data - ViewModel'den gelen analitik veriler
-     */
     init: function (data) {
-        console.log("DashboardPremium: Analitikler Başlatılıyor", data);
+        if (!data) return;
+        console.log("DashboardPremium: Motor Ateşleniyor...", data);
+
+        // Önceki grafikleri temizle
+        this.destroyCharts();
+
+        // Grafiklerini çiz
         this.renderSalesChart(data);
-        this.applyCategoryColors(data.categoryColors);
-        this.initTooltips();
+        this.renderCategoryChart(data);
+        this.renderCountryChart(data);
+
+        if (data.categoryColors) {
+            this.applyCategoryColors(data.categoryColors);
+        }
     },
 
-    /**
-     * Aylık Satış ve Kâr grafiğini çizer (Double Line Chart)
-     */
     renderSalesChart: function (data) {
-        const ctx = document.getElementById('premiumSalesChart');
-        if (!ctx) return;
+        const canvas = document.getElementById('premiumSalesChart');
+        if (!canvas) return;
 
-        // Canvas üzerinde gradyanlar oluştur (Premium Figma Style)
-        const ctx2d = ctx.getContext('2d');
+        const ctx = canvas.getContext('2d');
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.15)');
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
 
-        let salesGradient = ctx2d.createLinearGradient(0, 0, 0, 400);
-        salesGradient.addColorStop(0, 'rgba(99, 102, 241, 0.35)');
-        salesGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
-
-        let profitGradient = ctx2d.createLinearGradient(0, 0, 0, 400);
-        profitGradient.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
-        profitGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
-
-        // Eğer veri yoksa boş dizi göster (Index.cshtml'deki no-data katmanı bunu ele alacak)
-        const salesData = data.monthlySales || [];
-        const profitData = data.monthlyProfit || [];
-        const labels = data.monthlyLabels || [];
-
-        this.charts.sales = new Chart(ctx, {
+        this.charts['sales'] = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: data.months || [],
                 datasets: [
                     {
                         label: 'Satışlar',
-                        data: salesData,
+                        data: data.salesData || [],
                         borderColor: this.config.colors.sales,
-                        backgroundColor: salesGradient,
+                        backgroundColor: gradient,
                         fill: true,
-                        tension: 0.45,
-                        borderWidth: 4,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: this.config.colors.sales,
-                        pointHoverBorderColor: '#fff',
-                        pointHoverBorderWidth: 2
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 2
                     },
                     {
                         label: 'Kâr',
-                        data: profitData,
+                        data: data.profitData || [],
                         borderColor: this.config.colors.profit,
-                        backgroundColor: profitGradient,
-                        fill: true,
-                        tension: 0.45,
-                        borderWidth: 4,
                         borderDash: [5, 5],
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: this.config.colors.profit,
-                        pointHoverBorderColor: '#fff',
-                        pointHoverBorderWidth: 2
+                        fill: false,
+                        tension: 0.4,
+                        borderWidth: 2
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: true, position: 'top', align: 'end' },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        padding: 12,
-                        backgroundColor: '#1e293b',
-                        titleFont: { size: 14 },
-                        bodyFont: { size: 13 },
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.dataset.label || '';
-                                if (label) label += ': ';
-                                if (context.parsed.y !== null) {
-                                    label += new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(context.parsed.y);
-                                }
-                                return label;
-                            }
-                        }
-                    }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: this.config.colors.grid, drawBorder: false },
-                        ticks: {
-                            callback: value => new Intl.NumberFormat('tr-TR', { notation: 'compact' }).format(value)
-                        }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
+                    y: { grid: { color: this.config.colors.grid }, ticks: { color: this.config.colors.text } },
+                    x: { grid: { display: false }, ticks: { color: this.config.colors.text } }
                 }
             }
         });
     },
 
-    /**
-     * Kategori bazlı renkleri UI elemanlarına (ikon arka planları vb.) uygular
-     */
-    applyCategoryColors: function (colorMap) {
-        if (!colorMap) return;
+    renderCategoryChart: function (data) {
+        const ctx = document.getElementById('categoryChart');
+        if (!ctx || !data.categoryLabels) return;
+        this.charts['cat'] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.categoryLabels,
+                datasets: [{
+                    data: data.categoryData,
+                    backgroundColor: Object.values(data.categoryColors || {}),
+                    borderWidth: 0
+                }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+        });
+    },
 
+    renderCountryChart: function (data) {
+        const ctx = document.getElementById('countryChart');
+        if (!ctx || !data.countryLabels) return;
+        this.charts['country'] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.countryLabels,
+                datasets: [{
+                    label: 'Ciro',
+                    data: data.countryData,
+                    backgroundColor: '#6366f1',
+                    borderRadius: 4
+                }]
+            },
+            options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } } }
+        });
+    },
+
+    applyCategoryColors: function (colorMap) {
         document.querySelectorAll('.js-category-icon').forEach(el => {
             const cat = el.getAttribute('data-category');
             if (colorMap[cat]) {
-                el.style.backgroundColor = colorMap[cat] + '15'; // %15 opacity
+                el.style.backgroundColor = colorMap[cat] + '15';
                 el.style.color = colorMap[cat];
             }
         });
     },
 
-    /**
-     * Bootstrap tooltips başlatma
-     */
-    initTooltips: function () {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(t => new bootstrap.Tooltip(t));
+    destroyCharts: function () {
+        Object.values(this.charts).forEach(chart => chart.destroy());
+        this.charts = {};
     }
 };

@@ -20,5 +20,11 @@ namespace Wine_Spirits.Controllers
                 .Include(o => o.Warehouse);
             return View(await orders.ToListAsync());
         }
+
+        // GET: Orders/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }

@@ -1,0 +1,183 @@
+/*
+    Products Custom SaaS Styles
+    - Professional Inventory Layout
+    - Modern Filter Pills
+    - Stock Warning Visuals
+*/
+
+:root {
+    --accent-color: #6366f1;
+    --low-stock-bg: #fee2e2;
+    --low-stock-text: #ef4444;
+    --success-bg: #f0fdf4;
+    --success-text: #16a34a;
+}
+
+/* Inventory Header Section */
+.inventory-header {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.search-container {
+    max-width: 400px;
+    position: relative;
+}
+
+.search-container i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-input {
+    padding-left: 40px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Filter Pills */
+.filter-pills {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.filter-pill {
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+    background: #f1f5f9;
+}
+
+.filter-pill.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Modern Inventory Table */
+.products-table-v2 {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.products-table-v2 thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.products-table-v2 tbody td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.products-table-v2 tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.products-table-v2 tbody tr {
+    transition: background 0.2s ease;
+}
+
+.products-table-v2 tbody tr:hover {
+    background: #fdfdff;
+}
+
+/* Product Info Cell */
+.product-info-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.product-meta {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* Stock Badges */
+.badge-stock {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-stock.low {
+    background: var(--low-stock-bg);
+    color: var(--low-stock-text);
+}
+
+.badge-stock.normal {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+/* Action Buttons */
+.action-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn-v2 {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
+
+.action-btn-v2:hover {
+    background: #f8fafc;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.action-btn-v2.delete:hover {
+    color: #ef4444;
+    border-color: #ef4444;
+}
