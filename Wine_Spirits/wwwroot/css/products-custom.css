@@ -1,183 +1,173 @@
-/*
-    Products Custom SaaS Styles
-    - Professional Inventory Layout
-    - Modern Filter Pills
-    - Stock Warning Visuals
-*/
+﻿/* Wine & Spirits - Modern Inventory Management CSS 
+ * Design System & Component Library
+ */
 
 :root {
-    --accent-color: #6366f1;
-    --low-stock-bg: #fee2e2;
-    --low-stock-text: #ef4444;
-    --success-bg: #f0fdf4;
-    --success-text: #16a34a;
+    --ws-primary: #1e293b;
+    --ws-accent: #6366f1;
+    --ws-bg: #f8fafc;
+    --ws-card-bg: #ffffff;
+    --ws-border: #e2e8f0;
+    --ws-text-main: #1e293b;
+    --ws-text-muted: #64748b;
+    --ws-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --ws-success: #059669;
+    --ws-danger: #dc2626;
+    --ws-sku-bg: #f1f5f9;
 }
 
-/* Inventory Header Section */
-.inventory-header {
-    background: #ffffff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+/* 1. Genel Wrapper */
+.ws-inventory-wrapper {
+    background-color: var(--ws-bg);
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* 2. Dashboard Stat Kartları */
+.ws-stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
-.search-container {
-    max-width: 400px;
-    position: relative;
-}
-
-.search-container i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    pointer-events: none;
-}
-
-.search-input {
-    padding-left: 40px !important;
-    border-radius: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.2s ease;
-}
-
-.search-input:focus {
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
-}
-
-/* Filter Pills */
-.filter-pills {
+/* 3. Aksiyon Çubuğu ve Filtreler (TAŞMA SORUNU ÇÖZÜMÜ) */
+.ws-action-bar {
     display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1.5rem;
-}
-
-.filter-pill {
-    padding: 8px 16px;
-    border-radius: 100px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.filter-pill:hover {
-    background: #f1f5f9;
-}
-
-.filter-pill.active {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-/* Modern Inventory Table */
-.products-table-v2 {
-    background: #ffffff;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--ws-card-bg);
+    padding: 1.25rem;
     border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+    box-shadow: var(--ws-shadow);
+    flex-wrap: wrap;
 }
 
-.products-table-v2 thead th {
-    background: #f8fafc;
-    color: #64748b;
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.products-table-v2 tbody td {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-}
-
-.products-table-v2 tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.products-table-v2 tbody tr {
-    transition: background 0.2s ease;
-}
-
-.products-table-v2 tbody tr:hover {
-    background: #fdfdff;
-}
-
-/* Product Info Cell */
-.product-info-cell {
-    display: flex;
-    flex-direction: column;
-}
-
-.product-name {
-    font-weight: 600;
-    color: #1e293b;
-    font-size: 14px;
-}
-
-.product-meta {
-    font-size: 12px;
-    color: #94a3b8;
-    margin-top: 2px;
-}
-
-/* Stock Badges */
-.badge-stock {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-stock.low {
-    background: var(--low-stock-bg);
-    color: var(--low-stock-text);
-}
-
-.badge-stock.normal {
-    background: var(--success-bg);
-    color: var(--success-text);
-}
-
-/* Action Buttons */
-.action-group {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.action-btn-v2 {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+.ws-search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
+}
+
+    .ws-search-wrapper i {
+        position: absolute;
+        left: 1rem;
+        color: var(--ws-text-muted);
+        z-index: 10;
+        pointer-events: none;
+        width: 20px;
+        height: 20px;
+    }
+
+.ws-search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem !important;
+    border: 1.5px solid var(--ws-border);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: #fcfcfc;
+}
+
+    .ws-search-input:focus {
+        outline: none;
+        border-color: var(--ws-accent);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: #fff;
+    }
+
+.ws-filters-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.ws-date-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .ws-date-wrapper i {
+        position: absolute;
+        left: 12px;
+        color: var(--ws-text-muted);
+        z-index: 5;
+    }
+
+.ws-date-input {
+    padding-left: 38px !important;
+    border: 1.5px solid var(--ws-border);
+    border-radius: 12px;
+    height: 46px;
+    width: 220px;
+    font-size: 0.9rem;
+}
+
+/* 4. Modal Düzenlemeleri */
+.ws-modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.ws-form-label {
+    font-weight: 600;
+    color: var(--ws-text-main);
+    margin-bottom: 0.5rem;
+}
+
+/* Spinner ve Diğerleri */
+.ws-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--ws-border);
+    border-top-color: var(--ws-accent);
+    border-radius: 50%;
+    animation: ws-spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes ws-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* İkon ve Arama Kutusu Sabitleme */
+.ws-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .ws-search-wrapper i, .ws-search-wrapper svg {
+        position: absolute;
+        left: 15px;
+        z-index: 10;
+        width: 18px;
+        height: 18px;
+        color: #94a3b8;
+    }
+
+.ws-search-input {
+    padding-left: 45px !important; /* İkona yer açar */
+    height: 48px;
+    border-radius: 12px;
+}
+
+.ws-date-wrapper i, .ws-date-wrapper svg {
+    position: absolute;
+    left: 12px;
+    z-index: 10;
     color: #64748b;
-    transition: all 0.2s ease;
 }
 
-.action-btn-v2:hover {
-    background: #f8fafc;
-    color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-.action-btn-v2.delete:hover {
-    color: #ef4444;
-    border-color: #ef4444;
+.ws-date-input {
+    padding-left: 40px !important;
+    height: 46px;
 }

@@ -1,179 +1,76 @@
 @model Wine_Spirits.Models.Product
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @{
-    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
-    if (isAjax) { Layout = null; } else { Layout = "_Layout"; }
+    Layout = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest" ? null : "_Layout";
 }
 
-<div class="@(isAjax ? "" : "container py-5")">
-    <div class="@(isAjax ? "" : "form-card")">
-        <div class="card shadow-none border-0 bg-transparent">
-            <div class="card-body p-0">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-end mb-1">
-                                <label asp-for="ProductDefinitionId" class="form-label mb-0">Ürün Adı</label>
-                                <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Tanım', 'Ürün Adı')">
-                                    <i data-lucide="plus-circle" style="width: 14px;"></i> Talep Et
-                                </button>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="tag" style="width: 16px;"></i></span>
-                                <select asp-for="ProductDefinitionId" class="form-select select2-enable" asp-items="ViewBag.ProductDefinitionId" required title="Bu alan yönetici kısıtlamasındadır.">
-                                    <option value="">Ürün Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="ProductDefinitionId" class="text-danger small"></span>
-                        </div>
+<div class="p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 fw-bold text-dark">Yeni Ürün Ekle</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
 
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-end mb-1">
-                                <label asp-for="ProductCategoryId" class="form-label mb-0">Kategori</label>
-                                <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Kategori', 'Kategori')">
-                                    <i data-lucide="plus-circle" style="width: 14px;"></i>
-                                </button>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="layers" style="width: 16px;"></i></span>
-                                <select asp-for="ProductCategoryId" class="form-select" asp-items="ViewBag.ProductCategoryId" required title="Bu alan yönetici kısıtlamasındadır.">
-                                    <option value="">Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="ProductCategoryId" class="text-danger small"></span>
-                        </div>
+    <form asp-action="Create" id="createProductForm" method="post">
+        @Html.AntiForgeryToken()
 
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-end mb-1">
-                                <label asp-for="CountryId" class="form-label mb-0">Menşei Ülke</label>
-                                <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Ülke', 'Ülke')">
-                                    <i data-lucide="plus-circle" style="width: 14px;"></i>
-                                </button>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="globe" style="width: 16px;"></i></span>
-                                <select asp-for="CountryId" class="form-select" asp-items="ViewBag.CountryId" required title="Bu alan yönetici kısıtlamasındadır.">
-                                    <option value="">Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="CountryId" class="text-danger small"></span>
-                        </div>
+        <div class="row g-3">
+            @* Ürün Adı *@
+            <div class="col-12">
+                <label class="form-label fw-bold">Ürün Tanımı</label>
+                <select asp-for="ProductDefinitionId" class="form-select shadow-sm" asp-items="ViewBag.ProductDefinitionId" required>
+                    <option value="">-- Ürün Seçiniz --</option>
+                </select>
+            </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="Year" class="form-label">Üretim Yılı</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="calendar" style="width: 16px;"></i></span>
-                                <select asp-for="Year" class="form-select" asp-items="ViewBag.Years" required>
-                                    <option value="">Yıl Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="Year" class="text-danger small"></span>
-                        </div>
+            @* Kategori ve Birim *@
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Kategori</label>
+                <select asp-for="ProductCategoryId" class="form-select shadow-sm" asp-items="ViewBag.ProductCategoryId" required>
+                    <option value="">-- Kategori Seçiniz --</option>
+                </select>
+            </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="Price" class="form-label">Birim Fiyat</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="banknote" style="width: 16px;"></i></span>
-                                <input asp-for="Price" class="form-control" placeholder="0.00" required />
-                            </div>
-                            <span asp-validation-for="Price" class="text-danger small"></span>
-                        </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Ölçü Birimi</label>
+                <select asp-for="UnitId" class="form-select shadow-sm" asp-items="ViewBag.UnitId" required>
+                    <option value="">-- Birim Seçiniz --</option>
+                </select>
+            </div>
 
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-end mb-1">
-                                <label asp-for="UnitId" class="form-label mb-0">Birim</label>
-                                <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Birim', 'Ölçü Birimi')">
-                                    <i data-lucide="plus-circle" style="width: 14px;"></i>
-                                </button>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="box" style="width: 16px;"></i></span>
-                                <select asp-for="UnitId" class="form-select" asp-items="ViewBag.UnitId" required title="Bu alan yönetici kısıtlamasındadır.">
-                                    <option value="">Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="UnitId" class="text-danger small"></span>
-                        </div>
+            @* Tedarikçi ve Ülke *@
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Tedarikçi</label>
+                <select asp-for="SupplierId" class="form-select shadow-sm" asp-items="ViewBag.SupplierId" required>
+                    <option value="">-- Tedarikçi Seçiniz --</option>
+                </select>
+            </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="StockQuantity" class="form-label">Mevcut Stok</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="database" style="width: 16px;"></i></span>
-                                <input asp-for="StockQuantity" class="form-control" type="number" required />
-                            </div>
-                            <span asp-validation-for="StockQuantity" class="text-danger small"></span>
-                        </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Menşei Ülke</label>
+                <select asp-for="CountryId" class="form-select shadow-sm" asp-items="ViewBag.CountryId" required>
+                    <option value="">-- Ülke Seçiniz --</option>
+                </select>
+            </div>
 
-                        <div class="col-12">
-                            <label asp-for="SupplierId" class="form-label">Tedarikçi</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="truck" style="width: 16px;"></i></span>
-                                <select asp-for="SupplierId" class="form-select" asp-items="ViewBag.SupplierId" required>
-                                    <option value="">Seçiniz...</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="SupplierId" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="drawer-footer">
-                        @if (isAjax) {
-                            <button type="button" class="btn btn-light px-4 border" onclick="SidePanel.close()">
-                                <i data-lucide="x" class="me-2" style="width: 16px;"></i> Vazgeç
-                            </button>
-                        } else {
-                            <a asp-action="Index" class="btn btn-light px-4 border">
-                                <i data-lucide="arrow-left" class="me-2" style="width: 16px;"></i> Vazgeç
-                            </a>
-                        }
-                        <button type="submit" class="btn btn-indigo flex-grow-1 shadow-sm fw-bold">
-                            <i data-lucide="check" class="me-2" style="width: 18px;"></i> Ürünü Kaydet
-                        </button>
-                    </div>
-                </form>
+            @* Sayısal Alanlar *@
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Stok Miktarı</label>
+                <input asp-for="StockQuantity" type="number" class="form-control shadow-sm" value="0" min="0" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Birim Fiyat (₺)</label>
+                <input asp-for="Price" type="number" step="0.01" class="form-control shadow-sm" placeholder="0.00" required />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Üretim Yılı</label>
+                <input asp-for="Year" type="number" class="form-control shadow-sm" value="@DateTime.Now.Year" />
             </div>
         </div>
-    </div>
+
+        <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">İptal</button>
+            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">Ürünü Kaydet</button>
+        </div>
+    </form>
 </div>
-
-@if (!isAjax) {
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        <script>
-            $(document).ready(function() {
-                $('.select2-enable').select2({
-                    placeholder: "Seçiniz...",
-                    allowClear: true,
-                    width: '100%',
-                    dropdownParent: $('#sidePanel') // Panel içinde düzgün çalışması için
-                });
-            });
-
-            function sendSupportRequest(type, label) {
-                const name = prompt(`Yeni ${label} talebi için isim giriniz:`);
-                if (name && name.trim() !== "") {
-                    $.ajax({
-                        url: '/Support/SendRequest',
-                        type: 'POST',
-                        data: { type: type, name: name },
-                        success: function(response) {
-                            if (response.success) {
-                                // showStatusToast is defined in site.js
-                                showStatusToast(response.message, 'check-circle', true);
-                            } else {
-                                alert(response.message);
-                            }
-                        },
-                        error: function() {
-                            alert("İşlem sırasında bir hata oluştu.");
-                        }
-                    });
-                }
-            }
-            lucide.createIcons();
-        </script>
-    }
-}

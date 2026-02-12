@@ -21,9 +21,8 @@ public partial class Product
     public Guid CountryId { get; set; }
 
     [Display(Name = "Üretim Yılı (vintage)")]
-    [Required(ErrorMessage = "Yıl bilgisi gereklidir.")]
     [Range(1800, 2100, ErrorMessage = "Lütfen geçerli bir yıl giriniz (1800-2100).")]
-    public int Year { get; set; }
+    public int? Year { get; set; } // 
 
     [Display(Name = "Ölçü Birimi")]
     [Required(ErrorMessage = "Lütfen birim seçiniz.")]
