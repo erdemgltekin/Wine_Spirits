@@ -7,7 +7,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/customers.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/customer/customers.css" asp-append-version="true" />
 }
 
 <div class="container-fluid py-4">
@@ -148,8 +148,7 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-            
-            // Reinitialize Lucide icons for dynamic content
+
             if (typeof lucide !== 'undefined') lucide.createIcons();
         });
     </script>

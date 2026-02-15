@@ -63,7 +63,7 @@ namespace Wine_Spirits.Controllers
         {
             try
             {
-                var query = _context.Product
+                var query = _context.Products
                     .Include(p => p.ProductDefinition).Include(p => p.ProductCategory)
                     .Include(p => p.Unit).Include(p => p.Supplier).Include(p => p.Country)
                     .AsNoTracking();
@@ -96,11 +96,11 @@ namespace Wine_Spirits.Controllers
 
         private void PopulateSelectLists(Product p = null)
         {
-            ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", p?.CountryId);
-            ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategory, "Id", "Name", p?.ProductCategoryId);
-            ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinition, "Id", "Name", p?.ProductDefinitionId);
-            ViewData["SupplierId"] = new SelectList(_context.Supplier, "Id", "Name", p?.SupplierId);
-            ViewData["UnitId"] = new SelectList(_context.Unit, "Id", "Name", p?.UnitId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", p?.CountryId);
+            ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name", p?.ProductCategoryId);
+            ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions, "Id", "Name", p?.ProductDefinitionId);
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name", p?.SupplierId);
+            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", p?.UnitId);
         }
     }
 }

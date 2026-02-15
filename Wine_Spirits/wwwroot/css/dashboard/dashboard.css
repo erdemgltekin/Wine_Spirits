@@ -1,13 +1,4 @@
-﻿/* ========================================
-   Dashboard CSS - Production Ready
-   ========================================
-   KÖK NEDEN ANALİZİ:
-   1. .ws-stat-card'a padding VERİLMEMELİ (card-body p-4 zaten veriyor)
-   2. canvas'a height: 100% !important VERİLMEMELİ (Chart.js kendi yönetir)
-   3. overflow: visible tehlikelidir, hidden olmalı
-   4. Duplicate kurallar temizlendi
-   ======================================== */
-
+﻿
 /* Ana Kapsayıcı */
 .dashboard-v2-container {
     max-width: 1400px;

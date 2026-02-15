@@ -5,7 +5,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard/dashboard.css" asp-append-version="true" />
 }
 
 <div class="dashboard-v2-container mt-4">
@@ -131,11 +131,22 @@
 </div>
 
 @section Scripts {
+    @* Grafik kütüphanesi *@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="~/js/dashboard-charts.js" asp-append-version="true"></script>
+    @* 1. Grafik ayarlarını içeren dosya *@
+    <script src="~/js/dashboard/dashboard-charts.js" asp-append-version="true"></script>
+    @* 2. Tablo verilerini ve istatistikleri çeken dosya (Bunu eklemeyi unutma) *@
+    <script src="~/js/dashboard/dashboard-activity.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // İkonları canlandır
             if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Dashboard verilerini ilk kez yükle
+            if (typeof DashboardManager !== 'undefined') {
+                DashboardManager.init();
+            }
         });
     </script>
+}
 }

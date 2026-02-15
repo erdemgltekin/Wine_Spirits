@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
 
 namespace Wine_Spirits.Controllers
 {
-    public class WarehousesController : Controller
+    public class WarehousesController : BaseController
     {
         private readonly WineSpiritsContext _context;
 
@@ -13,118 +13,63 @@ namespace Wine_Spirits.Controllers
             _context = context;
         }
 
-        // GET: Warehouses
+        // Listeleme: Global Query Filter sayesinde IsDeleted=true olanlar gelmez.
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WareHouse.ToListAsync());
+            return View(await _context.WareHouses.ToListAsync());
         }
 
-        // GET: Warehouses/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => IsAjaxRequest ? PartialView() : View();
 
-        // POST: Warehouses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Location")] WareHouse wareHouse)
+        public async Task<IActionResult> Create([Bind("Name,Location")] WareHouse wareHouse)
         {
-            if (ModelState.IsValid)
-            {
-                wareHouse.Id = Guid.NewGuid(); // Ensure ID is generated if not by DB default (though DB handles newid(), explict setting avoids issues)
-                _context.Add(wareHouse);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(wareHouse);
+            if (!ModelState.IsValid)
+                return IsAjaxRequest ? PartialView(wareHouse) : View(wareHouse);
+
+            // BaseEntity sayesinde Id ve CreatedDate otomatik yönetilebilir 
+            // ama burada açıkça set etmek istersen:
+            _context.Add(wareHouse);
+            await _context.SaveChangesAsync();
+
+            return IsAjaxRequest ? JsonSuccess("Depo başarıyla oluşturuldu.") : RedirectToAction(nameof(Index));
         }
 
-        // GET: Warehouses/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var wareHouse = await _context.WareHouse.FindAsync(id);
-            if (wareHouse == null)
-            {
-                return NotFound();
-            }
-            return View(wareHouse);
-        }
-
-        // POST: Warehouses/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Location")] WareHouse wareHouse)
-        {
-            if (id != wareHouse.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(wareHouse);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!WareHouseExists(wareHouse.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(wareHouse);
-        }
-
-        // GET: Warehouses/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var wareHouse = await _context.WareHouse
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (wareHouse == null)
-            {
-                return NotFound();
-            }
-
-            return View(wareHouse);
-        }
-
-        // POST: Warehouses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var wareHouse = await _context.WareHouse.FindAsync(id);
-            if (wareHouse != null)
+            // 1. KONTROL: Yetki Kontrolü (BaseController'dan geliyor)
+            if (!CanDelete)
             {
-                _context.WareHouse.Remove(wareHouse);
+                return JsonError("Bu işlem için Müdür veya Müdür Yardımcısı yetkisi gereklidir!");
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            try
+            {
+                var wareHouse = await _context.WareHouses.FindAsync(id);
+                if (wareHouse == null) return NotFound();
 
-        private bool WareHouseExists(Guid id)
-        {
-            return _context.WareHouse.Any(e => e.Id == id);
+                // 2. KONTROL: İçinde ürün olan depo silinmesin (İş mantığı)
+                if (await _context.Products.AnyAsync(p => p.WarehouseId == id))
+                {
+                    return JsonError("Bu depo içerisinde ürünler bulunduğu için arşive alınamaz!");
+                }
+
+                // 3. İŞLEM: Fiziksel silme yerine Soft Delete (Durum Güncelleme)
+                wareHouse.IsDeleted = true;
+
+                _context.Update(wareHouse); // Remove yerine Update kullanıyoruz
+                await _context.SaveChangesAsync();
+
+                return JsonSuccess("Depo başarıyla arşive kaldırıldı.");
+            }
+            catch (Exception ex)
+            {
+                // BaseController'daki hata yönetimini kullanıyoruz
+                return JsonError("Bir hata oluştu: " + ex.Message);
+            }
         }
     }
 }

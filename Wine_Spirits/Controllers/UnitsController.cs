@@ -21,7 +21,7 @@ public class UnitsController : Controller
     {
         // [Performance]: Sadece ihtiyacımız olan veriyi çekiyoruz. Scaffold bazen gereksiz Include işlemleri yapabilir.
         // Burada basit bir listeleme yeterli olduğu için düz bir sorgu atıyoruz.
-        var units = await _context.Unit.ToListAsync();
+        var units = await _context.Units.ToListAsync();
         return View(units);
     }
 
@@ -54,7 +54,7 @@ public class UnitsController : Controller
         // [Null Check]: ID gelmemişse işlem yapamayız.
         if (id == null) return NotFound();
 
-        var unit = await _context.Unit.FindAsync(id);
+        var unit = await _context.Units.FindAsync(id);
         if (unit == null) return NotFound(); // [Existence Check]: Kayıt yoksa 404 dön.
 
         return View(unit);
@@ -78,7 +78,7 @@ public class UnitsController : Controller
             catch (DbUpdateConcurrencyException)
             {
                 // [Concurrency]: Aynı anda başkası sildiyse kontrol et.
-                if (!_context.Unit.Any(e => e.Id == id)) return NotFound();
+                if (!_context.Units.Any(e => e.Id == id)) return NotFound();
                 else throw;
             }
             return RedirectToAction(nameof(Index));
@@ -91,7 +91,7 @@ public class UnitsController : Controller
     {
         if (id == null) return NotFound();
 
-        var unit = await _context.Unit
+        var unit = await _context.Units
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (unit == null) return NotFound();
@@ -104,10 +104,10 @@ public class UnitsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var unit = await _context.Unit.FindAsync(id);
+        var unit = await _context.Units.FindAsync(id);
         if (unit != null)
         {
-            _context.Unit.Remove(unit); // [EF Core]: Silinmek üzere işaretle.
+            _context.Units.Remove(unit); // [EF Core]: Silinmek üzere işaretle.
         }
 
         await _context.SaveChangesAsync(); // [Database]: DELETE komutunu çalıştır.

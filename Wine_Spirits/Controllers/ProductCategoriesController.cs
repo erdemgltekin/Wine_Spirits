@@ -19,7 +19,7 @@ public class ProductCategoriesController : Controller
     public async Task<IActionResult> Index()
     {
         // [Async List]: Tüm kategorileri asenkron olarak listeliyoruz.
-        return View(await _context.ProductCategory.ToListAsync());
+        return View(await _context.ProductCategories.ToListAsync());
     }
 
     // GET: ProductCategories/Create
@@ -51,7 +51,7 @@ public class ProductCategoriesController : Controller
     {
         if (id == null) return NotFound();
 
-        var productCategory = await _context.ProductCategory.FindAsync(id);
+        var productCategory = await _context.ProductCategories.FindAsync(id);
         if (productCategory == null) return NotFound();
 
         return View(productCategory);
@@ -88,7 +88,7 @@ public class ProductCategoriesController : Controller
     {
         if (id == null) return NotFound();
 
-        var productCategory = await _context.ProductCategory
+        var productCategory = await _context.ProductCategories
             .FirstOrDefaultAsync(m => m.Id == id);
         
         if (productCategory == null) return NotFound();
@@ -101,10 +101,10 @@ public class ProductCategoriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var productCategory = await _context.ProductCategory.FindAsync(id);
+        var productCategory = await _context.ProductCategories.FindAsync(id);
         if (productCategory != null)
         {
-            _context.ProductCategory.Remove(productCategory);
+            _context.ProductCategories.Remove(productCategory);
         }
         
         await _context.SaveChangesAsync();
@@ -113,6 +113,6 @@ public class ProductCategoriesController : Controller
 
     private bool ProductCategoryExists(Guid id)
     {
-        return _context.ProductCategory.Any(e => e.Id == id);
+        return _context.ProductCategories.Any(e => e.Id == id);
     }
 }

@@ -15,7 +15,7 @@ namespace Wine_Spirits.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var customers = await _context.Customer.ToListAsync();
+            var customers = await _context.Customers.ToListAsync();
             ViewData["TotalCustomers"] = customers.Count;
             ViewData["ActiveCustomers"] = customers.Count(c => !string.IsNullOrEmpty(c.Email));
             return View(customers);
@@ -61,7 +61,7 @@ namespace Wine_Spirits.Controllers
         {
             if (id == null) return NotFound();
 
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null) return NotFound();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -107,7 +107,7 @@ namespace Wine_Spirits.Controllers
 
         private bool CustomerExists(Guid id)
         {
-            return _context.Customer.Any(e => e.Id == id);
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }

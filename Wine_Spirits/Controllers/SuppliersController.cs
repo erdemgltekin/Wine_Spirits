@@ -16,13 +16,13 @@ namespace Wine_Spirits.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Supplier.Include(s => s.Country).ToListAsync());
+            return View(await _context.Suppliers.Include(s => s.Country).ToListAsync());
         }
 
         // GET: Suppliers/Create
         public IActionResult Create()
         {
-            ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name");
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView();
@@ -48,7 +48,7 @@ namespace Wine_Spirits.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", supplier.CountryId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", supplier.CountryId);
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(supplier);
@@ -61,10 +61,10 @@ namespace Wine_Spirits.Controllers
         {
             if (id == null) return NotFound();
 
-            var supplier = await _context.Supplier.FindAsync(id);
+            var supplier = await _context.Suppliers.FindAsync(id);
             if (supplier == null) return NotFound();
 
-            ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", supplier.CountryId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", supplier.CountryId);
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(supplier);
@@ -99,7 +99,7 @@ namespace Wine_Spirits.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Country, "Id", "Name", supplier.CountryId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", supplier.CountryId);
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(supplier);
@@ -109,7 +109,7 @@ namespace Wine_Spirits.Controllers
 
         private bool SupplierExists(Guid id)
         {
-            return _context.Supplier.Any(e => e.Id == id);
+            return _context.Suppliers.Any(e => e.Id == id);
         }
     }
 }

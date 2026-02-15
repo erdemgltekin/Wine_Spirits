@@ -1,46 +1,52 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    // Session'dan kullanıcı bilgilerini çekiyoruz
+    var fullName = HttpContextAccessor.HttpContext?.Session.GetString("FullName") ?? "Misafir";
+    var position = HttpContextAccessor.HttpContext?.Session.GetString("Position") ?? "Yetkisiz";
+}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Wine & Spirits</title>
-    
-    <!-- Google Fonts: Inter -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Bootstrap & Custom CSS -->
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/dashboard-custom.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/css/dashboard/dashboard-custom.css" asp-append-version="true" />
+
+    @* Sayfalara özel CSS dosyaları buraya enjekte edilecek *@
     @await RenderSectionAsync("Styles", required: false)
-    
-    <!-- Lucide Icons -->
+
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    
+
     <div class="layout-wrapper">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar" id="mainSidebar">
             <div class="sidebar-logo d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <i data-lucide="wine" class="me-2 text-primary"></i>
-                    <span>Wine & Spirits</span>
+                    <span class="fw-bold">Wine & Spirits</span>
                 </div>
                 <button type="button" id="sidebarToggle" class="btn btn-link text-white p-0 d-none d-md-block">
                     <i data-lucide="menu"></i>
                 </button>
             </div>
-            
+
             <nav class="sidebar-menu">
-                <!-- Main Menu -->
                 <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")">
                     <i data-lucide="layout-dashboard"></i> Anasayfa
                 </a>
-                
+
                 <a asp-controller="Products" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Products" ? "active" : "")">
                     <i data-lucide="package"></i> Ürünler
                 </a>
@@ -65,54 +71,61 @@
                     <i data-lucide="truck"></i> Tedarikçiler
                 </a>
 
-                <div class="sidebar-divider my-3 opacity-25" style="border-top: 1px solid #fff;"></div>
+                @* YETKİ KONTROLÜ: Sadece Müdür ve Yardımcısı Yönetim panelini görebilir *@
+                @if (position == "Müdür" || position == "Müdür Yardımcısı")
+                {
+                    <div class="sidebar-divider my-3 opacity-25" style="border-top: 1px solid #fff;"></div>
 
-                <!-- Admin Area -->
-                <a asp-controller="Management" asp-action="Backoffice" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" ? "active" : "") text-warning">
-                    <i data-lucide="shield-check"></i> Yönetim (Backoffice)
-                </a>
+                    <a asp-controller="Management" asp-action="Backoffice" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" ? "active" : "") text-warning">
+                        <i data-lucide="shield-check"></i> Yönetim (Backoffice)
+                    </a>
 
-                <a asp-controller="Settings" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Settings" ? "active" : "")">
-                    <i data-lucide="settings"></i> Ayarlar
-                </a>
+                    <a asp-controller="Settings" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Settings" ? "active" : "")">
+                        <i data-lucide="settings"></i> Ayarlar
+                    </a>
+                }
             </nav>
-            
-            <div class="p-3 border-top">
-                <div class="d-flex align-items-center">
-                    <div class="bg-light rounded-circle p-2 me-2">
-                        <i data-lucide="user" class="text-secondary" style="width:20px; height:20px;"></i>
+
+            @* DİNAMİK KULLANICI PROFİL ALANI *@
+            <div class="p-3 border-top mt-auto">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded-circle p-2 me-2">
+                            <i data-lucide="user" class="text-secondary" style="width:20px; height:20px;"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="text-sm fw-medium text-white">@fullName</div>
+                            <div class="text-xs text-muted" style="font-size: 11px;">@position</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="text-sm fw-medium">Admin User</div>
-                        <div class="text-xs text-muted" style="font-size: 12px;">admin@winespirits.com</div>
-                    </div>
+                    @* Logout Butonu *@
+                    <a asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-link text-danger p-0 ms-2" title="Güvenli Çıkış">
+                        <i data-lucide="log-out" style="width:18px; height:18px;"></i>
+                    </a>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-white py-3 mt-auto">
+    <footer class="border-top footer text-muted bg-white py-3">
         <div class="container text-center">
             &copy; 2026 - Wine & Spirits SaaS - <a asp-area="" asp-controller="Dashboard" asp-action="Privacy">Gizlilik</a>
         </div>
     </footer>
 
-    <!-- Side-Panel (Drawer) Infrastructure -->
     <div id="sidePanelOverlay" class="side-panel-overlay"></div>
     <div id="sidePanel" class="side-panel">
         <div class="side-panel-header">
-            <h5 id="sidePanelTitle" class="mb-0 fw-bold">Başlık</h5>
+            <h5 id="sidePanelTitle" class="mb-0 fw-bold">Detay Bilgisi</h5>
             <button type="button" class="btn-close-panel" id="closeSidePanel">
                 <i data-lucide="x"></i>
             </button>
         </div>
         <div id="sidePanelContent" class="side-panel-body">
-            <!-- Dynamic content will be loaded here via AJAX -->
             <div class="p-4 text-center">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Yükleniyor...</span>
@@ -121,16 +134,14 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <!-- Toast Container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-        <div id="statusToast" class="toast align-items-center text-white bg-indigo border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="statusToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body d-flex align-items-center">
                     <i id="toastIcon" data-lucide="check-circle" class="me-2" style="width: 18px;"></i>
                     <span id="toastMessage">İşlem başarıyla tamamlandı.</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Kapat"></button>
             </div>
         </div>
     </div>
@@ -143,27 +154,26 @@
     <script src="~/js/side-panel.js" asp-append-version="true"></script>
 
     <script>
-        // Initialize Lucide Icons Globally
+        // Global Lucide Icon Initialization
         lucide.createIcons();
 
-        // Sidebar Toggle Logic
+        // Sidebar Toggle & UI Logic
         document.addEventListener('DOMContentLoaded', function() {
             const toggleBtn = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('mainSidebar');
-            
+
             if (toggleBtn && sidebar) {
-                // Ensure initial state is stored if needed or just toggle
                 toggleBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     sidebar.classList.toggle('collapsed');
-                    
-                    // Trigger Lucide icons refresh if necessary (usually not needed for just CSS width change)
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    // Yeniden render gerektiren ikonlar için kısa gecikme
+                    setTimeout(() => lucide.createIcons(), 250);
                 });
             }
         });
     </script>
-    
+
+    @* Sayfalara özel scriptler buraya enjekte edilecek *@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -34,7 +34,9 @@
                                 <span class="badge bg-light text-indigo border">@item.RequestType</span>
                             </td>
                             <td class="fw-bold">@item.SuggestedName</td>
-                            <td class="text-muted small">@item.CreatedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="text-muted small">
+                                @(item.CreatedDate is DateTime dt ? dt.ToString("dd.MM.yyyy HH:mm") : item.CreatedDate)
+                            </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
                                     <button onclick="processRequest('@item.Id', 'Approve')" class="btn btn-sm btn-success px-3">

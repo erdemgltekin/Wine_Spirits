@@ -1,35 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Wine_Spirits.Models;
 
-public partial class Customer
+public partial class Customer : BaseEntity
 {
-    public Guid Id { get; set; }
 
-    [Display(Name = "Müşteri Adı")]
-    [Required(ErrorMessage = "Müşteri adı boş bırakılamaz.")]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    [Display(Name = "Müşteri Soyadı")]
-    [Required(ErrorMessage = "Müşteri soyadı boş bırakılamaz.")]
-    public string Lastname { get; set; }
+    public string Lastname { get; set; } = null!;
 
-    [Display(Name = "E-Posta")]
-    [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
-    public string Email { get; set; }
+    public string Email { get; set; } = null!;
 
-    [Display(Name = "Telefon No")]
-    [Required(ErrorMessage = "Telefon numarası zorunludur.")]
-    public string Phone { get; set; }
+    public string Phone { get; set; } = null!;
 
-    [Display(Name = "Adres Detayları")]
-    [Required(ErrorMessage = "Adres bilgisi gereklidir.")]
-    public string Adress { get; set; }
+    public string Adress { get; set; } = null!;
 
-    [Display(Name = "Vergi Dairesi")]
-    public string TaxOffice { get; set; }
+    public string TaxOffice { get; set; } = null!;
 
-    [Display(Name = "Vergi Numarası")]
     public int TaxNumber { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

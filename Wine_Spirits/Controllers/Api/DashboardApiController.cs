@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
-using Wine_Spirits.Models.ViewModels;
+using System.Globalization;
 
 namespace Wine_Spirits.Controllers.Api;
 
@@ -19,20 +19,24 @@ public class DashboardApiController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStats()
     {
-        var totalProducts = await _context.Product.CountAsync();
-        var totalStock = await _context.Product.SumAsync(p => p.StockQuantity);
-        var pendingApprovals = await _context.SupportRequest.CountAsync(r => r.Status == 0);
-        var totalOrdersValue = await _context.OrderDetail.SumAsync(od => od.TotalPrice);
+        // Temel İstatistikler
+        var totalProducts = await _context.Products.CountAsync();
+        var totalStock = await _context.Products.SumAsync(p => (int?)p.StockQuantity) ?? 0;
+
+        // [HATA DÜZELTİLDİ]: Status modelde string olduğu için "0" ile karşılaştırılmalı
+        var pendingApprovals = await _context.SupportRequests.CountAsync(r => r.Status == "0");
+
+        var totalOrdersValue = await _context.OrderDetails.SumAsync(od => (decimal?)od.TotalPrice) ?? 0m;
 
         // Kategori Bazlı Dağılım
-        var categoryData = await _context.Product
+        var categoryData = await _context.Products
             .Include(p => p.ProductCategory)
             .GroupBy(p => p.ProductCategory.Name ?? "Diğer")
             .Select(g => new { Label = g.Key, Value = g.Count() })
             .ToListAsync();
 
         // Ülke Bazlı Dağılım
-        var countryData = await _context.Product
+        var countryData = await _context.Products
             .Include(p => p.Country)
             .GroupBy(p => p.Country.Name ?? "Bilinmiyor")
             .Select(g => new { Label = g.Key, Value = g.Count() })
@@ -40,7 +44,7 @@ public class DashboardApiController : ControllerBase
 
         // Premium Analitik: Aylık Performans
         var sixMonthsAgo = DateTime.Now.AddMonths(-5);
-        var monthlyData = await _context.OrderDetail
+        var monthlyData = await _context.OrderDetails
             .Include(od => od.Order)
             .Where(od => od.Order.OrderDate >= new DateTime(sixMonthsAgo.Year, sixMonthsAgo.Month, 1))
             .ToListAsync();
@@ -48,7 +52,7 @@ public class DashboardApiController : ControllerBase
         var monthlyLabels = new List<string>();
         var monthlySales = new List<decimal>();
         var monthlyProfit = new List<decimal>();
-        var trCulture = new System.Globalization.CultureInfo("tr-TR");
+        var trCulture = new CultureInfo("tr-TR");
 
         for (int i = 5; i >= 0; i--)
         {
@@ -62,7 +66,7 @@ public class DashboardApiController : ControllerBase
 
         // Stok Trendi: Son 10 Gün
         var tenDaysAgo = DateTime.Now.AddDays(-9);
-        var movements = await _context.StockMovement
+        var movements = await _context.StockMovements
             .Where(sm => sm.Date >= tenDaysAgo.Date)
             .ToListAsync();
 
@@ -78,29 +82,34 @@ public class DashboardApiController : ControllerBase
             stockTrendValues.Add(netChange);
         }
 
-        // Son Siparişler (DTO projeksiyonu ile dairesel referansları engelliyoruz)
-        var recentOrders = await _context.OrderDetail
-            .Include(od => od.Order)
-                .ThenInclude(o => o.Customer)
-            .Include(od => od.Product)
-                .ThenInclude(p => p.ProductDefinition)
+        // Son Siparişler (Güvenli Substring ve Null Check eklendi)
+        var recentOrders = await _context.OrderDetails
+            .Include(od => od.Order).ThenInclude(o => o.Customer)
+            .Include(od => od.Product).ThenInclude(p => p.ProductDefinition)
+            .Include(od => od.Product).ThenInclude(p => p.Unit)
             .OrderByDescending(od => od.Order.OrderDate)
             .Take(8)
             .Select(od => new {
                 OrderId = od.OrderId,
-                OrderShortId = od.Order.Id.ToString().Substring(0, 8).ToUpper(),
-                CustomerName = od.Order.Customer.Name + " " + od.Order.Customer.Lastname,
-                CustomerEmail = od.Order.Customer.Email,
-                CustomerInitials = od.Order.Customer.Name.Substring(0,1) + od.Order.Customer.Lastname.Substring(0,1),
-                ProductName = od.Product.ProductDefinition.Name,
+                // [GÜVENLİK]: Id null ise hata vermemesi için kontrol
+                OrderShortId = od.Order != null ? od.Order.Id.ToString().Substring(0, 8).ToUpper() : "N/A",
+                CustomerName = od.Order != null && od.Order.Customer != null ? od.Order.Customer.Name + " " + od.Order.Customer.Lastname : "Bilinmeyen",
+                CustomerEmail = od.Order != null && od.Order.Customer != null ? od.Order.Customer.Email : "",
+                // [GÜVENLİK]: İsimler boşsa Substring patlamasın diye kontrol
+                CustomerInitials = od.Order != null && od.Order.Customer != null
+                                   ? (od.Order.Customer.Name.Length > 0 ? od.Order.Customer.Name.Substring(0, 1) : "") +
+                                     (od.Order.Customer.Lastname.Length > 0 ? od.Order.Customer.Lastname.Substring(0, 1) : "")
+                                   : "??",
+                ProductName = od.Product != null && od.Product.ProductDefinition != null ? od.Product.ProductDefinition.Name : "İsimsiz Ürün",
                 Quantity = od.Quantity,
-                UnitName = od.Product.Unit.Name,
+                UnitName = od.Product != null && od.Product.Unit != null ? od.Product.Unit.Name : "Adet",
                 TotalPrice = od.TotalPrice,
-                StatusValue = od.Order.Id.GetHashCode() % 4 // Simülasyon
+                StatusValue = od.Order != null ? Math.Abs(od.Order.Id.GetHashCode() % 4) : 0
             })
             .ToListAsync();
 
-        return Ok(new {
+        return Ok(new
+        {
             totalProducts,
             totalStock,
             pendingApprovals,

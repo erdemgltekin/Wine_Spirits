@@ -16,42 +16,33 @@ public class ManagementController : Controller
     // GET: /Management/Backoffice
     public async Task<IActionResult> Backoffice()
     {
-        var pendingRequests = await _context.SupportRequest
-            .Where(r => r.Status == 0)
+        // Hata: SupportRequest -> SupportRequests (Çoğul yapıldı)
+        // Hata: Status string olduğu için "0" (string) olarak kontrol edildi
+        var pendingRequests = await _context.SupportRequests
+            .Where(r => r.Status == "0" || r.Status == "Pending")
             .OrderByDescending(r => r.CreatedDate)
             .ToListAsync();
-        
+
         return View(pendingRequests);
     }
 
     [HttpPost]
     public async Task<IActionResult> ApproveRequest(Guid id)
     {
-        var request = await _context.SupportRequest.FindAsync(id);
+        var request = await _context.SupportRequests.FindAsync(id);
         if (request == null) return NotFound();
 
         try
         {
-            switch (request.RequestType)
-            {
-                case "Tanım":
-                    _context.ProductDefinition.Add(new ProductDefinition { Name = request.SuggestedName });
-                    break;
-                case "Kategori":
-                    _context.ProductCategory.Add(new ProductCategory { Name = request.SuggestedName });
-                    break;
-                case "Ülke":
-                    _context.Country.Add(new Country { Name = request.SuggestedName });
-                    break;
-                case "Birim":
-                    _context.Unit.Add(new Unit { Name = request.SuggestedName });
-                    break;
-            }
+            // ... Switch case bloklarında _context.TabloAdi kısımlarının 
+            // sonuna 's' eklediğinden emin ol (Örn: _context.Countries.Add)
 
-            request.Status = 1; // Onaylandı
+            // HATA: Cannot implicitly convert type 'int' to 'string'
+            // Çözüm: 1 yerine "1" (Tırnak içinde string olarak)
+            request.Status = "1";
+
             await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = "Talep onaylandı ve veritabanına eklendi." });
+            return Json(new { success = true, message = "Onaylandı." });
         }
         catch (Exception ex)
         {
@@ -62,10 +53,10 @@ public class ManagementController : Controller
     [HttpPost]
     public async Task<IActionResult> RejectRequest(Guid id)
     {
-        var request = await _context.SupportRequest.FindAsync(id);
+        var request = await _context.SupportRequests.FindAsync(id);
         if (request == null) return NotFound();
 
-        request.Status = 2; // Reddedildi
+        request.Status = "Rejected"; // 2 yerine "Rejected"
         await _context.SaveChangesAsync();
 
         return Json(new { success = true, message = "Talep reddedildi." });

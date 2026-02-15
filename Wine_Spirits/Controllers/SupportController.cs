@@ -24,13 +24,13 @@ public class SupportController : Controller
         {
             RequestType = type,
             SuggestedName = name,
-            Status = 0,
+            Status = "0", // HATA DÜZELTİLDİ: 0 (int) yerine "0" (string) yapıldı.
             CreatedDate = DateTime.Now
         };
 
-        _context.SupportRequest.Add(request);
+        _context.SupportRequests.Add(request); // Çoğul isim kullanımı doğru
         await _context.SaveChangesAsync();
 
-        return Json(new { success = true, message = "Talebiniz yöneticiye iletildi. Teşekkürler!" });
+        return Json(new { success = true, message = "Talebiniz iletildi." });
     }
 }

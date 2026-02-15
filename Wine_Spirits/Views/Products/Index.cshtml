@@ -1,71 +1,98 @@
+@using Wine_Spirits.Models.ViewModels
 @model Wine_Spirits.Models.ViewModels.ProductsIndexViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Ürün Envanteri";
     Layout = "_Layout";
-    var stats = Model?.Stats ?? new Wine_Spirits.Models.ViewModels.ProductStats();
+    var stats = Model?.Stats ?? new ProductStats();
+    var fmtMoney = new Func<decimal, string>(val => val.ToString("C2", new System.Globalization.CultureInfo("tr-TR")));
 }
 
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="~/css/products-custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/product/products-custom.css" asp-append-version="true" />
 }
 
 <div class="ws-inventory-wrapper">
-    @* Dashboard Kartları - Orijinal Mimari *@
-    <div class="ws-stats-container">
-        <div class="ws-stat-col"><ws-stat-card label="Toplam Ürün" value="0" icon="package" ws-stat="totalProducts" /></div>
-        <div class="ws-stat-col"><ws-stat-card label="Kritik Stok" value="0" icon="alert-triangle" ws-stat="criticalStock" /></div>
-        <div class="ws-stat-col"><ws-stat-card label="Envanter Değeri" value="₺0,00" icon="banknote" ws-stat="inventoryValue" /></div>
-        <div class="ws-stat-col"><ws-stat-card label="Kategori" value="0" icon="layers" ws-stat="categoryCount" /></div>
-    </div>
-
-    <div class="ws-action-bar">
-        <div class="ws-search-wrapper">
-            <i data-lucide="search"></i>
-            <input type="text" id="inventorySearch" class="ws-search-input" placeholder="Ürün adı veya koduna göre ara...">
-        </div>
-        <div class="ws-filters-group">
-            <div class="ws-date-wrapper">
-                <i data-lucide="calendar"></i>
-                <input type="text" id="dateRangeFilter" class="ws-date-input" placeholder="Tarih Seçin">
-            </div>
-            <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4" id="btnCreateNew">
-                <i data-lucide="plus-circle"></i> Yeni Ürün
-            </button>
+    @* Sayfa Başlığı *@
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Ürün Envanteri</h2>
+            <p class="text-muted mb-0">Stok durumunu buradan yönetin.</p>
         </div>
     </div>
 
+    @* İstatistik Kartları *@
+    <div class="ws-stats-container mb-4">
+        <div class="ws-stat-col">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-indigo-50 text-indigo-600" }' />
+        </div>
+        <div class="ws-stat-col">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "criticalStock", Label = "Kritik Stok", Value = stats.CriticalStockCount.ToString(), Icon = "alert-triangle", IconClass = "bg-rose-50 text-rose-600" }' />
+        </div>
+        <div class="ws-stat-col">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "inventoryValue", Label = "Envanter Değeri", Value = fmtMoney(stats.TotalInventoryValue), Icon = "banknote", IconClass = "bg-emerald-50 text-emerald-600" }' />
+        </div>
+        <div class="ws-stat-col">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "categoryCount", Label = "Kategori", Value = stats.CategoryCount.ToString(), Icon = "layers", IconClass = "bg-amber-50 text-amber-600" }' />
+        </div>
+    </div>
+
+    @* Aksiyon Çubuğu *@
+    <div class="ws-action-bar mb-4 d-flex justify-content-between align-items-center gap-3">
+        <div class="ws-search-wrapper flex-grow-1">
+            <input type="text" id="inventorySearch" class="form-control shadow-sm" placeholder="Ürün adı veya kodla ara...">
+        </div>
+        <div class="ws-date-filter" style="min-width: 220px;">
+            <input type="text" id="dateFilter" class="form-control shadow-sm" placeholder="Tarih Aralığı Seçin">
+        </div>
+        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm fw-bold" id="btnCreateNew">
+            <i data-lucide="plus-circle"></i> Yeni Ürün Ekle
+        </button>
+    </div>
+
+    @* Tablo *@
     <div class="card border-0 shadow-sm overflow-hidden">
-        <table class="table align-middle mb-0">
-            <thead class="bg-light">
-                <tr>
-                    <th class="ps-4">Ürün Kodu</th>
-                    <th>Ürün Bilgisi</th>
-                    <th>Kategori</th>
-                    <th>Menşei</th>
-                    <th>Fiyat</th>
-                    <th>Stok</th>
-                    <th class="text-end pe-4">İşlem</th>
-                </tr>
-            </thead>
-            <tbody id="productsTableBody">
-                <tr><td colspan="7" class="text-center py-5">Veriler senkronize ediliyor...</td></tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-light small fw-bold text-muted uppercase">
+                    <tr>
+                        <th class="ps-4">KOD</th>
+                        <th>ÜRÜN / TEDARİKÇİ</th>
+                        <th>KATEGORİ</th>
+                        <th>MENŞEİ</th>
+                        <th>FİYAT</th>
+                        <th>STOK</th>
+                        <th class="text-end pe-4">İŞLEM</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <tr><td colspan="7" class="text-center py-5">Veriler yükleniyor...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<div class="modal fade" id="productModal" tabindex="-1">
+@* Modal *@
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content ws-modal-content">
+        <div class="modal-content border-0 shadow-lg">
             <div id="productModalBody"></div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/js/products-manager.js" asp-append-version="true"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+    <script src="~/js/product/products-manager.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) lucide.createIcons();
+            flatpickr("#dateFilter", { locale: "tr", mode: "range", dateFormat: "d.m.Y" });
+        });
+    </script>
 }
