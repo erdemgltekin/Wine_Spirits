@@ -44,7 +44,8 @@
         <div class="ws-search-wrapper flex-grow-1">
             <input type="text" id="inventorySearch" class="form-control shadow-sm" placeholder="Ürün adı veya kodla ara...">
         </div>
-        <div class="ws-date-filter" style="min-width: 220px;">
+        @* Temizlik: Inline style kaldırıldı, class eklendi *@
+        <div class="ws-date-filter">
             <input type="text" id="dateFilter" class="form-control shadow-sm" placeholder="Tarih Aralığı Seçin">
         </div>
         <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm fw-bold" id="btnCreateNew">
@@ -89,10 +90,5 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
     <script src="~/js/product/products-manager.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.lucide) lucide.createIcons();
-            flatpickr("#dateFilter", { locale: "tr", mode: "range", dateFormat: "d.m.Y" });
-        });
-    </script>
+    @* Temizlik: Script bloğu kaldırıldı *@
 }

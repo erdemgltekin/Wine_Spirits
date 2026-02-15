@@ -6,6 +6,14 @@ const ProductManager = {
         const modalEl = document.getElementById('productModal');
         if (modalEl) this.bsModal = new bootstrap.Modal(modalEl);
 
+        // Flatpickr Başlatma (Index.cshtml'den taşındı)
+        if (document.getElementById("dateFilter")) {
+            flatpickr("#dateFilter", { locale: "tr", mode: "range", dateFormat: "d.m.Y" });
+        }
+
+        // İkonları başlat
+        if (window.lucide) lucide.createIcons();
+
         this.loadProducts();
         this.attachEvents();
     },

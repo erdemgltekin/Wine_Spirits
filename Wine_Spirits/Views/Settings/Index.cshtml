@@ -1,38 +1,75 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Wine_Spirits
+@* Not: Wine_Spirits projenizin Namespace adıdır. *@
+
 @{
     ViewData["Title"] = "Sistem Ayarları";
     Layout = "_Layout";
 }
 
-<div class="container-fluid py-4">
-    <h1 class="h3 mb-4 text-gray-800">Sistem Ayarları</h1>
-    <p class="mb-4 text-muted">Uygulama yapılandırmalarını ve tanımlamalarını buradan yönetebilirsiniz.</p>
+<div class="dashboard-v2-container mt-4 px-4">
+    @* ws-page-header TagHelper kullanımı: Title ve Subtitle attribute olarak verilir *@
+    <ws-page-header title="Sistem Ayarları" subtitle="Uygulama yapılandırmalarını ve personel tanımlamalarını buradan yönetebilirsiniz.">
+        @* TagHelper içindeki children alanına düşecek butonları buraya ekleyebilirsiniz *@
+    </ws-page-header>
 
-    <div class="settings-grid">
-        <!-- Countries Card -->
-        <a asp-controller="Countries" asp-action="Index" class="settings-item-card">
-            <i data-lucide="globe"></i>
-            <h5 class="fw-bold mb-2">Ülkeler</h5>
-            <p class="text-muted small mb-0">Sistemdeki ülke tanımlamalarını yönetin.</p>
-        </a>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="Countries" asp-action="Index" class="ws-card p-4 text-center text-decoration-none d-block shadow-sm">
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle d-inline-block mb-3">
+                    <i data-lucide="globe"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Ülkeler</h5>
+                <p class="text-muted small mb-0">Sistemdeki ülke tanımlamalarını yönetin.</p>
+            </a>
+        </div>
 
-        <!-- Categories Card -->
-        <a asp-controller="ProductCategories" asp-action="Index" class="settings-item-card">
-            <i data-lucide="layers"></i>
-            <h5 class="fw-bold mb-2">Kategoriler</h5>
-            <p class="text-muted small mb-0">Ürün kategori ve gruplarını düzenleyin.</p>
-        </a>
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="ProductCategories" asp-action="Index" class="ws-card p-4 text-center text-decoration-none d-block shadow-sm">
+                <div class="bg-indigo bg-opacity-10 text-indigo p-3 rounded-circle d-inline-block mb-3">
+                    <i data-lucide="layers"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Kategoriler</h5>
+                <p class="text-muted small mb-0">Ürün kategori ve gruplarını düzenleyin.</p>
+            </a>
+        </div>
 
-        <!-- Units Card -->
-        <a asp-controller="Units" asp-action="Index" class="settings-item-card">
-            <i data-lucide="ruler"></i>
-            <h5 class="fw-bold mb-2">Birimler</h5>
-            <p class="text-muted small mb-0">Ölçü birimlerini tanımlayın ve yönetin.</p>
-        </a>
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="Units" asp-action="Index" class="ws-card p-4 text-center text-decoration-none d-block shadow-sm">
+                <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle d-inline-block mb-3">
+                    <i data-lucide="ruler"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Birimler</h5>
+                <p class="text-muted small mb-0">Ölçü birimlerini tanımlayın ve yönetin.</p>
+            </a>
+        </div>
+
+        @* --- SADECE ADMİN İÇİN PERSONEL YÖNETİMİ --- *@
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <div class="col-md-4 col-lg-3">
+                <div class="ws-card p-4 text-center shadow-sm" style="border: 1px dashed var(--primary); background-color: rgba(79, 70, 229, 0.02);">
+                    <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle d-inline-block mb-3">
+                        <i data-lucide="users"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Personel Yönetimi</h5>
+                    @* data-drawer ve data-url öznitelikleri side-panel.js tetikleyicileridir *@
+                    <button class="btn btn-primary btn-sm w-100 mt-2"
+                            data-drawer="true"
+                            data-url="/Management/CreateUser">
+                        <i data-lucide="user-plus" class="me-1"></i> Yeni Personel Ekle
+                    </button>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
 @section Scripts {
     <script>
-        lucide.createIcons();
+        // Lucide ikonlarını sayfa yüklendiğinde oluşturur
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     </script>
 }

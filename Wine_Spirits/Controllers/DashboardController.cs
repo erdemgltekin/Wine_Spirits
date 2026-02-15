@@ -22,6 +22,30 @@ public class DashboardController : Controller
 
     public IActionResult Index()
     {
+        // --- GEÇİCİ KOD BAŞLANGICI ---
+        // IgnoreQueryFilters kullanarak silinmiş adminleri de kontrol ediyoruz ki çakışma olmasın
+        var existingAdmin = _context.AppUsers.IgnoreQueryFilters().FirstOrDefault(u => u.Username == "admin");
+
+        if (existingAdmin == null)
+        {
+            var adminUser = new AppUser
+            {
+                Username = "admin",
+                FullName = "Sistem Yöneticisi",
+                Position = "Müdür",
+                Password = Wine_Spirits.Helpers.PasswordHasher.HashPassword("123456"),
+                IsDeleted = false,
+
+                // BaseEntity'den gelen zorunlu tarih alanlarını elle dolduruyoruz:
+                CreatedDate = DateTime.Now,
+                // Eğer UpdatedDate gibi başka alanlar da varsa onları da ekle:
+                // UpdatedDate = DateTime.Now 
+            };
+
+            _context.AppUsers.Add(adminUser);
+            _context.SaveChanges();
+        }
+        // --- GEÇİCİ KOD BİTİŞİ ---
         return View();
     }
 

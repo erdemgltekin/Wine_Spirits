@@ -1,0 +1,119 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Wine_Spirits.Models
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="sidebar-header">
+    <a asp-controller="Dashboard" asp-action="Index" class="sidebar-brand text-decoration-none">
+        <i data-lucide="wine" class="sidebar-brand-icon"></i>
+        <span>Wine & Spirits</span>
+    </a>
+</div>
+
+<nav class="sidebar-nav">
+    @* --- Ana Menü --- *@
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")"
+       asp-controller="Dashboard" asp-action="Index">
+        <i data-lucide="home" class="sidebar-nav-item-icon"></i>
+        <span>Ana Sayfa</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Products" ? "active" : "")"
+       asp-controller="Products" asp-action="Index">
+        <i data-lucide="package" class="sidebar-nav-item-icon"></i>
+        <span>Ürünler</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Warehouses" ? "active" : "")"
+       asp-controller="Warehouses" asp-action="Index">
+        <i data-lucide="archive" class="sidebar-nav-item-icon"></i>
+        <span>Depolar</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Stock" ? "active" : "")"
+       asp-controller="Stock" asp-action="Movements">
+        <i data-lucide="trending-up" class="sidebar-nav-item-icon"></i>
+        <span>Stok Hareketleri</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "StockReport" ? "active" : "")"
+       asp-controller="Reports" asp-action="StockReport">
+        <i data-lucide="file-text" class="sidebar-nav-item-icon"></i>
+        <span>Stok Raporu</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" ? "active" : "")"
+       asp-controller="Orders" asp-action="Index">
+        <i data-lucide="shopping-cart" class="sidebar-nav-item-icon"></i>
+        <span>Siparişler</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")"
+       asp-controller="Customers" asp-action="Index">
+        <i data-lucide="user-check" class="sidebar-nav-item-icon"></i>
+        <span>Müşteriler</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Suppliers" ? "active" : "")"
+       asp-controller="Suppliers" asp-action="Index">
+        <i data-lucide="truck" class="sidebar-nav-item-icon"></i>
+        <span>Tedarikçiler</span>
+    </a>
+
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
+       asp-controller="Reports" asp-action="Index">
+        <i data-lucide="bar-chart-2" class="sidebar-nav-item-icon"></i>
+        <span>Raporlar</span>
+    </a>
+
+    <div class="sidebar-divider" style="height: 1px; background-color: var(--gray-200); margin: 1rem 1.5rem; opacity: 0.5;"></div>
+
+    @* --- Yetki Bazlı Menü --- *@
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        @* Yönetim Paneli *@
+        <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")"
+           asp-controller="Management" asp-action="Users">
+            <i data-lucide="shield-check" class="sidebar-nav-item-icon text-primary"></i>
+            <span class="fw-bold">Yönetim ve Ayarlar</span>
+        </a>
+
+        @* Backoffice (Talep Yönetimi) - Yeni Eklenen Link *@
+        <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Backoffice" ? "active" : "")"
+           asp-controller="Management" asp-action="Backoffice">
+            <i data-lucide="clipboard-list" class="sidebar-nav-item-icon text-indigo"></i>
+            <span class="fw-bold">Veri Talepleri</span>
+        </a>
+    }
+    else
+    {
+        <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" ? "active" : "")"
+           asp-controller="Management" asp-action="Users">
+            <i data-lucide="user-cog" class="sidebar-nav-item-icon"></i>
+            <span>Hesap Ayarlarım</span>
+        </a>
+    }
+</nav>
+
+@* --- Alt Kullanıcı Bilgi Alanı --- *@
+<div class="sidebar-footer" style="position: absolute; bottom: 0; width: 100%; padding: 1rem; border-top: 1px solid var(--gray-100); background: white;">
+    <div class="d-flex align-items-center gap-2 px-2">
+        <div class="avatar" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">
+            @if (User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name))
+            {
+                @User.Identity.Name.Substring(0, 1).ToUpper()
+            }
+            else
+            {
+                <i data-lucide="user" style="width: 14px;"></i>
+            }
+        </div>
+        <div class="user-info overflow-hidden">
+            <div class="fw-bold text-truncate" style="font-size: 0.85rem; color: var(--gray-900);">
+                @(User.Identity?.Name ?? "Misafir")
+            </div>
+            <div class="text-muted text-truncate" style="font-size: 0.75rem;">
+                @(User.IsInRole("SuperAdmin") ? "Sistem Yöneticisi" : "Personel")
+            </div>
+        </div>
+    </div>
+</div>

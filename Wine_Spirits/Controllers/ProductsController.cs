@@ -30,32 +30,44 @@ namespace Wine_Spirits.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
+            // İlişkisel nesne bağlarını validasyondan çıkarıyoruz (Hata vermemesi için)
+            string[] navs = { "Country", "ProductCategory", "ProductDefinition", "Supplier", "Unit", "Warehouse" };
+            foreach (var nav in navs) ModelState.Remove(nav);
+
+            // KRİTİK KONTROL: UnitId boş mu geliyor?
+            if (product.UnitId == Guid.Empty)
+            {
+                return Json(new { success = false, message = "Lütfen geçerli bir 'Birim' seçiniz. (Birim ID eksik)" });
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Eğer WarehouseId seçilmediyse varsayılanı ata
+                    if (product.WarehouseId == Guid.Empty)
+                    {
+                        var defaultWh = await _context.WareHouses.FirstOrDefaultAsync();
+                        if (defaultWh != null) product.WarehouseId = defaultWh.Id;
+                    }
+
                     product.Id = Guid.NewGuid();
                     _context.Add(product);
                     await _context.SaveChangesAsync();
                     return Json(new { success = true });
                 }
-                catch (Exception ex)
+                catch (DbUpdateException dbEx)
                 {
-                    return Json(new { success = false, message = "Veritabanı hatası: " + ex.Message });
+                    // İşte senin görseldeki hatayı burada yakalayıp kullanıcıya açıklıyoruz
+                    var msg = dbEx.InnerException?.Message ?? dbEx.Message;
+                    if (msg.Contains("FK_Product_Unit"))
+                        return Json(new { success = false, message = "Hata: Seçtiğiniz Birim sistemde bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin." });
+
+                    return Json(new { success = false, message = "Veritabanı Hatası: " + msg });
                 }
             }
 
-            // Hangi alanın hata verdiğini bulup JS'e gönderiyoruz
-            var errorMessages = ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-
-            return Json(new
-            {
-                success = false,
-                message = "Lütfen alanları kontrol edin: " + string.Join(", ", errorMessages)
-            });
+            return Json(new { success = false, message = "Lütfen formdaki zorunlu alanları doldurun." });
         }
 
         [HttpGet]
@@ -64,8 +76,11 @@ namespace Wine_Spirits.Controllers
             try
             {
                 var query = _context.Products
-                    .Include(p => p.ProductDefinition).Include(p => p.ProductCategory)
-                    .Include(p => p.Unit).Include(p => p.Supplier).Include(p => p.Country)
+                    .Include(p => p.ProductDefinition)
+                    .Include(p => p.ProductCategory)
+                    .Include(p => p.Unit)
+                    .Include(p => p.Supplier)
+                    .Include(p => p.Country)
                     .AsNoTracking();
 
                 var products = await query.ToListAsync();
@@ -77,6 +92,7 @@ namespace Wine_Spirits.Controllers
                     categoryName = p.ProductCategory?.Name ?? "Genel",
                     price = p.Price,
                     stockQuantity = p.StockQuantity,
+                    unitName = p.Unit?.Name ?? "Birim Yok",
                     supplierName = p.Supplier?.Name ?? "-",
                     countryName = p.Country?.Name ?? "-"
                 }).ToList();
@@ -91,16 +107,20 @@ namespace Wine_Spirits.Controllers
 
                 return Json(new { products = data, stats = stats });
             }
-            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Veri çekme hatası: " + ex.Message });
+            }
         }
 
         private void PopulateSelectLists(Product p = null)
         {
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", p?.CountryId);
-            ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories, "Id", "Name", p?.ProductCategoryId);
-            ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions, "Id", "Name", p?.ProductDefinitionId);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Name", p?.SupplierId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", p?.UnitId);
+            ViewData["CountryId"] = new SelectList(_context.Countries.OrderBy(x => x.Name), "Id", "Name", p?.CountryId);
+            ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories.OrderBy(x => x.Name), "Id", "Name", p?.ProductCategoryId);
+            ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", p?.ProductDefinitionId);
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers.OrderBy(x => x.Name), "Id", "Name", p?.SupplierId);
+            ViewData["UnitId"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", p?.UnitId);
+            ViewData["WarehouseId"] = new SelectList(_context.WareHouses.OrderBy(x => x.Name), "Id", "Name", p?.WarehouseId);
         }
     }
 }

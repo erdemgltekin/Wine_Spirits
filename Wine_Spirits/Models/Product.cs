@@ -25,19 +25,19 @@ public partial class Product : BaseEntity
 
     public int StockQuantity { get; set; }
 
-    public virtual Country Country { get; set; } = null!;
+    public virtual Country? Country { get; set; }
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-    public virtual ProductCategory ProductCategory { get; set; } = null!;
+    public virtual ProductCategory? ProductCategory { get; set; }
 
-    public virtual ProductDefinition ProductDefinition { get; set; } = null!;
+    public virtual ProductDefinition? ProductDefinition { get; set; }
 
     public virtual ICollection<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
 
-    public virtual Supplier Supplier { get; set; } = null!;
+    public virtual Supplier? Supplier { get; set; }
 
-    public virtual Unit Unit { get; set; } = null!;
+    public virtual Unit? Unit { get; set; }
 
-    public virtual WareHouse Warehouse { get; set; } = null!;
+    public virtual WareHouse? Warehouse { get; set; }
 }
