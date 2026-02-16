@@ -1,76 +1,97 @@
 @model IEnumerable<Wine_Spirits.Models.WareHouse>
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Depo Yönetimi";
     Layout = "_Layout";
 }
 
-<!-- Page Header -->
-<div class="page-header d-flex justify-content-between align-items-center">
-    <div>
-        <h1 class="h3 mb-1 text-gray-800 fw-bold">Depolar</h1>
-        <p class="text-muted small mb-0">Sistemdeki tüm depolama birimlerini buradan yönetebilirsiniz.</p>
-    </div>
-    <a asp-action="Create" class="btn btn-indigo shadow-sm px-4">
-        <i data-lucide="plus" class="me-2"></i> Yeni Depo Ekle
-    </a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/warehouse/warehouse-styles.css" asp-append-version="true" />
+}
 
-<div class="container-fluid">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3 border-bottom">
-            <h6 class="m-0 font-weight-bold text-primary d-flex align-items-center">
-                <i data-lucide="list" class="me-2" style="width: 18px;"></i> Kayıtlı Depolar
-            </h6>
+<div class="container-fluid px-4 py-4">
+    @* Sayfa Başlığı ve Yeni Ekle Butonu *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h4 fw-bold text-dark mb-1">Depo Yönetimi</h2>
+            <p class="text-muted small mb-0">Depolarınızı yönetin ve stok durumunu görüntüleyin.</p>
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Depo Adı</th>
-                        <th>Lokasyon</th>
-                        <th class="text-end pe-4">İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-light p-2 rounded-circle me-3">
-                                        <i data-lucide="warehouse" class="text-primary" style="width: 18px; height: 18px;"></i>
-                                    </div>
-                                    <span class="fw-bold text-dark">@item.Name</span>
-                                </div>
-                            </td>
-                            <td class="text-muted">
-                                <i data-lucide="map-pin" class="me-1 text-secondary" style="width: 14px;"></i>
-                                @item.Location
-                            </td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn btn-edit" title="Düzenle">
-                                        <i data-lucide="pencil"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn btn-delete" title="Sil">
-                                        <i data-lucide="trash-2"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+        <a asp-action="Create" class="btn ws-btn-primary d-flex align-items-center gap-2 btn-warehouse-add">
+            <i data-lucide="plus" class="btn-icon-plus"></i> Yeni Depo Ekle
+        </a>
+    </div>
+
+    @* Arama Barı *@
+    <div class="ws-search-container">
+        <i data-lucide="search" class="ws-search-icon"></i>
+        <input type="text" id="warehouseSearch" class="form-control border-0 shadow-sm ws-search-input" placeholder="Depo ara (Ad, konum)...">
+    </div>
+
+    @* Depo Grid Alanı *@
+    <div class="ws-warehouse-grid">
+        @foreach (var item in Model)
+        {
+            var displayId = item.Id.ToString();
+            var shortCode = displayId.Length >= 4 ? displayId.Substring(0, 4).ToUpper() : displayId.ToUpper();
+
+            <div class="ws-warehouse-card-wrapper">
+                <div class="ws-warehouse-card" data-name="@item.Name" data-code="DPO-@shortCode" data-location="@item.Location">
+                    
+                    @* Üst: İkon, Başlık, Aksiyonlar *@
+                    <div class="card-header-flex">
+                        <div class="card-header-row">
+                            <div class="warehouse-icon-box">
+                                <i data-lucide="box"></i>
+                            </div>
+                            <div class="warehouse-header-info">
+                                <div class="warehouse-title">@item.Name</div>
+                                <div class="warehouse-code">DPO-@shortCode</div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="ws-action-btn ws-edit-icon" title="Düzenle">
+                                <i data-lucide="pencil"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="ws-delete-form">
+                                <button type="button" class="ws-action-btn ws-delete-icon btn-delete-warehouse" title="Sil">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    @* Orta: Meta Bilgiler (Konum, Tarih) *@
+                    <div class="warehouse-meta">
+                        <div class="meta-item">
+                            <i data-lucide="map-pin"></i>
+                            <span>@item.Location</span>
+                        </div>
+                        <div class="meta-item">
+                            <i data-lucide="calendar"></i>
+                            <span>@item.CreatedDate.ToString("dd.MM.yyyy")</span>
+                        </div>
+                    </div>
+
+                    @* Alt: İstatistikler *@
+                    <div class="warehouse-stats">
+                        <div class="stat-box purple">
+                            <span class="stat-label">Ürün Çeşidi</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-box blue">
+                            <span class="stat-label">Toplam Stok</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            lucide.createIcons();
-        });
-    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="~/js/warehouse/warehouse-manager.js" asp-append-version="true"></script>
 }

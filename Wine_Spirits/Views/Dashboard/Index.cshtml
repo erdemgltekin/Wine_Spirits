@@ -6,21 +6,27 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/dashboard/dashboard.css" asp-append-version="true" />
+    @* Yeni Aksiyon Butonları CSS *@
+    <link rel="stylesheet" href="~/css/dashboard/dashboard-actions.css" asp-append-version="true" />
 }
 
 <div class="dashboard-v2-container mt-4">
 
     @* Page Header + Son Güncelleme + Aksiyon Butonları *@
     <ws-page-header title="Genel Bakış" subtitle="İşletmenizin tüm operasyonlarını tek bir ekrandan izleyin ve yönetin.">
-        <div class="d-flex align-items-center gap-3">
-            <span id="lastUpdated" class="text-muted small d-none d-md-inline">
+        <div class="dashboard-actions-container">
+            <span id="lastUpdated" class="text-muted small d-none d-md-inline me-2">
                 <i data-lucide="clock" style="width:14px;height:14px;" class="me-1"></i>Son Güncelleme: --:--
             </span>
-            <a asp-controller="Orders" asp-action="Create" class="ws-btn ws-btn-primary shadow-sm">
+            
+            @* Yeni Sipariş Butonu - Primary Style *@
+            <a asp-controller="Orders" asp-action="Create" class="ws-btn-modern ws-btn-primary-modern shadow-sm">
                 <i data-lucide="shopping-cart"></i> Yeni Sipariş
             </a>
-            <a asp-controller="StockMovements" asp-action="Create" asp-route-type="Giriş" class="ws-btn ws-btn-white shadow-sm">
-                <i data-lucide="plus-circle" class="text-success"></i> Stok Girişi
+            
+            @* Stok Girişi Butonu - Outline Success Style *@
+            <a asp-controller="StockMovements" asp-action="Create" asp-route-type="Giriş" class="ws-btn-modern ws-btn-outline-success-modern shadow-sm">
+                <i data-lucide="plus-circle"></i> Stok Girişi
             </a>
         </div>
     </ws-page-header>
@@ -135,8 +141,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     @* 1. Grafik ayarlarını içeren dosya *@
     <script src="~/js/dashboard/dashboard-charts.js" asp-append-version="true"></script>
-    @* 2. Tablo verilerini ve istatistikleri çeken dosya (Bunu eklemeyi unutma) *@
+    @* 2. Tablo verilerini ve istatistikleri çeken dosya *@
     <script src="~/js/dashboard/dashboard-activity.js" asp-append-version="true"></script>
+    @* 3. Yeni Aksiyon Butonları JS *@
+    <script src="~/js/dashboard/dashboard-actions.js" asp-append-version="true"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // İkonları canlandır
@@ -148,5 +157,4 @@
             }
         });
     </script>
-}
 }

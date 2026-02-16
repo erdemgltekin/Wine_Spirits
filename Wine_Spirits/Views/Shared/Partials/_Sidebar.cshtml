@@ -94,26 +94,4 @@
     }
 </nav>
 
-@* --- Alt Kullanıcı Bilgi Alanı --- *@
-<div class="sidebar-footer" style="position: absolute; bottom: 0; width: 100%; padding: 1rem; border-top: 1px solid var(--gray-100); background: white;">
-    <div class="d-flex align-items-center gap-2 px-2">
-        <div class="avatar" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">
-            @if (User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name))
-            {
-                @User.Identity.Name.Substring(0, 1).ToUpper()
-            }
-            else
-            {
-                <i data-lucide="user" style="width: 14px;"></i>
-            }
-        </div>
-        <div class="user-info overflow-hidden">
-            <div class="fw-bold text-truncate" style="font-size: 0.85rem; color: var(--gray-900);">
-                @(User.Identity?.Name ?? "Misafir")
-            </div>
-            <div class="text-muted text-truncate" style="font-size: 0.75rem;">
-                @(User.IsInRole("SuperAdmin") ? "Sistem Yöneticisi" : "Personel")
-            </div>
-        </div>
-    </div>
-</div>
+@* --- Alt Kullanıcı Bilgi Alanı Kaldırıldı --- *@

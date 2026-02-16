@@ -18,7 +18,7 @@
                         <div class="col-12">
                             <label asp-for="Name" class="form-label">Depo Adı</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="building" style="width: 16px;"></i></span>
+                                <span class="input-group-text"><i data-lucide="building" class="ws-icon-16"></i></span>
                                 <input asp-for="Name" class="form-control" required />
                             </div>
                             <span asp-validation-for="Name" class="text-danger small"></span>
@@ -27,25 +27,25 @@
                         <div class="col-12">
                             <label asp-for="Location" class="form-label">Depo Konumu / Adres</label>
                             <div class="input-group">
-                                <span class="input-group-text pt-2"><i data-lucide="map-pin" style="width: 16px;"></i></span>
+                                <span class="input-group-text pt-2"><i data-lucide="map-pin" class="ws-icon-16"></i></span>
                                 <textarea asp-for="Location" class="form-control" rows="3" required></textarea>
                             </div>
                             <span asp-validation-for="Location" class="text-danger small"></span>
                         </div>
                     </div>
                     
-                    <div class="drawer-footer">
+                    <div class="drawer-footer ws-modal-footer">
                         @if (isAjax) {
-                            <button type="button" class="btn btn-light px-4 border" onclick="SidePanel.close()">
-                                <i data-lucide="x" class="me-2" style="width: 16px;"></i> Vazgeç
+                            <button type="button" class="btn ws-btn-secondary" onclick="SidePanel.close()">
+                                <i data-lucide="x" class="me-2 ws-icon-16"></i> Vazgeç
                             </button>
                         } else {
-                            <a asp-action="Index" class="btn btn-light px-4 border">
-                                <i data-lucide="arrow-left" class="me-2" style="width: 16px;"></i> Vazgeç
+                            <a asp-action="Index" class="btn ws-btn-secondary">
+                                <i data-lucide="arrow-left" class="me-2 ws-icon-16"></i> Vazgeç
                             </a>
                         }
-                        <button type="submit" class="btn btn-indigo flex-grow-1 shadow-sm fw-bold">
-                            <i data-lucide="save" class="me-2" style="width: 18px;"></i> Değişiklikleri Kaydet
+                        <button type="submit" class="btn ws-btn-primary flex-grow-1">
+                            <i data-lucide="save" class="me-2 ws-icon-18"></i> Değişiklikleri Kaydet
                         </button>
                     </div>
                 </form>

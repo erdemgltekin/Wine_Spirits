@@ -1,0 +1,122 @@
+/**
+ * @file dashboard-actions.css
+ * @description Dashboard sayfası aksiyon butonları için modern stil tanımlamaları.
+ * Bu dosya, "Yeni Sipariş" ve "Stok Girişi" butonlarının görsel yapısını,
+ * hover efektlerini ve mobil uyumluluğunu yönetir.
+ * 
+ * @updates
+ * - Flexbox yapılandırması
+ * - Hover animasyonları (scale, shadow)
+ * - Renk paleti optimizasyonu
+ */
+
+/* 
+ * Aksiyon Butonları Konteyner Yapısı 
+ * Mobil cihazlarda esnek (wrap) yapı sağlar.
+ */
+.dashboard-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* gap-3 karşılığı */
+    flex-wrap: wrap;
+}
+
+/*
+ * Modern Buton Temel Sınıfı
+ * Tüm dashboard aksiyon butonları için ortak özellikler.
+ */
+.ws-btn-modern {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 0.75rem;
+    /* Daha modern, yuvarlak hatlar */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/*
+ * Hover Efekti: Büyüme ve Gölge
+ * Kullanıcı etkileşimini artırmak için görsel geri bildirim.
+ */
+.ws-btn-modern:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/*
+ * İkon Hizalaması
+ * Lucide ikonları ile metin arasındaki boşluğu optimize eder.
+ */
+.ws-btn-modern i,
+.ws-btn-modern svg {
+    margin-right: 0.5rem;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+}
+
+/* Hover durumunda ikonun hafifçe hareket etmesi */
+.ws-btn-modern:hover i,
+.ws-btn-modern:hover svg {
+    transform: rotate(-10deg);
+}
+
+/*
+ * Yeni Sipariş Butonu (Primary)
+ * Ana vurgu rengini kullanır.
+ */
+.ws-btn-primary-modern {
+    background-color: #4f46e5;
+    /* Indigo-600 */
+    color: white;
+    border-color: #4f46e5;
+}
+
+.ws-btn-primary-modern:hover {
+    background-color: #4338ca;
+    /* Indigo-700 */
+    color: white;
+}
+
+/*
+ * Stok Girişi Butonu (Outline Success)
+ * İkincil aksiyon, daha hafif görsel ağırlık.
+ */
+.ws-btn-outline-success-modern {
+    background-color: transparent;
+    color: #10b981;
+    /* Emerald-500 */
+    border-color: #10b981;
+    background-color: #fff;
+}
+
+.ws-btn-outline-success-modern:hover {
+    background-color: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+/*
+ * Mobil Uyumluluk
+ * Küçük ekranlarda butonların tam genişlikte olması istenirse burası aktif edilebilir.
+ * Şu an için wrap yapısı yeterli.
+ */
+@media (max-width: 576px) {
+    .dashboard-actions-container {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ws-btn-modern {
+        flex-grow: 1;
+        /* Mobilde butonları genişlet */
+    }
+}

@@ -74,10 +74,10 @@ body {
     text-decoration: none !important;
 }
 
-    .ws-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    }
+.ws-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
 
 /* Stat Card Specifics */
 .ws-stat-card .ws-icon-box {
@@ -89,10 +89,10 @@ body {
     justify-content: center;
 }
 
-    .ws-stat-card .ws-icon-box i {
-        width: 24px;
-        height: 24px;
-    }
+.ws-stat-card .ws-icon-box i {
+    width: 24px;
+    height: 24px;
+}
 
 /* --- Settings Page Grid & Specialized Cards --- */
 /* Dashed card for action-based settings (like Add Personnel) */
@@ -117,81 +117,215 @@ body {
     transition: var(--transition-base);
 }
 
+/* Global Button Standards */
+/* Vazgeç / İptal Butonu Standartı */
+.ws-btn-secondary {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px 24px !important;
+    border-radius: 12px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease;
+}
+
+.ws-btn-secondary:hover {
+    background-color: #f8fafc !important;
+}
+
+/* Kaydet / Ekle Butonu Standartı */
+.ws-btn-primary {
+    background-color: #8b5cf6 !important;
+    /* Görseldeki mor tonu */
+    color: #ffffff !important;
+    border: none !important;
+    padding: 8px 24px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.2);
+    transition: all 0.2s ease;
+}
+
+.ws-btn-primary:hover {
+    background-color: #7c3aed !important;
+    transform: translateY(-1px);
+}
+
+.ws-modal-footer {
+    margin-top: 2rem !important;
+    /* 2rem boşluk */
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+}
+
+.ws-icon-16 {
+    width: 16px;
+    height: 16px;
+}
+
+.ws-icon-18 {
+    width: 18px;
+    height: 18px;
+}
+
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
-    .btn-primary:hover {
-        background-color: var(--primary-hover);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
-
-/* --- Sidebar Refinements (Figma Style) --- */
-.sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--gray-200);
-    position: fixed;
-    height: 100vh;
-    z-index: 1000;
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
-.sidebar-nav-item {
+/* --- Layout Structure Refined --- */
+:root {
+    --sidebar-width: 240px;
+    /* Narrower sidebar */
+    --topbar-height: 64px;
+}
+
+body {
+    padding-top: var(--topbar-height);
+    /* Make space for fixed TopBar */
+}
+
+/* --- TopBar --- */
+.ws-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    background: #ffffff;
+    border-bottom: 1px solid var(--gray-200);
     display: flex;
     align-items: center;
-    padding: 0.75rem 1.5rem;
-    color: var(--gray-600);
-    text-decoration: none;
-    border-radius: 8px;
-    margin: 0.2rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    padding-left: calc(var(--sidebar-width) + 1.5rem);
+    /* Sidebar'ın önünü açmama gerek yok hamburger solda ama sidebar fixed */
+    z-index: 990;
+    /* Sidebar (1000) altında veya üstünde? Sidebar solda fixed, TopBar üstte. Genelde Sidebar topbarın altında olur veya tam tersi. Figma'da Sidebar full height ise TopBar sidebarın sağında başlar.  */
+    /* Kullanıcı "En üstte... sol tarafta SidePanel'i açıp kapatan menü butonu" dedi. Bu hamburger sidebar kapalıyken mi var? 
+       "Global Layout (Üst Panel & SidePanel): TopBar: En üstte; sol tarafta SidePanel'i açıp kapatan..." 
+       Genelde Dashboardlarda Sidebar solda full height (z-index yüksek), TopBar onun sağında kalan alanda olur. 
+       YA DA TopBar full width, Sidebar onun altında. 
+       Figma görseline bakarsak: Sidebar solda, TopBar sidebarın sağında başlıyor GİBİ veya Sidebar üstüne biniyor.
+       "SidePanel'i açıp kapatan" dediğine göre Sidebar toggle edilebilir. 
+       Ben güvenli yol olarak: Sidebar solda fixed (default açık), TopBar sidebarın sağında (main-content içinde gibi davranan header) yapacağım.
+       FAKAT, "TopBar: En üstte" dedi. 
+       Hadi TopBar'ı full width yapmayalım, Sidebar genişliği kadar soldan padding verelim.
+    */
+    transition: transform 0.3s ease, margin-left 0.3s ease, padding-left 0.3s ease;
+
+    /* .ws-topbar.expanded removed - using body.sidebar-collapsed instead */
+
+    /* Badge Hidden Class */
+    .badge-hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 992px) {
+        .ws-topbar {
+            padding-left: 1.5rem;
+            /* Mobilde sidebar gizli */
+        }
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 2rem;
+        min-height: calc(100vh - var(--topbar-height));
+        margin-top: 0;
+        /* body padding-top hallediyor */
+    }
+
     transition: var(--transition-base);
 }
 
-    .sidebar-nav-item:hover, .sidebar-nav-item.active {
-        background-color: var(--indigo-soft);
-        color: var(--primary);
-    }
-
-        .sidebar-nav-item.active i {
-            color: var(--primary);
-        }
-
-/* --- Utils --- */
-.bg-indigo-50 {
-    background-color: var(--indigo-soft);
+/* Sidebar Collapsed State (Using body class for sync) */
+body.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
 }
 
-.text-indigo-600 {
+body.sidebar-collapsed .main-content {
+    margin-left: 0;
+}
+
+body.sidebar-collapsed .ws-topbar {
+    padding-left: 1.5rem;
+}
+
+/* Sidebar Logo Area css removed per user request */
+
+.sidebar-nav-item {
+    border-radius: 8px;
+    margin: 0.25rem 0.75rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.sidebar-nav-item:hover {
+    background-color: var(--gray-50);
+    color: var(--gray-900);
+}
+
+.sidebar-nav-item.active {
+    background-color: #f5f3ff !important;
+    /* Mor soft arka plan (Figma isteği) */
+    color: var(--primary) !important;
+    font-weight: 600;
+}
+
+.sidebar-nav-item.active i {
     color: var(--primary);
 }
 
-.bg-emerald-50 {
-    background-color: #ecfdf5;
+
+/* --- Modal Tweaks (Global) --- */
+.modal-content {
+    border-radius: 16px;
+    /* Figma: Köşeleri yumuşak */
 }
 
-.text-emerald-600 {
-    color: #059669;
+.modal-backdrop.show {
+    opacity: 0.3;
+    /* Daha hafif backdrop */
 }
 
-.bg-rose-50 {
-    background-color: #fff1f2;
-}
-
-.text-rose-600 {
-    color: #e11d48;
-}
-
-/* Responsive */
+/* --- Responsive --- */
 @media (max-width: 992px) {
     .main-content {
         margin-left: 0;
-        padding: 1.5rem;
+    }
+
+    .ws-topbar {
+        left: 0;
     }
 
     .sidebar {
         transform: translateX(-100%);
     }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}
+
+/* Eski stilleri koru ama üzerine yaz */
+.ws-page-header {
+    margin-bottom: 2rem;
+}
+
+.ws-card {
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.btn {
+    border-radius: 10px;
 }

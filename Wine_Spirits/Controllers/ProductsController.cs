@@ -3,18 +3,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Wine_Spirits.Models;
-using Wine_Spirits.Models.ViewModels;
 
 namespace Wine_Spirits.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly WineSpiritsContext _context;
-        private static readonly JsonSerializerOptions _jsonOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        };
 
         public ProductsController(WineSpiritsContext context) => _context = context;
 
@@ -30,97 +24,78 @@ namespace Wine_Spirits.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
-            // İlişkisel nesne bağlarını validasyondan çıkarıyoruz (Hata vermemesi için)
+            // 1. ADIM: İlişkisel nesneleri doğrulamadan çıkar (Hata almanı engeller)
             string[] navs = { "Country", "ProductCategory", "ProductDefinition", "Supplier", "Unit", "Warehouse" };
             foreach (var nav in navs) ModelState.Remove(nav);
 
-            // KRİTİK KONTROL: UnitId boş mu geliyor?
-            if (product.UnitId == Guid.Empty)
-            {
-                return Json(new { success = false, message = "Lütfen geçerli bir 'Birim' seçiniz. (Birim ID eksik)" });
-            }
+            // 2. ADIM: Kritik ID Kontrolleri
+            if (product.UnitId == Guid.Empty) ModelState.AddModelError("UnitId", "Lütfen bir ölçü birimi seçin.");
+            if (product.ProductDefinitionId == Guid.Empty) ModelState.AddModelError("ProductDefinitionId", "Lütfen bir ürün tanımı seçin.");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Eğer WarehouseId seçilmediyse varsayılanı ata
-                    if (product.WarehouseId == Guid.Empty)
+                    // Depo kontrolü
+                    if (product.WarehouseId == null || product.WarehouseId == Guid.Empty)
                     {
                         var defaultWh = await _context.WareHouses.FirstOrDefaultAsync();
                         if (defaultWh != null) product.WarehouseId = defaultWh.Id;
+                        else return Json(new { success = false, message = "Sistemde tanımlı depo bulunamadı." });
                     }
 
                     product.Id = Guid.NewGuid();
                     _context.Add(product);
                     await _context.SaveChangesAsync();
-                    return Json(new { success = true });
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    // İşte senin görseldeki hatayı burada yakalayıp kullanıcıya açıklıyoruz
-                    var msg = dbEx.InnerException?.Message ?? dbEx.Message;
-                    if (msg.Contains("FK_Product_Unit"))
-                        return Json(new { success = false, message = "Hata: Seçtiğiniz Birim sistemde bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin." });
 
-                    return Json(new { success = false, message = "Veritabanı Hatası: " + msg });
+                    return Json(new { success = true, message = "Ürün başarıyla kaydedildi." });
+                }
+                catch (DbUpdateException ex)
+                {
+                    var inner = ex.InnerException?.Message ?? ex.Message;
+                    // Görseldeki hatayı burada yakalıyoruz
+                    if (inner.Contains("FK_Product_Unit"))
+                        return Json(new { success = false, message = "Hata: Seçtiğiniz Birim veritabanında kayıtlı değil." });
+
+                    return Json(new { success = false, message = "Veritabanı hatası: " + inner });
                 }
             }
 
-            return Json(new { success = false, message = "Lütfen formdaki zorunlu alanları doldurun." });
+            // Validasyon hatalarını kullanıcıya döndür
+            var errorList = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            return Json(new { success = false, message = string.Join(" | ", errorList) });
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductsData(DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> GetProductsData()
         {
-            try
-            {
-                var query = _context.Products
-                    .Include(p => p.ProductDefinition)
-                    .Include(p => p.ProductCategory)
-                    .Include(p => p.Unit)
-                    .Include(p => p.Supplier)
-                    .Include(p => p.Country)
-                    .AsNoTracking();
-
-                var products = await query.ToListAsync();
-                var data = products.Select(p => new
-                {
+            var data = await _context.Products
+                .Include(p => p.ProductDefinition).Include(p => p.ProductCategory)
+                .Include(p => p.Unit).Include(p => p.Supplier).Include(p => p.Country)
+                .AsNoTracking()
+                .Select(p => new {
                     id = p.Id,
                     productCode = "WS-" + p.Id.ToString().Substring(0, 5).ToUpper(),
-                    name = p.ProductDefinition?.Name ?? "İsimsiz",
-                    categoryName = p.ProductCategory?.Name ?? "Genel",
+                    name = p.ProductDefinition.Name,
+                    categoryName = p.ProductCategory.Name,
                     price = p.Price,
                     stockQuantity = p.StockQuantity,
-                    unitName = p.Unit?.Name ?? "Birim Yok",
-                    supplierName = p.Supplier?.Name ?? "-",
-                    countryName = p.Country?.Name ?? "-"
-                }).ToList();
+                    unitName = p.Unit.Name,
+                    supplierName = p.Supplier.Name,
+                    countryName = p.Country.Name
+                }).ToListAsync();
 
-                var stats = new
-                {
-                    totalProducts = data.Count,
-                    criticalStockCount = data.Count(d => d.stockQuantity < 10),
-                    totalInventoryValue = data.Sum(d => d.price * (decimal)d.stockQuantity),
-                    categoryCount = data.Select(d => d.categoryName).Distinct().Count()
-                };
-
-                return Json(new { products = data, stats = stats });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = "Veri çekme hatası: " + ex.Message });
-            }
+            return Json(new { products = data });
         }
 
         private void PopulateSelectLists(Product p = null)
         {
-            ViewData["CountryId"] = new SelectList(_context.Countries.OrderBy(x => x.Name), "Id", "Name", p?.CountryId);
-            ViewData["ProductCategoryId"] = new SelectList(_context.ProductCategories.OrderBy(x => x.Name), "Id", "Name", p?.ProductCategoryId);
-            ViewData["ProductDefinitionId"] = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", p?.ProductDefinitionId);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers.OrderBy(x => x.Name), "Id", "Name", p?.SupplierId);
-            ViewData["UnitId"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", p?.UnitId);
-            ViewData["WarehouseId"] = new SelectList(_context.WareHouses.OrderBy(x => x.Name), "Id", "Name", p?.WarehouseId);
+            ViewBag.CountryId = new SelectList(_context.Countries.OrderBy(x => x.Name), "Id", "Name", p?.CountryId);
+            ViewBag.ProductCategoryId = new SelectList(_context.ProductCategories.OrderBy(x => x.Name), "Id", "Name", p?.ProductCategoryId);
+            ViewBag.ProductDefinitionId = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", p?.ProductDefinitionId);
+            ViewBag.SupplierId = new SelectList(_context.Suppliers.OrderBy(x => x.Name), "Id", "Name", p?.SupplierId);
+            ViewBag.UnitId = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", p?.UnitId);
+            ViewBag.WarehouseId = new SelectList(_context.WareHouses.OrderBy(x => x.Name), "Id", "Name", p?.WarehouseId);
         }
     }
 }
