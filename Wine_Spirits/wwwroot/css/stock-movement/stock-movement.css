@@ -1,0 +1,83 @@
+/* Stock Movement - Page Specific Styles */
+
+.ws-stock-movement-container {
+    padding: 1.5rem;
+}
+
+
+/* Badge Styles Extension (Page Specific) */
+.ws-badge-opening {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.ws-badge-transfer {
+    background-color: #fffbef;
+    color: #d97706;
+    border: 1px solid #fef3c7;
+}
+
+.ws-badge-audit {
+    background-color: #f5f3ff;
+    color: #7c3aed;
+    border: 1px solid #ede9fe;
+}
+
+/* --- Movement No Specific Styling --- */
+.ws-movement-no {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: #4f46e5;
+    background: #eef2ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* --- Modal Overrides (If any specific to Stock Movement) --- */
+.ws-modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.ws-modal-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.ws-modal-input {
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    font-size: 0.9rem;
+    color: #1e293b;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.ws-modal-input:focus {
+    background-color: #fff;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.ws-modal-textarea {
+    height: auto !important;
+    padding: 1rem;
+}
+
+.ws-btn-close {
+    background-color: #f1f5f9;
+    border-radius: 50%;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 1;
+    transition: all 0.2s ease;
+}
+
+.ws-btn-close:hover {
+    background-color: #e2e8f0;
+}

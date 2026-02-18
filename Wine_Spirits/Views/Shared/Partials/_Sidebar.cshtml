@@ -29,14 +29,14 @@
         <span>Depolar</span>
     </a>
 
-    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Stock" ? "active" : "")"
-       asp-controller="Stock" asp-action="Movements">
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockMovement" ? "active" : "")"
+       asp-controller="StockMovement" asp-action="Index">
         <i data-lucide="trending-up" class="sidebar-nav-item-icon"></i>
         <span>Stok Hareketleri</span>
     </a>
 
-    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "StockReport" ? "active" : "")"
-       asp-controller="Reports" asp-action="StockReport">
+    <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockReports" ? "active" : "")"
+       asp-controller="StockReports" asp-action="Index">
         <i data-lucide="file-text" class="sidebar-nav-item-icon"></i>
         <span>Stok Raporu</span>
     </a>

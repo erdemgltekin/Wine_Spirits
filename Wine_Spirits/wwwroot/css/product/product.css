@@ -1,0 +1,66 @@
+/* Product Page Specific Styles */
+
+.ws-product-container {
+    padding: 1.5rem;
+}
+
+/* Stat card stilleri artık site.css'de global olarak tanımlı (ws-stat-card-v2) */
+
+/* Product Image */
+
+.ws-product-img-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ws-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Specific Table Column Sizing */
+.ws-custom-table th:first-child,
+.ws-custom-table td:first-child {
+    width: 72px;
+}
+
+/* Danger Action Button */
+.ws-action-btn-danger:hover {
+    background-color: #fff1f2;
+    color: #e11d48;
+    border-color: #fecdd3;
+}
+
+/* Flatpickr Customization */
+.flatpickr-calendar {
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid #f1f5f9 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: #8b5cf6 !important;
+    border-color: #8b5cf6 !important;
+}
+
+.flatpickr-day.inRange {
+    background: #ede9fe !important;
+    border-color: #ede9fe !important;
+    color: #5b21b6 !important;
+}
+
+.flatpickr-day:hover {
+    background: #f5f3ff !important;
+}

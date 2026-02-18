@@ -153,10 +153,231 @@ body {
 
 .ws-modal-footer {
     margin-top: 2rem !important;
-    /* 2rem boşluk */
     display: flex !important;
     justify-content: flex-end !important;
     gap: 12px !important;
+}
+
+/* --- Global Modern Filter System (V3.0) --- */
+.ws-filter-container {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    margin-bottom: 2rem;
+}
+
+/* İkonlu İnput Grubu */
+.ws-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.ws-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #64748b;
+    pointer-events: none;
+    z-index: 10;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ws-input-control {
+    width: 100%;
+    height: 48px;
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding-left: 2.75rem !important;
+    /* İkon boşluğu */
+    padding-right: 1rem !important;
+    font-size: 0.9rem !important;
+    color: #1e293b !important;
+    transition: all 0.2s ease !important;
+}
+
+.ws-input-control:focus {
+    background-color: #ffffff !important;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1) !important;
+    outline: none;
+}
+
+/* Premium Dropdown Select */
+.ws-select-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 14px;
+    padding-right: 2.5rem !important;
+}
+
+/* Filtrele / Sırala Butonu */
+.ws-btn-modern-filter {
+    height: 48px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.ws-btn-modern-filter:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+
+.ws-btn-modern-filter i {
+    color: #64748b;
+}
+
+/* --- Global Modern Table System --- */
+.ws-table-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.ws-custom-table {
+    width: 100%;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.ws-custom-table thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ws-custom-table tbody td {
+    padding: 1rem 1.5rem;
+    color: #1e293b;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.ws-custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.ws-custom-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* --- Action Buttons --- */
+.ws-action-container {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.ws-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.ws-action-btn:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+/* --- Dropdown Extensions --- */
+.dropdown-menu {
+    border-radius: 12px !important;
+    padding: 0.5rem !important;
+    border: 1px solid #f1f5f9 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dropdown-item {
+    border-radius: 8px !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.85rem !important;
+    color: #475569 !important;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+.dropdown-item.active {
+    background-color: #8b5cf6 !important;
+    color: #fff !important;
+}
+
+/* --- Global Badge System --- */
+.ws-badge {
+    padding: 0.35rem 0.65rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.ws-badge-success {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.ws-badge-danger {
+    background-color: #fff1f2;
+    color: #e11d48;
+}
+
+.ws-badge-primary {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.ws-badge-warning {
+    background-color: #fffbeb;
+    color: #d97706;
+}
+
+.ws-badge-neutral {
+    background-color: #f1f5f9;
+    color: #475569;
 }
 
 .ws-icon-16 {
@@ -285,15 +506,119 @@ body.sidebar-collapsed .ws-topbar {
 }
 
 
+/* --- Global Stat Card V2 System --- */
+/* Tek kaynak: Dashboard, Ürünler ve Stok Hareketleri sayfaları bu sınıfları paylaşır */
+.ws-stat-card-v2 {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+
+.ws-stat-card-v2:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+}
+
+.ws-stat-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ws-stat-icon-box i,
+.ws-stat-icon-box svg {
+    width: 22px;
+    height: 22px;
+}
+
+.ws-stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ws-stat-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    letter-spacing: 0;
+}
+
+.ws-stat-value-text {
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+}
+
 /* --- Modal Tweaks (Global) --- */
 .modal-content {
     border-radius: 16px;
-    /* Figma: Köşeleri yumuşak */
 }
 
 .modal-backdrop.show {
     opacity: 0.3;
-    /* Daha hafif backdrop */
+}
+
+/* --- Color Utility Classes (for Stat Cards) --- */
+.bg-indigo-50 {
+    background-color: #eef2ff !important;
+}
+
+.text-indigo-600 {
+    color: #4f46e5 !important;
+}
+
+.bg-rose-50 {
+    background-color: #fff1f2 !important;
+}
+
+.text-rose-600 {
+    color: #e11d48 !important;
+}
+
+.bg-emerald-50 {
+    background-color: #ecfdf5 !important;
+}
+
+.text-emerald-600 {
+    color: #059669 !important;
+}
+
+.bg-amber-50 {
+    background-color: #fffbeb !important;
+}
+
+.text-amber-600 {
+    color: #d97706 !important;
+}
+
+.bg-primary-50 {
+    background-color: #eff6ff !important;
+}
+
+.text-primary-600 {
+    color: #2563eb !important;
+}
+
+.bg-violet-50 {
+    background-color: #f5f3ff !important;
+}
+
+.text-violet-600 {
+    color: #7c3aed !important;
 }
 
 /* --- Responsive --- */

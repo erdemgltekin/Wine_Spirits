@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Wine_Spirits.Controllers
 {
-    public class StockMovementsController : Controller
+    public class StockMovementController : Controller
     {
         public IActionResult Index()
         {

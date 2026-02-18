@@ -3,118 +3,167 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Ürün Envanteri";
+    ViewData["Title"] = "Ürünler";
     Layout = "_Layout";
     var stats = Model?.Stats ?? new ProductStats();
     var fmtMoney = new Func<decimal, string>(val => val.ToString("C2", new System.Globalization.CultureInfo("tr-TR")));
 }
 
 @section Styles {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    @* Tüm görsel kurallar bu dosyalarda toplanmıştır *@
-    <link rel="stylesheet" href="~/css/product/products-custom.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/product/inventory-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/product/product.css" asp-append-version="true" />
 }
 
-<div class="ws-inventory-wrapper">
-    @* Sayfa Başlığı ve Yeni Ürün Butonu *@
-    <div class="ws-page-header d-flex justify-content-between align-items-center mb-4">
-        <div class="ws-header-title">
-            <h2 class="fw-bold text-dark mb-1">Ürün Envanteri</h2>
-            <p class="text-muted mb-0 small">Stok durumu, fiyatlandırma ve ürün yönetim paneli.</p>
+<div class="ws-product-container">
+    @* Sayfa Başlığı ve Aksiyonlar *@
+    <div class="ws-page-header mb-4">
+        <div>
+            <h2 class="ws-page-title">Ürün Envanteri</h2>
+            <p class="ws-page-subtitle">Tüm ürünlerinizi premium bir arayüzle yönetin.</p>
         </div>
-        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm fw-bold" id="btnCreateNew">
-            <i data-lucide="plus-circle"></i> Yeni Ürün Ekle
+        <button type="button" class="ws-btn-primary shadow-sm" id="btnCreateNew">
+            <i data-lucide="plus-circle" class="ws-icon-16"></i> Yeni Ürün Ekle
         </button>
     </div>
 
-    @* İstatistik Kartları (Partial üzerinden gelir, stilleri inventory-styles.css içindedir) *@
-    <div class="ws-stats-grid mb-4">
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-indigo-50 text-indigo-600" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "criticalStock", Label = "Kritik Stok", Value = stats.CriticalStockCount.ToString(), Icon = "alert-triangle", IconClass = "bg-rose-50 text-rose-600" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "inventoryValue", Label = "Envanter Değeri", Value = fmtMoney(stats.TotalInventoryValue), Icon = "banknote", IconClass = "bg-emerald-50 text-emerald-600" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "categoryCount", Label = "Kategori", Value = stats.CategoryCount.ToString(), Icon = "layers", IconClass = "bg-amber-50 text-amber-600" }' />
+    @* İstatistik Kartları (V2 - Figma Accurate) *@
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-sm-6">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-indigo-50 text-indigo-600" }' />
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "criticalStock", Label = "Kritik Stok", Value = stats.CriticalStockCount.ToString(), Icon = "alert-triangle", IconClass = "bg-rose-50 text-rose-600" }' />
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "inventoryValue", Label = "Envanter Değeri", Value = fmtMoney(stats.TotalInventoryValue), Icon = "banknote", IconClass = "bg-emerald-50 text-emerald-600" }' />
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "categoryCount", Label = "Kategoriler", Value = stats.CategoryCount.ToString(), Icon = "layers", IconClass = "bg-amber-50 text-amber-600" }' />
+        </div>
     </div>
 
-    @* Aksiyon ve Filtreleme Çubuğu *@
-    <div class="card border-0 shadow-sm mb-4 ws-action-card">
-        <div class="card-body p-3">
-            <div class="row g-3 align-items-center">
-                @* Arama *@
-                <div class="col-md-4">
-                    <div class="input-group ws-search-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted">
-                            <i data-lucide="search"></i>
+    @* Premium Filtreleme Paneli (V3.0) *@
+    <div class="ws-filter-container">
+        <div class="row g-3 align-items-center">
+            @* Arama *@
+            <div class="col-lg-3 col-md-12">
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="search"></i></span>
+                    <input type="text" class="ws-input-control" placeholder="Ürün adı veya barkod..." id="inventorySearch">
+                </div>
+            </div>
+            
+            @* Kategori *@
+            <div class="col-lg-2 col-md-4">
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="layers"></i></span>
+                    <select class="ws-input-control ws-select-control" id="filterCategory">
+                        <option value="">Kategoriler</option>
+                        <option>Şarap</option>
+                        <option>Bira</option>
+                        <option>Sert Alkol</option>
+                    </select>
+                </div>
+            </div>
+
+            @* Marka *@
+            <div class="col-lg-2 col-md-4">
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="tag"></i></span>
+                    <select class="ws-input-control ws-select-control" id="filterBrand">
+                        <option value="">Tüm Markalar</option>
+                        <option>Chateau Reserve</option>
+                        <option>Vintage Selection</option>
+                    </select>
+                </div>
+            </div>
+
+            @* Stok Durumu *@
+            <div class="col-lg-3 col-md-4">
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="alert-circle"></i></span>
+                    <select class="ws-input-control ws-select-control" id="filterStockStatus">
+                        <option value="">Stok Durumu</option>
+                        <option value="safe">Yeterli Stok</option>
+                        <option value="critical">Kritik Stok (< 10)</option>
+                    </select>
+                </div>
+            </div>
+
+            @* Filtrele / Sırala *@
+            <div class="col-lg-2 col-md-12">
+                <div class="dropdown">
+                    <button class="ws-btn-modern-filter dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="d-flex align-items-center gap-2">
+                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
+                            Filtrele / Sırala
                         </span>
-                        <input type="text" id="inventorySearch" class="form-control border-start-0 ps-0" placeholder="Ürün adı veya kodla ara...">
-                    </div>
-                </div>
-
-                @* Modern Filtreleme Dropdown *@
-                <div class="col-md-3">
-                    <div class="dropdown ws-sort-dropdown w-100">
-                        <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown">
-                            <span class="d-flex align-items-center gap-2">
-                                <i data-lucide="sliders-horizontal" class="text-muted"></i>
-                                <span id="currentSortLabel">Filtrele / Sırala</span>
-                            </span>
-                            <i data-lucide="chevron-down" class="small text-muted"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                            <li><h6 class="dropdown-header">İsim Sıralaması</h6></li>
-                            <li><a class="dropdown-item active" href="#" data-sort="name_asc"><i data-lucide="arrow-down-a-z"></i> A'dan Z'ye</a></li>
-                            <li><a class="dropdown-item" href="#" data-sort="name_desc"><i data-lucide="arrow-up-z-a"></i> Z'den A'ya</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Fiyat Analizi</h6></li>
-                            <li><a class="dropdown-item" href="#" data-sort="price_asc"><i data-lucide="trending-up"></i> Fiyat: Artan</a></li>
-                            <li><a class="dropdown-item" href="#" data-sort="price_desc"><i data-lucide="trending-down"></i> Fiyat: Azalan</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item ws-critical-item" href="#" data-sort="critical_stock"><i data-lucide="alert-octagon"></i> Kritik Stoklar (< 10)</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                @* Tarih Filtresi *@
-                <div class="col-md-3">
-                    <div class="input-group ws-date-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted">
-                            <i data-lucide="calendar"></i>
-                        </span>
-                        <input type="text" id="dateFilter" class="form-control border-start-0 ps-0" placeholder="Tarih Seçin">
-                    </div>
-                </div>
-
-                @* Yenileme *@
-                <div class="col-md-2 text-end">
-                    <button class="btn btn-light border w-100 d-flex align-items-center justify-content-center gap-2" id="btnRefreshTable">
-                        <i data-lucide="refresh-cw"></i> Yenile
+                        <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
                     </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                        <li><h6 class="dropdown-header">Sıralama</h6></li>
+                        <li><a class="dropdown-item active" href="#" data-sort="name-asc">A'dan Z'ye</a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="name-desc">Z'den A'ya</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" data-sort="stock-desc">En Yüksek Stok</a></li>
+                        <li><a class="dropdown-item text-danger" href="#" data-sort="critical">Kritik Stoklar</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    @* Veri Tablosu *@
-    <div class="card border-0 shadow-sm overflow-hidden ws-inventory-card">
+    @* Ürünler Tablosu *@
+    <div class="ws-table-card">
         <div class="table-responsive">
-            <table class="table align-middle mb-0 ws-custom-table">
+            <table class="table ws-custom-table align-middle">
                 <thead>
                     <tr>
-                        <th class="ps-4">KOD</th>
-                        <th>ÜRÜN / TEDARİKÇİ</th>
+                        <th class="ps-4">GÖRSEL</th>
+                        <th>BARKOD</th>
+                        <th>ÜRÜN ADI</th>
                         <th>KATEGORİ</th>
-                        <th>MENŞEİ</th>
-                        <th>FİYAT</th>
                         <th>STOK</th>
-                        <th class="text-end pe-4">İŞLEM</th>
+                        <th>BİRİM</th>
+                        <th>DURUM</th>
+                        <th class="text-end pe-4">İŞLEMLER</th>
                     </tr>
                 </thead>
                 <tbody id="productsTableBody">
                     <tr>
-                        <td colspan="7" class="text-center py-5">
-                            <div class="ws-loader d-flex flex-column align-items-center gap-2">
-                                <div class="spinner-border text-primary spinner-border-sm"></div>
-                                <span class="text-muted small">Veriler yükleniyor...</span>
+                        <td class="ps-4">
+                            <div class="ws-product-img-wrapper">
+                                <i data-lucide="image" class="text-muted opacity-25"></i>
+                            </div>
+                        </td>
+                        <td><span class="text-muted small">8690001122</span></td>
+                        <td><div class="fw-semibold">Chardonnay Reserve 2022</div></td>
+                        <td>Beyaz Şarap</td>
+                        <td><span class="fw-bold text-danger">8</span></td>
+                        <td>Adet</td>
+                        <td><span class="ws-badge ws-badge-danger"><i data-lucide="alert-circle" class="ws-icon-16"></i> Kritik Stok</span></td>
+                        <td class="text-end pe-4">
+                            <div class="ws-action-container">
+                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
+                                <button class="ws-action-btn ws-action-btn-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="ps-4">
+                            <div class="ws-product-img-wrapper">
+                                <i data-lucide="image" class="text-muted opacity-25"></i>
+                            </div>
+                        </td>
+                        <td><span class="text-muted small">8690001145</span></td>
+                        <td><div class="fw-semibold">Merlot Special Selection</div></td>
+                        <td>Kırmızı Şarap</td>
+                        <td><span class="fw-bold text-dark">45</span></td>
+                        <td>Adet</td>
+                        <td><span class="ws-badge ws-badge-success"><i data-lucide="check-circle" class="ws-icon-16"></i> Yeterli</span></td>
+                        <td class="text-end pe-4">
+                            <div class="ws-action-container">
+                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
+                                <button class="ws-action-btn ws-action-btn-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -124,20 +173,6 @@
     </div>
 </div>
 
-@* Ürün Ekleme/Düzenleme Modalı *@
-<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div id="productModalBody"></div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
-    @* Tüm mantıksal işleyiş bu iki dosyada ayrıştırılmıştır *@
-    <script src="~/js/product/products-manager.js" asp-append-version="true"></script>
-    <script src="~/js/product/inventory-filters.js" asp-append-version="true"></script>
+    <script src="~/js/product/product.js" asp-append-version="true"></script>
 }
