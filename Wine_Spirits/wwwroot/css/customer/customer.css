@@ -1,0 +1,99 @@
+/* 
+   Müşteri Yönetimi (CRM) Sayfasına Özel Stiller 
+   Global Standart: Inline CSS kullanımı yasaktır. 
+*/
+
+.ws-customer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 
+   MODERN FİLTRELEME KONTEYNERİ (V3.0)
+   Flexbox ile tam sığan ve asla taşmayan yapı.
+*/
+.ws-filter-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    flex-wrap: nowrap !important;
+    /* Taşmayı önlemek için sarmayı kapattık */
+    background: #fff;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.ws-filter-container .ws-input-group,
+.ws-filter-container .ws-filter-item {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 
+   DURUM RENKLERİ & İKONLAR
+*/
+.btn-status-active {
+    color: #10b981 !important;
+    /* Emerald Green */
+}
+
+.btn-status-passive {
+    color: #94a3b8 !important;
+    /* Slate Gray */
+}
+
+/* Tablodaki Badge Standartları */
+.ws-badge-soft-green {
+    background-color: #ecfdf5 !important;
+    color: #059669 !important;
+    border: 1px solid #d1fae5 !important;
+}
+
+.ws-badge-soft-passive {
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* 
+   TABLO DÜZENLEMELERİ 
+*/
+.ws-info-main {
+    font-weight: 600;
+    color: #1e293b;
+    display: block;
+    font-size: 0.9rem;
+}
+
+.ws-info-sub {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: block;
+    margin-top: 2px;
+}
+
+/* MODAL & FORM */
+#createCustomerModal .modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.form-label {
+    margin-bottom: 0.4rem;
+    color: #475569;
+}
+
+@media (max-width: 992px) {
+    .ws-filter-container {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    .ws-filter-container>div {
+        flex: 1 1 calc(50% - 12px);
+    }
+}

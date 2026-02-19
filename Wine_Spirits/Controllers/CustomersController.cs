@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
+using Wine_Spirits.Models.ViewModels;
 
 namespace Wine_Spirits.Controllers
 {
@@ -15,10 +16,31 @@ namespace Wine_Spirits.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var customers = await _context.Customers.ToListAsync();
-            ViewData["TotalCustomers"] = customers.Count;
-            ViewData["ActiveCustomers"] = customers.Count(c => !string.IsNullOrEmpty(c.Email));
-            return View(customers);
+            var customers = await _context.Customers
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                .ToListAsync();
+
+            var stats = new CustomerStats
+            {
+                TotalCustomers = customers.Count,
+                ActiveCustomers = customers.Count(c => c.IsActive), // GLOBAL: Yeni IsActive alanına göre hesapla
+                TotalOrders = customers.Sum(c => c.Orders.Count),
+                TotalRevenue = customers
+                    .SelectMany(c => c.Orders)
+                    .SelectMany(o => o.OrderDetails)
+                    .Sum(od => od.TotalPrice)
+                    .ToString("C2", new System.Globalization.CultureInfo("tr-TR"))
+            };
+
+            var viewModel = new CustomersIndexViewModel
+            {
+                Customers = customers,
+                Stats = stats
+            };
+
+            return View(viewModel);
         }
 
         // GET: Customers/Create
@@ -103,6 +125,19 @@ namespace Wine_Spirits.Controllers
                 return PartialView(customer);
             }
             return View(customer);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            // GLOBAL: Müşteri aktif/pasif durumunu değiştiren backend logic
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null) return NotFound();
+
+            customer.IsActive = !customer.IsActive;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, isActive = customer.IsActive });
         }
 
         private bool CustomerExists(Guid id)
