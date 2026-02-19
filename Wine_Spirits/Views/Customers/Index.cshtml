@@ -69,10 +69,10 @@
             </select>
         </div>
 
-        @* Tarih Aralığı (Flatpickr - image_8b8edf.png) *@
+        @* Tarih Aralığı (Flatpickr - Range Mode) *@
         <div class="ws-input-group">
             <span class="ws-input-icon"><i data-lucide="calendar"></i></span>
-            <input type="text" class="ws-input-control flatpickr-date" id="filterDate" placeholder="Tarih Seçin">
+            <input type="text" class="ws-input-control flatpickr-date" id="filterDate" placeholder="Tarih Aralığı Seçin" readonly>
         </div>
 
         @* Filtrele / Sırala Butonu (Premium) *@
@@ -116,7 +116,8 @@
                 <tbody id="customersTableBody">
                     @foreach (var customer in Model.Customers)
                     {
-                        <tr>
+                        @* BURADA: JS tarafında tarih aralığı filtresi için CreatedDate data attribute olarak ekleniyor *@
+                        <tr data-date="@customer.CreatedDate.ToString("yyyy-MM-dd")">
                             <td class="ps-4">
                                 <span class="text-muted small fw-medium">#@customer.Id.ToString().Substring(0, 8).ToUpper()</span>
                             </td>
@@ -165,7 +166,7 @@
                                         <i data-lucide="power" class="ws-icon-16 @(customer.IsActive ? "btn-status-active" : "btn-status-passive")"></i>
                                     </button>
                                     <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                                    <button class="ws-action-btn text-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
+                                    <button class="ws-action-btn text-danger btn-delete-customer" data-id="@customer.Id" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -198,14 +199,15 @@
             </div>
             <div class="modal-body p-4">
                 <form id="createCustomerForm">
+                    @* BURADA: CSRF güvenliği için token ekleniyor *@
                     @Html.AntiForgeryToken()
                     <div class="mb-3">
-                        <label class="form-label small fw-semibold">Müşteri Adı / Firma</label>
+                        <label class="form-label small fw-semibold">Müşteri Adı / Soyad / Firma</label>
                         <div class="ws-input-group">
                             <input type="text" name="Name" class="ws-input-control" placeholder="Müşteri adını girin" required>
                         </div>
                     </div>
-                    @* GLOBAL: 50-50 Yan yana yerleşim *@
+                    @* GLOBAL: 50-50 Yan yana yerleşim (E-posta / Telefon) *@
                     <div class="row g-3 mb-3">
                         <div class="col-6">
                             <label class="form-label small fw-semibold">E-posta</label>
@@ -216,20 +218,20 @@
                             <input type="tel" name="Phone" class="ws-input-control" placeholder="Telefon numarası">
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Adres</label>
-                        <input type="text" name="Adress" class="ws-input-control" placeholder="Adres bilgisi">
-                    </div>
                     @* GLOBAL: 50-50 Yan yana yerleşim (Vergi Bilgileri) *@
-                    <div class="row g-3 mb-4">
-                        <div class="col-6">
-                            <label class="form-label small fw-semibold">Vergi Dairesi</label>
-                            <input type="text" name="TaxOffice" class="ws-input-control" placeholder="Vergi dairesi">
-                        </div>
+                    <div class="row g-3 mb-3">
                         <div class="col-6">
                             <label class="form-label small fw-semibold">Vergi Numarası</label>
                             <input type="number" name="TaxNumber" class="ws-input-control" placeholder="Vergi numarası">
                         </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold">Vergi Dairesi</label>
+                            <input type="text" name="TaxOffice" class="ws-input-control" placeholder="Vergi dairesi">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Adres</label>
+                        <textarea name="Adress" class="ws-input-control" style="height: 100px; padding-top: 12px; white-space: normal;" placeholder="Tam adres bilgisini girin"></textarea>
                     </div>
                     <div class="ws-modal-footer">
                         <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>

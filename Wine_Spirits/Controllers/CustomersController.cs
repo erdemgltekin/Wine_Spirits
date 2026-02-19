@@ -130,7 +130,7 @@ namespace Wine_Spirits.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
-            // GLOBAL: Müşteri aktif/pasif durumunu değiştiren backend logic
+            // BURADA: Database First IsActive kontrolü yapılıyor
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null) return NotFound();
 
@@ -138,6 +138,19 @@ namespace Wine_Spirits.Controllers
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, isActive = customer.IsActive });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            // BURADA: Soft-delete mantığı uygulanıyor (IsDeleted = true)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null) return NotFound();
+
+            customer.IsDeleted = true;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
         }
 
         private bool CustomerExists(Guid id)
