@@ -1,9 +1,12 @@
 ﻿@model Wine_Spirits.Models.ViewModels.StatCardViewModel
 
 <div class="ws-stat-card-v2" ws-stat="@Model.StatKey">
-    <div class="ws-stat-icon-box @Model.IconClass">
-        <i data-lucide="@Model.Icon"></i>
-    </div>
+    @if (!Model.HideIcon)
+    {
+        <div class="ws-stat-icon-box @Model.IconClass">
+            <i data-lucide="@Model.Icon"></i>
+        </div>
+    }
     <div class="ws-stat-body">
         <div class="ws-stat-label">@Model.Label</div>
         <div class="ws-stat-value-text">

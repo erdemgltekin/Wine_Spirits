@@ -6,4 +6,5 @@ public class CustomersIndexViewModel
 {
     public List<Customer> Customers { get; set; } = new List<Customer>();
     public CustomerStats Stats { get; set; } = new CustomerStats();
+    public object Customer { get; internal set; }
 }

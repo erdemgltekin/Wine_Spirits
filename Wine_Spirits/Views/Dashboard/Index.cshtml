@@ -145,16 +145,4 @@
     <script src="~/js/dashboard/dashboard-activity.js" asp-append-version="true"></script>
     @* 3. Yeni Aksiyon Butonları JS *@
     <script src="~/js/dashboard/dashboard-actions.js" asp-append-version="true"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // İkonları canlandır
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-
-            // Dashboard verilerini ilk kez yükle
-            if (typeof DashboardManager !== 'undefined') {
-                DashboardManager.init();
-            }
-        });
-    </script>
 }

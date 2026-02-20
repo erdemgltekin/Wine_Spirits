@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wine_Spirits.Models;
 using Wine_Spirits.Models.ViewModels;
+using System.Globalization;
 
 namespace Wine_Spirits.Controllers
 {
@@ -14,29 +15,32 @@ namespace Wine_Spirits.Controllers
             _context = context;
         }
 
+        // GET: Customers
         public async Task<IActionResult> Index()
         {
-            var customers = await _context.Customers
-                .Where(c => !c.IsDeleted)
-                .Include(c => c.Orders)
-                    .ThenInclude(o => o.OrderDetails)
+            // Context içinde Global Query Filter (IsDeleted) tanımlı olduğu için 
+            // burada tekrar .Where(c => !c.IsDeleted) yazmaya gerek yoktur.
+            var customer = await _context.Customers
+                .Include ( c => c.Orders)
+                .ThenInclude(o => o.OrderDetails)
                 .ToListAsync();
 
+            // İstatistikleri güvenli bir şekilde hesapla (Null-conditional operasyonları ile)
             var stats = new CustomerStats
             {
-                TotalCustomers = customers.Count,
-                ActiveCustomers = customers.Count(c => c.IsActive), // GLOBAL: Yeni IsActive alanına göre hesapla
-                TotalOrders = customers.Sum(c => c.Orders.Count),
-                TotalRevenue = customers
-                    .SelectMany(c => c.Orders)
-                    .SelectMany(o => o.OrderDetails)
-                    .Sum(od => od.TotalPrice)
-                    .ToString("C2", new System.Globalization.CultureInfo("tr-TR"))
+                TotalCustomers = customer.Count,
+                ActiveCustomers = customer.Count(c => c.IsActive),
+                TotalOrders = customer.Sum(c => c.Orders?.Count ?? 0),
+                // Ciro hesaplarken decimal cast kullanarak null hatalarını önle ve string'e çevir
+                TotalRevenue = (customer
+                    .SelectMany(c => c.Orders ?? new List<Order>())
+                    .SelectMany(o => o.OrderDetails ?? new List<OrderDetail>())
+                    .Sum(od => (decimal?)od.TotalPrice) ?? 0).ToString("C2", new CultureInfo("tr-TR"))
             };
 
             var viewModel = new CustomersIndexViewModel
             {
-                Customers = customers,
+                Customer = customer,
                 Stats = stats
             };
 
@@ -61,6 +65,10 @@ namespace Wine_Spirits.Controllers
             if (ModelState.IsValid)
             {
                 customer.Id = Guid.NewGuid();
+                customer.CreatedDate = DateTime.Now;
+                customer.IsActive = true;
+                customer.IsDeleted = false;
+
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
 
@@ -96,7 +104,7 @@ namespace Wine_Spirits.Controllers
         // POST: Customers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Lastname,Email,Phone,Adress,TaxOffice,TaxNumber")] Customer customer)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Lastname,Email,Phone,Adress,TaxOffice,TaxNumber,IsActive,CreatedDate")] Customer customer)
         {
             if (id != customer.Id) return NotFound();
 
@@ -127,10 +135,10 @@ namespace Wine_Spirits.Controllers
             return View(customer);
         }
 
+        // POST: Customers/ToggleStatus/5
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
-            // BURADA: Database First IsActive kontrolü yapılıyor
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null) return NotFound();
 
@@ -140,13 +148,14 @@ namespace Wine_Spirits.Controllers
             return Json(new { success = true, isActive = customer.IsActive });
         }
 
+        // POST: Customers/Delete/5
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            // BURADA: Soft-delete mantığı uygulanıyor (IsDeleted = true)
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null) return NotFound();
 
+            // Database-First Soft Delete Mantığı
             customer.IsDeleted = true;
             await _context.SaveChangesAsync();
 
@@ -159,4 +168,3 @@ namespace Wine_Spirits.Controllers
         }
     }
 }
-

@@ -5,6 +5,7 @@ namespace Wine_Spirits.Models;
 
 public partial class Product : BaseEntity
 {
+    public Guid Id { get; set; }
 
     public Guid ProductCategoryId { get; set; }
 
@@ -20,24 +21,26 @@ public partial class Product : BaseEntity
 
     public Guid ProductDefinitionId { get; set; }
 
-    // --- YENİ EKLENEN SÜTUN ---
-    public Guid WarehouseId { get; set; }
-
     public int StockQuantity { get; set; }
 
-    public virtual Country? Country { get; set; }
+    public DateTime CreatedDate { get; set; }
+
+    public Guid WarehouseId { get; set; }
+
+    public virtual WareHouse Warehouse { get; set; } = null!;
+
+    public virtual Country Country { get; set; } = null!;
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-    public virtual ProductCategory? ProductCategory { get; set; }
+    public virtual ProductCategory ProductCategory { get; set; } = null!;
 
-    public virtual ProductDefinition? ProductDefinition { get; set; }
+    public virtual ProductDefinition ProductDefinition { get; set; } = null!;
 
     public virtual ICollection<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
 
-    public virtual Supplier? Supplier { get; set; }
+    public virtual Supplier Supplier { get; set; } = null!;
 
-    public virtual Unit? Unit { get; set; }
+    public virtual Unit Unit { get; set; } = null!;
 
-    public virtual WareHouse? Warehouse { get; set; }
 }

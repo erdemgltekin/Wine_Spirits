@@ -11,7 +11,7 @@
                 <label asp-for="Name" class="form-label fw-bold text-dark small">Tedarikçi / Firma Adı</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="truck" class="text-muted" style="width: 16px;"></i>
+                        <i data-lucide="truck" class="text-muted ws-icon-16"></i>
                     </span>
                     <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="Örn: Anadolu Bağları Ltd." required />
                 </div>
@@ -23,7 +23,7 @@
                 <label asp-for="Email" class="form-label fw-bold text-dark small">E-Posta</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="mail" class="text-muted" style="width: 16px;"></i>
+                        <i data-lucide="mail" class="text-muted ws-icon-16"></i>
                     </span>
                     <input asp-for="Email" type="email" class="form-control border-start-0 ps-0" placeholder="info@tedarikci.com" required />
                 </div>
@@ -35,7 +35,7 @@
                 <label asp-for="Phone" class="form-label fw-bold text-dark small">Telefon</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="phone-call" class="text-muted" style="width: 16px;"></i>
+                        <i data-lucide="phone-call" class="text-muted ws-icon-16"></i>
                     </span>
                     <input asp-for="Phone" class="form-control border-start-0 ps-0" placeholder="0212 XXX XX XX" required />
                 </div>
@@ -43,11 +43,11 @@
             </div>
 
             <!-- Country Selection -->
-            <div class="col-12">
+            <div class="col-md-6">
                 <label asp-for="CountryId" class="form-label fw-bold text-dark small">Menşei Ülke</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="globe" class="text-muted" style="width: 16px;"></i>
+                        <i data-lucide="globe" class="text-muted ws-icon-16"></i>
                     </span>
                     <select asp-for="CountryId" class="form-select border-start-0 ps-0" asp-items="ViewBag.CountryId" required>
                         <option value="">Seçiniz...</option>
@@ -55,11 +55,25 @@
                 </div>
                 <span asp-validation-for="CountryId" class="text-danger small"></span>
             </div>
+
+            <!-- Warehouse Selection -->
+            <div class="col-md-6">
+                <label asp-for="WarehouseId" class="form-label fw-bold text-dark small">Bağlı Depo (Opsiyonel)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i data-lucide="home" class="text-muted ws-icon-16"></i>
+                    </span>
+                    <select asp-for="WarehouseId" class="form-select border-start-0 ps-0" asp-items="ViewBag.WarehouseId">
+                        <option value="">Depo Seçilmedi</option>
+                    </select>
+                </div>
+                <span asp-validation-for="WarehouseId" class="text-danger small"></span>
+            </div>
         </div>
 
         <div class="drawer-footer">
             <button type="submit" class="btn btn-indigo flex-grow-1 py-2 fw-bold shadow-sm">
-                <i data-lucide="check-circle" class="me-2" style="width: 18px;"></i>
+                <i data-lucide="check-circle" class="me-2 ws-icon-18"></i>
                 Tedarikçiyi Tanımla
             </button>
             <button type="button" class="btn btn-light px-4 py-2 border text-muted" id="closeSidePanel">

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Wine_Spirits.Models;
 
-public partial class OrderDetail : BaseEntity
+public partial class OrderDetail
 {
+    public Guid Id { get; set; }
 
     public Guid OrderId { get; set; }
 
@@ -15,6 +16,10 @@ public partial class OrderDetail : BaseEntity
     public decimal UnitPrice { get; set; }
 
     public decimal TotalPrice { get; set; }
+
+    public bool IsDeleted { get; set; }
+
+    public DateTime CreatedDate { get; set; }
 
     public virtual Order Order { get; set; } = null!;
 

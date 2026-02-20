@@ -6,20 +6,18 @@
     ViewData["Title"] = "Sipariş Yönetimi";
     Layout = "_Layout";
 
-    // Özet istatistikler (statik — backend entegrasyonunda dinamik hale gelecek)
-    int totalOrders     = Model?.Count() ?? 0;
-    int activeOrders    = Model?.Count(o => o.Description != null) ?? 0;
-    int completedOrders = 0;
+    int totalOrders = Model?.Count() ?? 0;
+    int activeOrders = Model?.Count(o => o.IsActive) ?? 0;
+    int completedOrders = 0; // İleride Status tablosu eklendiğinde burası dinamikleşecek
     int cancelledOrders = 0;
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/order/order.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/order.css" asp-append-version="true" />
 }
 
 <div class="ws-order-container">
-
-    @* ── Sayfa Başlığı ── *@
+    @* Sayfa Başlığı ve Yeni Ekle Butonu *@
     <div class="ws-page-header mb-4">
         <div>
             <h2 class="ws-page-title">Sipariş Yönetimi</h2>
@@ -30,60 +28,31 @@
         </button>
     </div>
 
-    @* ── İstatistik Kartları (V2 Global Standard) ── *@
+    @* İstatistik Kartları *@
     <div class="row g-4 mb-4">
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey   = "totalOrders",
-                Label     = "Toplam Sipariş",
-                Value     = totalOrders.ToString(),
-                Icon      = "shopping-cart",
-                IconClass = "bg-primary-50 text-primary-600"
-            }' />
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalOrders", Label = "Toplam Sipariş", Value = totalOrders.ToString(), Icon = "shopping-cart", IconClass = "bg-primary-50 text-primary-600" }' />
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey   = "activeOrders",
-                Label     = "Aktif Sipariş",
-                Value     = activeOrders.ToString(),
-                Icon      = "clock",
-                IconClass = "bg-violet-50 text-violet-600"
-            }' />
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "activeOrders", Label = "Aktif Sipariş", Value = activeOrders.ToString(), Icon = "clock", IconClass = "bg-violet-50 text-violet-600" }' />
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey   = "completedOrders",
-                Label     = "Tamamlanan",
-                Value     = completedOrders.ToString(),
-                Icon      = "check-circle",
-                IconClass = "bg-emerald-50 text-emerald-600"
-            }' />
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "completedOrders", Label = "Tamamlanan", Value = completedOrders.ToString(), Icon = "check-circle", IconClass = "bg-emerald-50 text-emerald-600" }' />
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey   = "cancelledOrders",
-                Label     = "İptal Edilen",
-                Value     = cancelledOrders.ToString(),
-                Icon      = "x-circle",
-                IconClass = "bg-rose-50 text-rose-600"
-            }' />
+            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "cancelledOrders", Label = "İptal Edilen", Value = cancelledOrders.ToString(), Icon = "x-circle", IconClass = "bg-rose-50 text-rose-600" }' />
         </div>
     </div>
 
-    @* ── Modern Filtreleme Konteyneri (V3.0 Global Standard) ── *@
-    <div class="ws-filter-container">
+    @* Filtreleme Paneli *@
+    <div class="ws-filter-container mb-4">
         <div class="row g-3 align-items-center">
-
-            @* Arama *@
             <div class="col-lg-4 col-md-12">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="search"></i></span>
-                    <input type="text" class="ws-input-control"
-                           placeholder="Sipariş ara (ID, müşteri, ürün)..." id="orderSearch">
+                    <input type="text" class="ws-input-control" placeholder="Sipariş ara..." id="orderSearch">
                 </div>
             </div>
-
-            @* Durum Filtresi *@
             <div class="col-lg-2 col-md-4">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="filter"></i></span>
@@ -92,49 +61,33 @@
                         <option value="active">Aktif</option>
                         <option value="completed">Tamamlandı</option>
                         <option value="cancelled">İptal</option>
-                        <option value="pending">Beklemede</option>
                     </select>
                 </div>
             </div>
-
-            @* Tarih Seçici (Flatpickr) *@
             <div class="col-lg-3 col-md-4">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="calendar"></i></span>
-                    <input type="text" class="ws-input-control ws-datepicker"
-                           id="orderDateFilter" placeholder="Tarih Seçin" readonly>
+                    <input type="text" class="ws-input-control ws-datepicker" id="orderDateFilter" placeholder="Tarih Seçin" readonly>
                 </div>
             </div>
-
-            @* Filtrele / Sırala *@
             <div class="col-lg-3 col-md-4">
                 <div class="dropdown">
-                    <button class="ws-btn-modern-filter dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="ws-btn-modern-filter w-100 justify-content-between dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <span class="d-flex align-items-center gap-2">
-                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
-                            Filtrele / Sırala
+                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i> Filtrele / Sırala
                         </span>
-                        <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                         <li><h6 class="dropdown-header">Tarih Sıralaması</h6></li>
                         <li><a class="dropdown-item active" href="#" data-sort="date-desc">Yeniden Eskiye</a></li>
                         <li><a class="dropdown-item" href="#" data-sort="date-asc">Eskiden Yeniye</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header">Tutar Sıralaması</h6></li>
-                        <li><a class="dropdown-item" href="#" data-sort="amount-desc">Tutar: Yüksekten Düşüğe</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="amount-asc">Tutar: Düşükten Yükseğe</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header">Müşteri</h6></li>
-                        <li><a class="dropdown-item" href="#" data-sort="customer-asc">Müşteri: A'dan Z'ye</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    @* ── Sipariş Tablosu ── *@
+    @* Sipariş Tablosu *@
     <div class="ws-table-card">
         <div class="table-responsive">
             <table class="table ws-custom-table align-middle" id="ordersTable">
@@ -152,17 +105,14 @@
                 <tbody>
                     @if (Model != null && Model.Any())
                     {
-                        int rowIndex = 1;
                         @foreach (var item in Model)
                         {
                             <tr>
                                 <td class="ps-4">
-                                    <span class="ws-order-no">#ORD-@rowIndex.ToString("D4")</span>
+                                    <span class="ws-order-no">#ORD-@item.Id.ToString().Substring(0, 8).ToUpper()</span>
                                 </td>
                                 <td>
-                                    <div class="ws-order-customer-name">
-                                        @item.Customer?.Name @item.Customer?.Lastname
-                                    </div>
+                                    <div class="ws-order-customer-name">@item.Customer?.Name @item.Customer?.Lastname</div>
                                     @if (!string.IsNullOrEmpty(item.Description))
                                     {
                                         <div class="ws-order-customer-meta">@item.Description</div>
@@ -172,45 +122,36 @@
                                     @if (item.Warehouse != null)
                                     {
                                         <span class="ws-warehouse-pill">
-                                            <i data-lucide="warehouse" class="ws-icon-16"></i>
-                                            @item.Warehouse.Name
+                                            <i data-lucide="warehouse" class="ws-icon-16"></i> @item.Warehouse.Name
                                         </span>
                                     }
                                     else
                                     {
+
                                         <span class="text-muted small">—</span>
                                     }
                                 </td>
                                 <td>
-                                    <div class="fw-medium text-dark" style="">@item.OrderDate.ToString("dd.MM.yyyy")</div>
+                                    <div class="fw-medium text-dark">@item.OrderDate.ToString("dd.MM.yyyy")</div>
                                     <div class="ws-order-customer-meta">@item.OrderDate.ToString("HH:mm")</div>
                                 </td>
+                                <td><span class="ws-order-amount">₺—</span></td>
                                 <td>
-                                    <span class="ws-order-amount">₺—</span>
-                                </td>
-                                <td>
-                                    <select class="ws-status-select status-active" data-order-id="@item.Id">
-                                        <option value="active" selected>Aktif</option>
+                                    @* Durum Seçimi - Tag Helper Hatası Giderilmiş Alan *@
+                                    <select class="ws-status-select @(item.IsActive ? "status-active" : "status-passive")" data-order-id="@item.Id">
+                                        <option value="active" selected="@(item.IsActive ? "selected" : null)">Aktif</option>
+                                        <option value="passive" selected="@(!item.IsActive ? "selected" : null)">Pasif</option>
                                         <option value="completed">Tamamlandı</option>
-                                        <option value="cancelled">İptal</option>
-                                        <option value="pending">Beklemede</option>
                                     </select>
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="ws-action-container">
-                                        <button class="ws-action-btn" title="Detay">
-                                            <i data-lucide="eye" class="ws-icon-16"></i>
-                                        </button>
-                                        <button class="ws-action-btn" title="Düzenle">
-                                            <i data-lucide="edit-3" class="ws-icon-16"></i>
-                                        </button>
-                                        <button class="ws-action-btn ws-action-btn-danger" title="Sil">
-                                            <i data-lucide="trash-2" class="ws-icon-16"></i>
-                                        </button>
+                                        <button class="ws-action-btn" title="Detay"><i data-lucide="eye" class="ws-icon-16"></i></button>
+                                        <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
+                                        <button class="ws-action-btn ws-action-btn-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
                                     </div>
                                 </td>
                             </tr>
-                            rowIndex++;
                         }
                     }
                     else
@@ -233,101 +174,49 @@
             </table>
         </div>
     </div>
-
 </div>
 
-@* ── Yeni Sipariş Oluştur Modalı ── *@
+@* Yeni Sipariş Modalı *@
 <div class="modal fade" id="newOrderModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content ws-order-modal-content">
-
-            @* Modal Başlık *@
             <div class="modal-header ws-order-modal-header">
                 <h5 class="modal-title ws-order-modal-title">Yeni Sipariş Oluştur</h5>
                 <button type="button" class="btn-close ws-btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-
-            @* Modal Gövde *@
             <div class="modal-body ws-order-modal-body">
                 <form id="formNewOrder" novalidate>
-
-                    @* Müşteri Seçimi *@
-                    <div class="ws-order-form-group">
+                    <div class="ws-order-form-group mb-3">
                         <label class="ws-order-form-label">Müşteri <span class="text-danger">*</span></label>
-                        <select class="ws-order-select" id="orderCustomer" required>
+                        <select class="ws-order-select ws-input-control" id="orderCustomer" required>
                             <option value="" selected disabled>Müşteri seçin</option>
-                            <option value="1">Ankara Restoran A</option>
-                            <option value="2">İstanbul Otel Zinciri</option>
-                            <option value="3">İzmir Şarap Evi</option>
-                            <option value="4">Bodrum Butik Otel</option>
                         </select>
                     </div>
-
-                    @* Sipariş Kalemleri Bölümü *@
-                    <div class="ws-order-items-section">
-                        <div class="ws-order-items-header">
-                            <span class="ws-order-items-title">Sipariş Kalemleri</span>
-                            <button type="button" class="ws-btn-add-item" id="btnAddOrderItem">
-                                <i data-lucide="plus" class="ws-icon-16"></i> Kalem Ekle
+                    <div class="ws-order-items-section border rounded p-3 bg-light">
+                        <div class="ws-order-items-header d-flex justify-content-between align-items-center mb-3">
+                            <span class="ws-order-items-title fw-bold">Sipariş Kalemleri</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddOrderItem">
+                                <i data-lucide="plus" class="ws-icon-14"></i> Kalem Ekle
                             </button>
                         </div>
-
-                        @* Kalem Satırları Konteyneri *@
                         <div id="orderItemsContainer">
-                            @* İlk kalem satırı varsayılan olarak gelir *@
-                            <div class="ws-order-item-row" data-item-index="0">
-                                <div class="ws-order-item-grid">
-                                    <div class="ws-order-item-field">
-                                        <label class="ws-order-item-label">Ürün</label>
-                                        <select class="ws-order-item-select ws-order-product-select">
-                                            <option value="" selected disabled>Ürün seçin</option>
-                                            <option value="1" data-price="485">Chardonnay Reserve 2022</option>
-                                            <option value="2" data-price="620">Merlot Special Selection</option>
-                                            <option value="3" data-price="1250">Vintage Cognac 50cl</option>
-                                            <option value="4" data-price="340">Rosé Provence 2023</option>
-                                            <option value="5" data-price="2100">Scotch Whisky 12Y</option>
-                                        </select>
-                                    </div>
-                                    <div class="ws-order-item-field ws-order-item-field--sm">
-                                        <label class="ws-order-item-label">Miktar</label>
-                                        <input type="number" class="ws-order-item-input ws-order-qty-input"
-                                               value="1" min="1" placeholder="1">
-                                    </div>
-                                    <div class="ws-order-item-field ws-order-item-field--sm">
-                                        <label class="ws-order-item-label">Birim Fiyat</label>
-                                        <div class="ws-order-price-wrapper">
-                                            <span class="ws-order-price-symbol">₺</span>
-                                            <input type="number" class="ws-order-item-input ws-order-price-input"
-                                                   value="0" min="0" placeholder="0">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="button" class="ws-order-item-delete" title="Kalemi Sil">
-                                    <i data-lucide="trash-2"></i>
-                                </button>
-                            </div>
+                            @* Dinamik olarak JS ile dolacak *@
                         </div>
                     </div>
-
-                    @* Toplam Tutar *@
-                    <div class="ws-order-total-row">
-                        <span class="ws-order-total-label">Toplam Tutar:</span>
-                        <span class="ws-order-total-value" id="orderTotalAmount">₺0</span>
+                    <div class="ws-order-total-row mt-3 text-end">
+                        <span class="ws-order-total-label fw-bold">Toplam Tutar:</span>
+                        <span class="ws-order-total-value fs-5 text-primary ms-2" id="orderTotalAmount">₺0</span>
                     </div>
-
                 </form>
             </div>
-
-            @* Modal Footer *@
             <div class="modal-footer ws-order-modal-footer">
-                <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="submit" form="formNewOrder" class="ws-btn-primary">Sipariş Oluştur</button>
+                <button type="button" class="ws-btn-secondary btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="submit" form="formNewOrder" class="ws-btn-primary btn btn-primary">Sipariş Oluştur</button>
             </div>
-
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/order/order.js" asp-append-version="true"></script>
+    <script src="~/js/pages/order.js" asp-append-version="true"></script>
 }

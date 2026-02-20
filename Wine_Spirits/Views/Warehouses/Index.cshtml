@@ -6,11 +6,10 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/warehouse/warehouse-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/warehouse.css" asp-append-version="true" />
 }
 
 <div class="container-fluid px-4 py-4">
-    @* Sayfa Başlığı ve Yeni Ekle Butonu *@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="h4 fw-bold text-dark mb-1">Depo Yönetimi</h2>
@@ -21,13 +20,11 @@
         </a>
     </div>
 
-    @* Arama Barı *@
     <div class="ws-search-container">
         <i data-lucide="search" class="ws-search-icon"></i>
         <input type="text" id="warehouseSearch" class="form-control border-0 shadow-sm ws-search-input" placeholder="Depo ara (Ad, konum)...">
     </div>
 
-    @* Depo Grid Alanı *@
     <div class="ws-warehouse-grid">
         @foreach (var item in Model)
         {
@@ -37,7 +34,6 @@
             <div class="ws-warehouse-card-wrapper">
                 <div class="ws-warehouse-card" data-name="@item.Name" data-code="DPO-@shortCode" data-location="@item.Location">
                     
-                    @* Üst: İkon, Başlık, Aksiyonlar *@
                     <div class="card-header-flex">
                         <div class="card-header-row">
                             <div class="warehouse-icon-box">
@@ -61,7 +57,6 @@
                         </div>
                     </div>
 
-                    @* Orta: Meta Bilgiler (Konum, Tarih) *@
                     <div class="warehouse-meta">
                         <div class="meta-item">
                             <i data-lucide="map-pin"></i>
@@ -73,7 +68,6 @@
                         </div>
                     </div>
 
-                    @* Alt: İstatistikler *@
                     <div class="warehouse-stats">
                         <div class="stat-box purple">
                             <span class="stat-label">Ürün Çeşidi</span>
@@ -92,6 +86,5 @@
 </div>
 
 @section Scripts {
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="~/js/warehouse/warehouse-manager.js" asp-append-version="true"></script>
+    <script src="~/js/pages/warehouse.js" asp-append-version="true"></script>
 }

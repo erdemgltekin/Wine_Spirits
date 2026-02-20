@@ -65,27 +65,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        function processRequest(id, action) {
-            if (!confirm('Bu işlemi onaylıyor musunuz?')) return;
-
-            $.ajax({
-                url: `/Management/${action}Request`,
-                type: 'POST',
-                data: { id: id },
-                success: function(response) {
-                    if (response.success) {
-                        $(`#row-${id}`).fadeOut(300, function() { $(this).remove(); });
-                        // site.js içindeki toast fonksiyonun varsa çağır
-                        if(typeof showStatusToast === 'function') {
-                            showStatusToast(response.message, 'check-circle', true);
-                        }
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        }
-        lucide.createIcons();
-    </script>
+    <script src="~/js/management/backoffice.js" asp-append-version="true"></script>
 }

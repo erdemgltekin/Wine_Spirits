@@ -5,6 +5,7 @@ namespace Wine_Spirits.Models;
 
 public partial class Order : BaseEntity
 {
+    public Guid Id { get; set; }
 
     public Guid CustomerId { get; set; }
 
@@ -14,9 +15,10 @@ public partial class Order : BaseEntity
 
     public Guid WarehouseId { get; set; }
 
+    public DateTime CreatedDate { get; set; }
+
     public virtual Customer Customer { get; set; } = null!;
-
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
-
     public virtual WareHouse Warehouse { get; set; } = null!;
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    
 }

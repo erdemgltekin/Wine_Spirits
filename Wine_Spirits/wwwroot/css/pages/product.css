@@ -1,0 +1,48 @@
+/* Product Page Specific Styles */
+@import "/css/main.css";
+
+.ws-product-container {
+    padding-bottom: 2rem;
+}
+
+.ws-product-img-wrapper {
+    width: 48px;
+    height: 48px;
+    background: #f8fafc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+}
+
+.ws-product-img-wrapper i {
+    width: 20px;
+    height: 20px;
+}
+
+.ws-badge-danger {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ws-badge-success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #dcfce7;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}

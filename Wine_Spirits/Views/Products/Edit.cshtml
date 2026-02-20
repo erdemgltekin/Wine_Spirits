@@ -135,38 +135,6 @@
 @if (!isAjax) {
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        <script>
-            $(document).ready(function() {
-                $('.select2-enable').select2({
-                    placeholder: "Seçiniz...",
-                    allowClear: true,
-                    width: '100%',
-                    dropdownParent: $('#sidePanel')
-                });
-            });
-
-            function sendSupportRequest(type, label) {
-                const name = prompt(`Yeni ${label} talebi için isim giriniz:`);
-                if (name && name.trim() !== "") {
-                    $.ajax({
-                        url: '/Support/SendRequest',
-                        type: 'POST',
-                        data: { type: type, name: name },
-                        success: function(response) {
-                            if (response.success) {
-                                // showStatusToast is defined in site.js
-                                showStatusToast(response.message, 'check-circle', true);
-                            } else {
-                                alert(response.message);
-                            }
-                        },
-                        error: function() {
-                            alert("İşlem sırasında bir hata oluştu.");
-                        }
-                    });
-                }
-            }
-            lucide.createIcons();
-        </script>
+        <script src="~/js/product/product-form.js" asp-append-version="true"></script>
     }
 }

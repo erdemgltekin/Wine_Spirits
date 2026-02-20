@@ -1,19 +1,29 @@
-﻿namespace Wine_Spirits.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class AppUser : BaseEntity
+namespace Wine_Spirits.Models;
+
+public partial class AppUser : BaseEntity
 {
+    public Guid Id { get; set; }
+
     public string Username { get; set; } = null!;
+
     public string Password { get; set; } = null!;
+
     public string? FullName { get; set; }
-    public string? Position { get; set; } // Görsel etiket (Örn: "Gece Müdürü")
-    public UserRole Role { get; set; }    // Sistemsel yetki (Enum)
-    public bool IsActive { get; set; } = true;
-    public bool IsDeleted { get; set; } = false;
+
+    public string? Position { get; set; }
+
+    public DateTime CreatedDate { get; set; }
+
+    public UserRole Role { get; set; }
 }
 
 public enum UserRole
 {
-    SuperAdmin = 1,
+    SuperAdmin = 0,
+    Admin = 1,
     Manager = 2,
     Staff = 3
 }

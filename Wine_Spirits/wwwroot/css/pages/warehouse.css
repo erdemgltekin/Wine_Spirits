@@ -1,0 +1,196 @@
+/**
+ * @file warehouse.css
+ * @description Depo Yönetimi sayfası için Figma tasarımına uygun stiller.
+ */
+@import "/css/main.css";
+
+.ws-warehouse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+.ws-warehouse-card {
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    padding: 1rem;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    justify-content: space-between;
+}
+
+.ws-warehouse-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.05);
+    border-color: #e2e8f0;
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.card-header-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.warehouse-icon-box {
+    width: 38px;
+    height: 38px;
+    background-color: #f5f3ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b5cf6;
+    flex-shrink: 0;
+}
+
+.warehouse-icon-box i {
+    width: 18px;
+    height: 18px;
+}
+
+.warehouse-header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.warehouse-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.warehouse-code {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.ws-action-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+}
+
+.ws-action-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.ws-edit-icon {
+    color: #334155 !important;
+}
+
+.ws-delete-icon {
+    color: #ef4444 !important;
+}
+
+.warehouse-meta {
+    margin-left: calc(38px + 0.75rem);
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.meta-item i {
+    width: 12px;
+    height: 12px;
+}
+
+.warehouse-stats {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.stat-box {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-box.purple {
+    background-color: #fdf4ff;
+}
+
+.stat-box.blue {
+    background-color: #f0f9ff;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.stat-box.purple .stat-value {
+    color: #d946ef;
+}
+
+.stat-box.blue .stat-value {
+    color: #0ea5e9;
+}
+
+.ws-search-container {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.ws-search-icon {
+    position: absolute;
+    color: #94a3b8;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+}
+
+.ws-search-input {
+    padding-left: 3rem;
+    height: 48px;
+    border-radius: 12px;
+}

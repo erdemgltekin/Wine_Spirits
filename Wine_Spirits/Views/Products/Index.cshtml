@@ -10,11 +10,10 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/product/product.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/product.css" asp-append-version="true" />
 }
 
 <div class="ws-product-container">
-    @* Sayfa Başlığı ve Aksiyonlar *@
     <div class="ws-page-header mb-4">
         <div>
             <h2 class="ws-page-title">Ürün Envanteri</h2>
@@ -25,7 +24,6 @@
         </button>
     </div>
 
-    @* İstatistik Kartları (V2 - Figma Accurate) *@
     <div class="row g-4 mb-4">
         <div class="col-xl-3 col-sm-6">
             <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-indigo-50 text-indigo-600" }' />
@@ -41,18 +39,14 @@
         </div>
     </div>
 
-    @* Premium Filtreleme Paneli (V3.0) *@
     <div class="ws-filter-container">
         <div class="row g-3 align-items-center">
-            @* Arama *@
             <div class="col-lg-3 col-md-12">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="search"></i></span>
                     <input type="text" class="ws-input-control" placeholder="Ürün adı veya barkod..." id="inventorySearch">
                 </div>
             </div>
-            
-            @* Kategori *@
             <div class="col-lg-2 col-md-4">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="layers"></i></span>
@@ -64,8 +58,6 @@
                     </select>
                 </div>
             </div>
-
-            @* Marka *@
             <div class="col-lg-2 col-md-4">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="tag"></i></span>
@@ -76,8 +68,6 @@
                     </select>
                 </div>
             </div>
-
-            @* Stok Durumu *@
             <div class="col-lg-3 col-md-4">
                 <div class="ws-input-group">
                     <span class="ws-input-icon"><i data-lucide="alert-circle"></i></span>
@@ -88,14 +78,11 @@
                     </select>
                 </div>
             </div>
-
-            @* Filtrele / Sırala *@
             <div class="col-lg-2 col-md-12">
                 <div class="dropdown">
                     <button class="ws-btn-modern-filter dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="d-flex align-items-center gap-2">
-                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
-                            Filtrele / Sırala
+                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i> Filtrele / Sırala
                         </span>
                         <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
                     </button>
@@ -105,14 +92,12 @@
                         <li><a class="dropdown-item" href="#" data-sort="name-desc">Z'den A'ya</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" data-sort="stock-desc">En Yüksek Stok</a></li>
-                        <li><a class="dropdown-item text-danger" href="#" data-sort="critical">Kritik Stoklar</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    @* Ürünler Tablosu *@
     <div class="ws-table-card">
         <div class="table-responsive">
             <table class="table ws-custom-table align-middle">
@@ -129,44 +114,7 @@
                     </tr>
                 </thead>
                 <tbody id="productsTableBody">
-                    <tr>
-                        <td class="ps-4">
-                            <div class="ws-product-img-wrapper">
-                                <i data-lucide="image" class="text-muted opacity-25"></i>
-                            </div>
-                        </td>
-                        <td><span class="text-muted small">8690001122</span></td>
-                        <td><div class="fw-semibold">Chardonnay Reserve 2022</div></td>
-                        <td>Beyaz Şarap</td>
-                        <td><span class="fw-bold text-danger">8</span></td>
-                        <td>Adet</td>
-                        <td><span class="ws-badge ws-badge-danger"><i data-lucide="alert-circle" class="ws-icon-16"></i> Kritik Stok</span></td>
-                        <td class="text-end pe-4">
-                            <div class="ws-action-container">
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                                <button class="ws-action-btn ws-action-btn-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4">
-                            <div class="ws-product-img-wrapper">
-                                <i data-lucide="image" class="text-muted opacity-25"></i>
-                            </div>
-                        </td>
-                        <td><span class="text-muted small">8690001145</span></td>
-                        <td><div class="fw-semibold">Merlot Special Selection</div></td>
-                        <td>Kırmızı Şarap</td>
-                        <td><span class="fw-bold text-dark">45</span></td>
-                        <td>Adet</td>
-                        <td><span class="ws-badge ws-badge-success"><i data-lucide="check-circle" class="ws-icon-16"></i> Yeterli</span></td>
-                        <td class="text-end pe-4">
-                            <div class="ws-action-container">
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                                <button class="ws-action-btn ws-action-btn-danger" title="Sil"><i data-lucide="trash-2" class="ws-icon-16"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                    @* Static rows for now, but following the clean pattern *@
                 </tbody>
             </table>
         </div>
@@ -174,5 +122,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/product/product.js" asp-append-version="true"></script>
+    <script src="~/js/pages/product.js" asp-append-version="true"></script>
 }

@@ -5,6 +5,7 @@ namespace Wine_Spirits.Models;
 
 public partial class Customer : BaseEntity
 {
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -18,10 +19,9 @@ public partial class Customer : BaseEntity
 
     public string TaxOffice { get; set; } = null!;
 
-    public int TaxNumber { get; set; }
-    
-    // GLOBAL: Müşteri aktiflik durumunu tutan alan
-    public bool IsActive { get; set; } = true;
+    public string? TaxNumber { get; set; }
+
+    public DateTime CreatedDate { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

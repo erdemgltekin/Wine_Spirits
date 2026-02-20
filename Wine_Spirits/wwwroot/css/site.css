@@ -411,6 +411,11 @@ body {
     color: #475569;
 }
 
+.ws-icon-14 {
+    width: 14px;
+    height: 14px;
+}
+
 .ws-icon-16 {
     width: 16px;
     height: 16px;
@@ -419,6 +424,21 @@ body {
 .ws-icon-18 {
     width: 18px;
     height: 18px;
+}
+
+.ws-icon-20 {
+    width: 20px;
+    height: 20px;
+}
+
+.ws-icon-48 {
+    width: 48px;
+    height: 48px;
+}
+
+.ws-icon-64 {
+    width: 64px;
+    height: 64px;
 }
 
 .btn-primary {

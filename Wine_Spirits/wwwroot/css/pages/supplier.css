@@ -1,0 +1,235 @@
+/**
+ * @file supplier.css
+ * @path wwwroot/css/pages/supplier.css
+ * @description Premium V3 Tedarikçi Yönetimi Tasarımı
+ */
+
+:root {
+    --ws-card-bg: #ffffff;
+    --ws-card-border: #f1f5f9;
+    --ws-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --ws-card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --ws-primary: #6366f1;
+    --ws-success: #10b981;
+    --ws-text-main: #1e293b;
+    --ws-text-muted: #64748b;
+}
+
+/* 1. Grid Yapısı */
+.ws-supplier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+    padding-top: 1rem;
+}
+
+/* 2. Kart Tasarımı (V3 Premium) */
+.ws-supplier-card {
+    background: var(--ws-card-bg);
+    border: 1px solid var(--ws-card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--ws-card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ws-supplier-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--ws-card-hover-shadow);
+    border-color: #e2e8f0;
+}
+
+/* 3. Status Indicator */
+.supplier-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.ws-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.ws-status-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* 4. Header V3 */
+.card-header-v3 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.supplier-avatar-box {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ws-primary);
+    border: 1px solid #e2e8f0;
+}
+
+.supplier-avatar-box i {
+    width: 24px;
+    height: 24px;
+}
+
+.supplier-info-v3 {
+    flex: 1;
+}
+
+.supplier-name-v3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--ws-text-main);
+    margin: 0;
+    line-height: 1.25;
+}
+
+.supplier-code-v3 {
+    font-size: 0.75rem;
+    color: var(--ws-text-muted);
+    font-weight: 500;
+}
+
+.card-actions-v3 {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ws-btn-icon-v3 {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ws-btn-icon-v3:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.ws-btn-icon-v3 i {
+    width: 16px;
+    height: 16px;
+}
+
+/* 5. Details Section */
+.supplier-details-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--ws-text-muted);
+}
+
+.detail-row i {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+}
+
+/* 6. Footer (KPIs) */
+.supplier-footer-v3 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.kpi-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--ws-text-muted);
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ws-text-main);
+}
+
+.ws-btn-delete-v3 {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #fff1f2;
+    color: #ef4444;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ws-btn-delete-v3:hover {
+    background: #fee2e2;
+    transform: scale(1.05);
+}
+
+/* 7. Empty State */
+.ws-empty-state-v3 {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 2px dashed #e2e8f0;
+}
+
+.empty-icon-box {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon-box i {
+    width: 40px;
+    height: 40px;
+}
