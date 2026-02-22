@@ -1,8 +1,13 @@
 @using Wine_Spirits.Models.ViewModels
 @model ProductsIndexViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Ürün Envanteri";
     var stats = Model?.Stats ?? new ProductStats();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/product/product.css" asp-append-version="true" />
 }
 
 <div class="ws-main-container p-4">
