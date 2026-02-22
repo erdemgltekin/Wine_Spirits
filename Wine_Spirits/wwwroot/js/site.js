@@ -1,6 +1,6 @@
 ﻿/**
  * SarapToptan ERP - Global JavaScript Controller
- * SidePanel (Drawer) ve GlobalUI (Modal/Sidebar) birleştirilmiş versiyon.
+ * SidePanel (Drawer), GlobalUI (Modal/Sidebar) ve Global Effects
  */
 
 /* ============================================================
@@ -127,7 +127,7 @@ const SidePanel = {
 };
 
 /* ============================================================
-   2. GLOBAL UI MANTIĞI (Modal, Sidebar, Helpers)
+    2. GLOBAL UI MANTIĞI (Modal, Sidebar, Helpers)
    ============================================================ */
 const GlobalUI = {
     bsModal: null,
@@ -137,6 +137,7 @@ const GlobalUI = {
         this.initNotifications();
         this.initTooltips();
         this.refreshLucide();
+        console.log('GlobalUI: Initialized.');
     },
 
     initSidebar: function () {
@@ -145,19 +146,14 @@ const GlobalUI = {
         const toggleBtn = document.getElementById('sidebarToggle');
         const sidebarClose = document.getElementById('sidebarClose');
 
-        // Sidebar Açma/Kapama (Toggle)
         if (toggleBtn && sidebar && mainContent) {
             toggleBtn.addEventListener('click', () => {
-                // CSS'deki .collapsed ve .expanded sınıflarını kullanıyoruz (İtme etkisi için)
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('expanded');
-
-                // İkonları tazele
                 this.refreshLucide();
             });
         }
 
-        // Mobil kapatma butonu
         if (sidebarClose && sidebar && mainContent) {
             sidebarClose.addEventListener('click', () => {
                 sidebar.classList.add('collapsed');
@@ -187,14 +183,16 @@ const GlobalUI = {
 
         if (!modalEl || !modalBody) return;
 
-        modalDialog.className = 'modal-dialog modal-dialog-centered ' + modalSize;
+        if (modalDialog) {
+            modalDialog.className = 'modal-dialog modal-dialog-centered ' + modalSize;
+        }
+
         modalBody.innerHTML = `
             <div class="p-5 text-center">
                 <div class="spinner-border text-primary" role="status"></div>
                 <p class="mt-2 text-muted small">Yükleniyor...</p>
             </div>`;
 
-        this.bsModal = new bootstrap.Toast(modalEl); // Bu bir hata, modal olmalı
         this.bsModal = new bootstrap.Modal(modalEl);
         this.bsModal.show();
 
@@ -207,15 +205,17 @@ const GlobalUI = {
     },
 
     refreshLucide: function () {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 };
 
 /* ============================================================
-   3. EVENT LISTENERLAR VE BAŞLATMA
+    3. EVENT LISTENERLAR VE BAŞLATMA
    ============================================================ */
 $(document).ready(function () {
-    // GlobalUI Başlat
+    // GlobalUI Başlat (İkonlar ve genel bileşenler dahil)
     GlobalUI.init();
 
     // SidePanel Universal Trigger [data-drawer="true"]
@@ -238,12 +238,17 @@ $(document).ready(function () {
     });
 });
 
-// AJAX ile sayfa içeriği değiştiğinde ikonları canlandır
+/**
+ * AJAX ile herhangi bir sayfa içeriği (tablo, modal vb.) değiştiğinde 
+ * ikonların otomatik olarak yeniden çizilmesini sağlar.
+ */
 $(document).ajaxComplete(function () {
     GlobalUI.refreshLucide();
 });
 
-// Yardımcı Fonksiyonlar (Global)
+/* ============================================================
+    4. YARDIMCI FONKSİYONLAR (GLOBAL)
+   ============================================================ */
 function formatCurrency(amount) {
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
 }

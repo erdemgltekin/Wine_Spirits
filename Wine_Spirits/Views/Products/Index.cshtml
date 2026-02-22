@@ -16,7 +16,7 @@
             <h2 class="fw-bold text-dark m-0">Ürün Envanteri</h2>
             <p class="text-muted small">Figma tabanlı profesyonel envanter yönetimi.</p>
         </div>
-        <button type="button" class="ws-btn-main" id="btnCreateNew">
+        <button type="button" class="ws-btn-main shadow-sm" id="btnCreateNew">
             <i data-lucide="plus"></i> Yeni Ürün Ekle
         </button>
     </div>
@@ -24,94 +24,71 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-indigo-50">
-                    <i data-lucide="package"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Toplam Ürün</small>
-                    <span class="fw-bold h5">@stats.TotalProducts</span>
-                </div>
+                <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
+                <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-rose-50">
-                    <i data-lucide="alert-triangle"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Kritik Stok</small>
-                    <span class="fw-bold h5">@stats.CriticalStockCount</span>
-                </div>
+                <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
+                <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-emerald-50">
-                    <i data-lucide="banknote"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Değer</small>
-                    <span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span>
-                </div>
+                <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
+                <div><small class="text-muted d-block">Değer</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-amber-50">
-                    <i data-lucide="layers"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Kategoriler</small>
-                    <span class="fw-bold h5">@stats.CategoryCount</span>
-                </div>
+                <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
+                <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
             </div>
         </div>
     </div>
 
-    <div class="ws-inventory-filter-bar shadow-sm">
-        <div class="ws-filter-icon-wrap ws-flex-search">
+    <div class="ws-filter-container shadow-sm">
+        <div class="ws-filter-item ws-flex-search">
             <i data-lucide="search"></i>
-            <input type="text" id="inventorySearch" class="form-control ws-filter-el" placeholder="Ürün ara...">
+            <input type="text" id="inventorySearch" class="ws-filter-el" placeholder="Ürün ara...">
         </div>
 
-        <div class="ws-filter-icon-wrap ws-flex-date">
+        <div class="ws-filter-item">
             <i data-lucide="calendar"></i>
-            <input type="text" id="dateFilter" class="form-control ws-filter-el" placeholder="Tarih Aralığı" readonly>
+            <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly>
         </div>
 
-        <div class="ws-filter-icon-wrap ws-flex-cat">
+        <div class="ws-filter-item">
             <i data-lucide="tag"></i>
-            <select class="form-select ws-filter-el" id="filterCategory">
-                <option value="">Kategori</option>
+            <select class="ws-filter-el" id="filterCategory">
+                <option value="">Kategori Seçin</option>
             </select>
         </div>
 
-        <div class="ws-filter-icon-wrap ws-flex-stock">
+        <div class="ws-filter-item">
             <i data-lucide="box"></i>
-            <select class="form-select ws-filter-el" id="filterStock">
-                <option value="">Stok</option>
-                <option value="in-stock">Var</option>
+            <select class="ws-filter-el" id="filterStock">
+                <option value="">Stok Durumu</option>
+                <option value="in-stock">Stokta Var</option>
                 <option value="critical">Kritik</option>
             </select>
         </div>
 
-        <div class="dropdown ws-flex-stock">
-            <button class="btn ws-filter-el ws-btn-sort w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="dropdown">
+            <button class="ws-btn-filter-action shadow-sm" type="button" data-bs-toggle="dropdown">
                 <i data-lucide="sliders-horizontal"></i> Sırala
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc" class="me-2 size-14"></i> İsim (A-Z)</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-desc')"><i data-lucide="sort-desc" class="me-2 size-14"></i> İsim (Z-A)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc" class="me-2 size-18"></i> İsim (A-Z)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up" class="me-2 size-18"></i> En Yüksek Fiyat</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up" class="me-2 size-14"></i> En Yüksek Fiyat</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-asc')"><i data-lucide="trending-down" class="me-2 size-14"></i> En Düşük Fiyat</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package" class="me-2 size-14"></i> Stok (Azalan)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package" class="me-2 size-18"></i> Stok (Azalan)</a></li>
             </ul>
         </div>
     </div>
 
-    <div class="ws-table-card shadow-sm border rounded-4 bg-white overflow-hidden">
+    <div id="productsTableContainer" class="ws-table-card shadow-sm border rounded-4 bg-white overflow-hidden">
         <table class="table align-middle m-0">
             <thead class="bg-light">
                 <tr>
@@ -132,10 +109,9 @@
 </div>
 
 <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered ws-modal-md">
+    <div id="globalModalDialog" class="modal-dialog modal-dialog-centered ws-modal-md">
         <div class="modal-content border-0 shadow-lg ws-modal-custom">
-            <div id="productModalBody">
-            </div>
+            <div id="productModalBody"></div>
         </div>
     </div>
 </div>
@@ -150,9 +126,10 @@
     <script src="~/js/product/product.js" asp-append-version="true"></script>
 
     <script>
-        // Sayfa yüklendiğinde Lucide ikonlarını initialize et
-        document.addEventListener('DOMContentLoaded', function() {
-            lucide.createIcons();
+        $(document).ready(function() {
+            if (typeof ProductManager !== 'undefined' && ProductManager.init) {
+                ProductManager.init();
+            }
         });
     </script>
 }

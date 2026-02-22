@@ -239,10 +239,11 @@ body {
 }
 
     .ws-btn-main:hover, .ws-btn-primary:hover {
-        background-color: var(--primary-hover) !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        background-color: var(--primary-hover) !important;     
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -6px rgba(124, 58, 237, 0.35) !important;
     }
+    
 
 .ws-btn-secondary {
     background-color: var(--gray-100) !important;
@@ -460,8 +461,130 @@ body {
     #sidePanel.active {
         right: 0;
     }
+/* --- 10.GLOBAL FILTER BAR CONTAINER --- */
+/* --- GLOBAL FILTER BAR (Figma Style) --- */
+.ws-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1.5px solid #f1f5f9;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
 
-/* 10. MOBİL UYUMLULUK */
+/* Filtre Elemanı Sarıcı (İkon + Input/Select) */
+.ws-filter-item, .ws-btn-filter-action {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 10px;
+    padding: 2px 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex: 1;
+}
+    /* Hover Efekti: Hem kutular hem buton mor shadow alsın */
+    .ws-filter-item:hover, .ws-btn-filter-action:hover {
+        transform: translateY(-3px) !important;
+        border-color: #7c3aed !important;
+        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2), 0 6px 6px -5px rgba(124, 58, 237, 0.1) !important;
+    }
+
+        /* İkon Efekti: Hover anında ikonları canlandır */
+        .ws-filter-item:hover i,
+        .ws-filter-item:hover svg,
+        .ws-btn-filter-action:hover i,
+        .ws-btn-filter-action:hover svg {
+            color: #7c3aed !important;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
+
+    /* Odaklanma Efekti (Mor Çerçeve) */
+    .ws-filter-item:focus-within {
+        border-color: #7c3aed;
+        background: #ffffff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2) !important;
+    }
+    
+
+    .ws-filter-item i, .ws-filter-item svg {
+        color: #94a3b8;
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+/* Input/Select Temizliği */
+.ws-filter-el {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #334155;
+    width: 100%;
+    outline: none;
+}
+
+/* Sırala/Filtrele Butonu */
+.ws-btn-filter-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    white-space: nowrap;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+    .ws-btn-filter-action:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #7c3aed;
+    }
+        .ws-btn-filter-action:hover i,
+        .ws-btn-filter-action:hover svg {
+            transform: rotate(15deg); 
+            color: #7c3aed;
+            transition: transform 0.3s ease;
+        }
+
+/* Sağdaki Sıralama/Filtrele Butonu */
+.ws-btn-filter-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    cursor: pointer;
+}    
+    .ws-btn-filter-action:hover {
+        background: #ffffff;
+        border-color: #7c3aed; 
+        color: #7c3aed;
+        transform: translateY(-3px); 
+        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2), 0 6px 6px -5px rgba(124, 58, 237, 0.1) !important;
+    }
+/* 11. MOBİL UYUMLULUK */
 @media (max-width: 991.98px) {
     .main-content {
         margin-left: 0 !important;

@@ -6,26 +6,21 @@
     padding: 1.5rem;
 }
 
-/* --- STAT KARTLARI (Figma Premium Hover & Glow Efekti) --- */
-
+/* --- STAT KARTLARI (Mor Glow Efekti) --- */
 .ws-stat-card-v2 {
     background: #ffffff !important;
     border: 1.5px solid #f1f5f9 !important;
-    border-radius: 20px !important; /* Daha yumuşak köşeler */
+    border-radius: 20px !important;
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
     position: relative;
-    z-index: 1;
 }
 
-    /* 1. Görseldeki Mor Gölge (Shadow) ve Yükselme Efekti */
     .ws-stat-card-v2:hover {
         transform: translateY(-8px) !important;
-        border-color: #7c3aed !important; /* Figma Purple */
-        /* Katmanlı mor gölge: derinlik ve parlama (glow) bir arada */
+        border-color: #7c3aed !important;
         box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.2), 0 10px 10px -5px rgba(124, 58, 237, 0.1) !important;
     }
 
-/* İkon Kutusu Genel Stili */
 .ws-stat-icon-box {
     width: 48px;
     height: 48px;
@@ -33,23 +28,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
     transition: transform 0.3s ease;
 }
 
 .ws-stat-card-v2:hover .ws-stat-icon-box {
-    transform: scale(1.1); /* Hoverda ikon hafifçe büyür */
+    transform: scale(1.1);
 }
 
-/* Lucide İkonlarının Belirginliği */
-.ws-stat-icon-box i,
-.ws-stat-icon-box svg {
+.ws-stat-icon-box i, .ws-stat-icon-box svg {
     width: 24px !important;
     height: 24px !important;
-    stroke-width: 2.5; /* Daha kalın ve premium duruş */
+    stroke-width: 2.5;
 }
 
-/* --- İKON RENK PALETİ (Daha Canlı Tonlar) --- */
+/* Renk Paleti */
 .bg-indigo-50 {
     background-color: #eef2ff !important;
     color: #4f46e5 !important;
@@ -70,8 +62,13 @@
     color: #d97706 !important;
 }
 
-/* --- ÜRÜN TABLOSU VE GÖRSELLER --- */
+/* --- PRODUCT SPECIFIC FILTER ADJUSTMENTS --- */
+.ws-flex-search {
+    flex: 2 !important;
+}
+/* Arama alanı daha geniş */
 
+/* --- TABLO VE GÖRSELLER --- */
 .ws-product-img-wrapper {
     width: 44px;
     height: 44px;
@@ -82,7 +79,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
 .ws-product-img {
@@ -91,41 +87,23 @@
     object-fit: cover;
 }
 
-/* Tablo Sütun Genişlikleri */
-.ws-custom-table th:first-child,
-.ws-custom-table td:first-child {
-    width: 72px;
-}
-
-/* İşlem Butonları (Aksiyon) */
-.ws-action-btn-danger:hover {
-    background-color: #fff1f2;
-    color: #e11d48;
-    border-color: #fecdd3;
-}
-
-/* --- FLATPICKR (TAKTAKÖZELLEŞTİRME) --- */
-
+/* Flatpickr Düzenleme */
 .flatpickr-calendar {
     border-radius: 16px !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
-    border: 1px solid #f1f5f9 !important;
-    font-family: 'Inter', sans-serif !important;
 }
 
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.endRange {
-    background: #7c3aed !important; /* Figma Moru */
+.flatpickr-day.selected {
+    background: #7c3aed !important;
     border-color: #7c3aed !important;
 }
 
-.flatpickr-day.inRange {
-    background: #f5f3ff !important;
-    border-color: #f5f3ff !important;
-    color: #7c3aed !important;
-}
+@media (max-width: 992px) {
+    .ws-filter-container {
+        flex-wrap: wrap;
+    }
 
-.flatpickr-day:hover {
-    background: #f5f3ff !important;
+    .ws-filter-item {
+        min-width: calc(50% - 6px);
+    }
 }
