@@ -4,12 +4,12 @@
     @if (!Model.HideIcon)
     {
         <div class="ws-stat-icon-box @Model.IconClass">
-            <i data-lucide="@Model.Icon"></i>
+            <i data-lucide="@Model.Icon" style="width: 24px; height: 24px;"></i>
         </div>
     }
-    <div class="ws-stat-body">
-        <div class="ws-stat-label">@Model.Label</div>
-        <div class="ws-stat-value-text">
+    <div class="ws-stat-content">
+        <span class="ws-stat-label">@Model.Label</span>
+        <div class="ws-stat-value-container">
             <span class="ws-stat-value">@Model.Value</span>
         </div>
     </div>

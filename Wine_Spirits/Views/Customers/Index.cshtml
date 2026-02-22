@@ -9,7 +9,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/customer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/customer/customer.css" asp-append-version="true" />
 }
 
 <div class="ws-customer-container">
@@ -18,24 +18,17 @@
             <h2 class="ws-page-title">Müşteri Yönetimi</h2>
             <p class="ws-page-subtitle">Müşteri portföyünüzü ve ticari bilgileri yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-primary shadow-sm" id="btnCreateCustomer" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+        <button type="button" class="ws-btn-primary shadow-sm" id="btnCreateCustomer">
             <i data-lucide="user-plus" class="ws-icon-16"></i> Yeni Müşteri Ekle
         </button>
     </div>
 
-    @* İstatistik Kartları Girdisi *@
-    <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalCustomers", Label = "Toplam Müşteri", Value = Model.Stats.TotalCustomers.ToString(), Icon = "users", IconClass = "bg-gray-100 text-gray-900" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "activeCustomers", Label = "Aktif Müşteri", Value = Model.Stats.ActiveCustomers.ToString(), Icon = "user-check", IconClass = "bg-emerald-50 text-emerald-600" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalOrders", Label = "Toplam Sipariş", Value = Model.Stats.TotalOrders.ToString(), Icon = "package", IconClass = "bg-primary-50 text-primary-600" }' />
-        </div>
-            @* Ciro Kısmı: Formatsız hali decimal değil artık string geldiği için direkt basıyoruz *@
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalRevenue", Label = "Toplam Ciro", Value = Model.Stats.TotalRevenue, Icon = "trending-up", IconClass = "bg-violet-50 text-violet-600" }' />
+    @* İstatistik Kartları: Modern Grid Yapısı *@
+    <div class="ws-stats-grid mb-4">
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalCustomers", Label = "Toplam Müşteri", Value = Model.Stats.TotalCustomers.ToString(), Icon = "users", IconClass = "bg-gray-100 text-gray-900" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "activeCustomers", Label = "Aktif Müşteri", Value = Model.Stats.ActiveCustomers.ToString(), Icon = "user-check", IconClass = "bg-emerald-50 text-emerald-600" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalOrders", Label = "Toplam Sipariş", Value = Model.Stats.TotalOrders.ToString(), Icon = "package", IconClass = "bg-primary-50 text-primary-600" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalRevenue", Label = "Toplam Ciro", Value = Model.Stats.TotalRevenue, Icon = "trending-up", IconClass = "bg-violet-50 text-violet-600" }' />
     </div>
 
     <div class="ws-filter-container">
@@ -55,7 +48,7 @@
 
         <div class="ws-input-group">
             <span class="ws-input-icon"><i data-lucide="calendar"></i></span>
-            <input type="text" class="ws-input-control flatpickr-date" id="filterDate" placeholder="Tarih Aralığı Seçin" readonly>
+            <input type="text" class="ws-input-control ws-datepicker" id="filterDate" placeholder="Tarih Aralığı Seçin" readonly>
         </div>
 
         <div class="ws-filter-item">
@@ -153,10 +146,13 @@
 </div>
 
 @* Modal ve Script bölümleri aynı kalabilir *@
-<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true">
-    @* ... (Modal içeriği senin dosyanla aynı kalsın) ... *@
-</div>
+<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content ws-card border-0 shadow-lg"></div>
+    </div>
+</div> 
 
 @section Scripts {
-    <script src="~/js/pages/customer.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="~/js/customer/customer.js" asp-append-version="true"></script>
 }

@@ -1,7 +1,6 @@
 ﻿// SarapToptan ERP - Main JavaScript File
 
 // Toggle sidebar functionality
-// Toggle sidebar functionality
 function toggleSidebar() {
     document.body.classList.toggle('sidebar-collapsed');
 }
@@ -54,3 +53,43 @@ function formatDate(dateString) {
         minute: '2-digit'
     }).format(date);
 }
+
+// Global UI Controller
+const GlobalUI = {
+    bsModal: null,
+    // modalSize parametresi ekledik: 'ws-modal-md' (varsayılan), 'modal-lg' vb.
+    openModal: function (url, modalSize = 'ws-modal-md') {
+        const modalEl = document.getElementById('productModal');
+        const modalBody = document.getElementById('productModalBody');
+        const modalDialog = document.getElementById('globalModalDialog');
+
+        if (!modalEl || !modalBody) return;
+
+        // 1. Önceki boyutu temizle ve yenisini ekle
+        modalDialog.className = 'modal-dialog modal-dialog-centered ' + modalSize;
+
+        // 2. İçeriği temizle (Eski verinin görünmesini engeller)
+        modalBody.innerHTML = `
+            <div class="p-5 text-center">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted small">Yükleniyor...</p>
+            </div>`;
+
+        this.bsModal = new bootstrap.Modal(modalEl);
+        this.bsModal.show();
+
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.text())
+            .then(html => {
+                modalBody.innerHTML = html;
+                this.refreshLucide(); // İkonları tazele
+            })
+            .catch(err => {
+                modalBody.innerHTML = '<div class="alert alert-danger m-3">Bir hata oluştu.</div>';
+            });
+    },
+
+    refreshLucide: function () {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+};

@@ -1,0 +1,48 @@
+﻿@model Wine_Spirits.Models.Customer
+
+<div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">Yeni Müşteri Ekle</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="createCustomerForm">
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Müşteri Adı / Firma *</label>
+            <input asp-for="Name" class="form-control" placeholder="Müşteri adını girin" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Email" class="form-label">E-posta</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresi">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Phone" class="form-label">Telefon</label>
+                <input asp-for="Phone" class="form-control" placeholder="Telefon numarası">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Adress" class="form-label">Adres</label>
+            <textarea asp-for="Adress" class="form-control" rows="2" placeholder="Adres bilgisi"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-2">
+                <label asp-for="TaxOffice" class="form-label">Vergi Dairesi</label>
+                <input asp-for="TaxOffice" class="form-control" placeholder="Vergi dairesi">
+            </div>
+            <div class="col-md-6 mb-2">
+                <label asp-for="TaxNumber" class="form-label">Vergi Numarası</label>
+                <input asp-for="TaxNumber" class="form-control" placeholder="Vergi numarası">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 10px; border: 1px solid #e2e8f0; color: #64748b;">İptal</button>
+        <button type="submit" class="ws-btn-primary">Müşteri Ekle</button>
+    </div>
+</form>

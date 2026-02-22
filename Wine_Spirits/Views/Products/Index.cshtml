@@ -1,126 +1,125 @@
 @using Wine_Spirits.Models.ViewModels
-@model Wine_Spirits.Models.ViewModels.ProductsIndexViewModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
+@model ProductsIndexViewModel
 @{
-    ViewData["Title"] = "Ürünler";
-    Layout = "_Layout";
+    ViewData["Title"] = "Ürün Envanteri";
     var stats = Model?.Stats ?? new ProductStats();
-    var fmtMoney = new Func<decimal, string>(val => val.ToString("C2", new System.Globalization.CultureInfo("tr-TR")));
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/pages/product.css" asp-append-version="true" />
-}
-
-<div class="ws-product-container">
-    <div class="ws-page-header mb-4">
+<div class="ws-main-container p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="ws-page-title">Ürün Envanteri</h2>
-            <p class="ws-page-subtitle">Tüm ürünlerinizi premium bir arayüzle yönetin.</p>
+            <h2 class="fw-bold text-dark m-0">Ürün Envanteri</h2>
+            <p class="text-muted small">Figma tabanlı profesyonel envanter yönetimi.</p>
         </div>
-        <button type="button" class="ws-btn-primary shadow-sm" id="btnCreateNew">
-            <i data-lucide="plus-circle" class="ws-icon-16"></i> Yeni Ürün Ekle
+        <button type="button" class="ws-btn-main" id="btnCreateNew">
+            <i data-lucide="plus"></i> Yeni Ürün Ekle
         </button>
     </div>
 
     <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-indigo-50 text-indigo-600" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "criticalStock", Label = "Kritik Stok", Value = stats.CriticalStockCount.ToString(), Icon = "alert-triangle", IconClass = "bg-rose-50 text-rose-600" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "inventoryValue", Label = "Envanter Değeri", Value = fmtMoney(stats.TotalInventoryValue), Icon = "banknote", IconClass = "bg-emerald-50 text-emerald-600" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "categoryCount", Label = "Kategoriler", Value = stats.CategoryCount.ToString(), Icon = "layers", IconClass = "bg-amber-50 text-amber-600" }' />
-        </div>
-    </div>
-
-    <div class="ws-filter-container">
-        <div class="row g-3 align-items-center">
-            <div class="col-lg-3 col-md-12">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="search"></i></span>
-                    <input type="text" class="ws-input-control" placeholder="Ürün adı veya barkod..." id="inventorySearch">
-                </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
+                <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
             </div>
-            <div class="col-lg-2 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="layers"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterCategory">
-                        <option value="">Kategoriler</option>
-                        <option>Şarap</option>
-                        <option>Bira</option>
-                        <option>Sert Alkol</option>
-                    </select>
-                </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
+                <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
             </div>
-            <div class="col-lg-2 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="tag"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterBrand">
-                        <option value="">Tüm Markalar</option>
-                        <option>Chateau Reserve</option>
-                        <option>Vintage Selection</option>
-                    </select>
-                </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
+                <div><small class="text-muted d-block">Değer</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
             </div>
-            <div class="col-lg-3 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="alert-circle"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterStockStatus">
-                        <option value="">Stok Durumu</option>
-                        <option value="safe">Yeterli Stok</option>
-                        <option value="critical">Kritik Stok (< 10)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-12">
-                <div class="dropdown">
-                    <button class="ws-btn-modern-filter dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="d-flex align-items-center gap-2">
-                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i> Filtrele / Sırala
-                        </span>
-                        <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
-                        <li><h6 class="dropdown-header">Sıralama</h6></li>
-                        <li><a class="dropdown-item active" href="#" data-sort="name-asc">A'dan Z'ye</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="name-desc">Z'den A'ya</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" data-sort="stock-desc">En Yüksek Stok</a></li>
-                    </ul>
-                </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
+                <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
             </div>
         </div>
     </div>
 
-    <div class="ws-table-card">
-        <div class="table-responsive">
-            <table class="table ws-custom-table align-middle">
-                <thead>
-                    <tr>
-                        <th class="ps-4">GÖRSEL</th>
-                        <th>BARKOD</th>
-                        <th>ÜRÜN ADI</th>
-                        <th>KATEGORİ</th>
-                        <th>STOK</th>
-                        <th>BİRİM</th>
-                        <th>DURUM</th>
-                        <th class="text-end pe-4">İŞLEMLER</th>
-                    </tr>
-                </thead>
-                <tbody id="productsTableBody">
-                    @* Static rows for now, but following the clean pattern *@
-                </tbody>
-            </table>
+    <div class="ws-inventory-filter-bar shadow-sm">
+        <div class="ws-filter-icon-wrap ws-flex-search">
+            <i data-lucide="search"></i>
+            <input type="text" id="inventorySearch" class="form-control ws-filter-el" placeholder="Ürün ara...">
+        </div>
+
+        <div class="ws-filter-icon-wrap ws-flex-date">
+            <i data-lucide="calendar"></i>
+            <input type="text" id="dateFilter" class="form-control ws-filter-el" placeholder="Tarih Aralığı" readonly>
+        </div>
+
+        <div class="ws-filter-icon-wrap ws-flex-cat">
+            <i data-lucide="tag"></i>
+            <select class="form-select ws-filter-el" id="filterCategory">
+                <option value="">Kategori</option>
+            </select>
+        </div>
+
+        <div class="ws-filter-icon-wrap ws-flex-stock">
+            <i data-lucide="box"></i>
+            <select class="form-select ws-filter-el" id="filterStock">
+                <option value="">Stok</option>
+                <option value="in-stock">Var</option>
+                <option value="critical">Kritik</option>
+            </select>
+        </div>
+
+        <div class="dropdown ws-flex-stock">
+            <button class="btn ws-filter-el ws-btn-sort w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i data-lucide="sliders-horizontal"></i> Sırala
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc" class="me-2 size-14"></i> İsim (A-Z)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-desc')"><i data-lucide="sort-desc" class="me-2 size-14"></i> İsim (Z-A)</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up" class="me-2 size-14"></i> En Yüksek Fiyat</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-asc')"><i data-lucide="trending-down" class="me-2 size-14"></i> En Düşük Fiyat</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package" class="me-2 size-14"></i> Stok (Azalan)</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="ws-table-card shadow-sm border rounded-4 bg-white overflow-hidden">
+        <table class="table align-middle m-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4 py-3 text-muted small">KOD</th>
+                    <th class="py-3 text-muted small">ÜRÜN ADI</th>
+                    <th class="py-3 text-muted small">KATEGORİ</th>
+                    <th class="py-3 text-muted small">TEDARİKÇİ</th>
+                    <th class="py-3 text-muted small">FİYAT</th>
+                    <th class="py-3 text-muted small">STOK</th>
+                    <th class="py-3 text-muted small">DURUM</th>
+                    <th class="text-center-actions py-3 text-muted small">İŞLEMLER</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ws-modal-md">
+        <div class="modal-content border-0 shadow-lg ws-modal-custom">
+            <div id="productModalBody">
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/pages/product.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/product/product.js" asp-append-version="true"></script>
 }

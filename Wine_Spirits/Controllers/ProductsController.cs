@@ -17,7 +17,7 @@ namespace Wine_Spirits.Controllers
         public IActionResult Create()
         {
             PopulateSelectLists();
-            return View();
+            return PartialView("_CreateProductPartial"); // View yerine PartialView döndür
         }
 
         [HttpPost]

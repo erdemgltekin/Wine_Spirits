@@ -6,59 +6,66 @@
     <title>@ViewData["Title"] - Wine & Spirits</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    @* CSS dosyalarının sırası önemlidir, en son site.css yüklenmeli *@
+    @* Temel Layout Stilleri *@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+    @* Premium Figma Dokunuşları ve Filtre Barı Stilleri *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @* Flatpickr - Global Tarih Seçici *@
+
+    @* Flatpickr - Premium Tarih Seçici Stilleri *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    @* Google Fonts - Inter (Premium görünüm için önerilir) *@
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="ws-layout-body">
 
-    @* TopBar (Fixed Header) *@
-    <header class="ws-topbar">
-        <div class="d-flex align-items-center">
+    @* --- TOPBAR (Fixed Header) --- *@
+    <header class="ws-topbar shadow-sm">
+        <div class="d-flex align-items-center gap-3">
             @* Hamburger Menu *@
             <button class="btn btn-link text-dark p-0" id="sidebarToggle">
                 <i data-lucide="menu"></i>
             </button>
+            @* Breadcrumb veya Logo alanı buraya gelebilir *@
         </div>
 
         <div class="d-flex align-items-center gap-3">
             @* Notifications *@
-            @* Notifications Dropdown *@
             <div class="dropdown">
                 @{
-                    int notificationCount = 0; // Bildirim yok simülasyonu (Badge gizlenmeli)
+                    int notificationCount = 0;
                 }
-                <a href="#" class="position-relative cursor-pointer text-decoration-none" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <a href="#" class="position-relative cursor-pointer text-decoration-none" id="notificationDropdown" data-bs-toggle="dropdown">
                     <i data-lucide="bell" class="text-muted"></i>
-                    <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white p-1 @(notificationCount == 0 ? "badge-hidden" : "")" style="font-size: 0.5rem;">
-                        @notificationCount
-                        <span class="visually-hidden">unread messages</span>
-                    </span>
+                    @if (notificationCount > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white p-1" style="font-size: 0.5rem;">
+                            @notificationCount
+                        </span>
+                    }
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-3" aria-labelledby="notificationDropdown" style="border-radius: 12px; min-width: 280px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-3 mt-2" style="border-radius: 16px; min-width: 300px;">
                     <li><h6 class="dropdown-header text-dark fw-bold px-0 pb-2 border-bottom">Bildirimler</h6></li>
-                    <li class="py-4 text-center text-muted small">
-                        Henüz yeni bildirim yok
-                    </li>
+                    <li class="py-4 text-center text-muted small">Henüz yeni bildirim yok</li>
                 </ul>
             </div>
 
-            @* User Profile Dropdown *@
+            @* User Profile *@
             <div class="dropdown ps-3 border-start">
-                <div class="d-flex align-items-center gap-2 cursor-pointer" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-2 cursor-pointer" id="userDropdown" data-bs-toggle="dropdown" style="cursor: pointer;">
                     <div class="text-end d-none d-sm-block line-height-sm">
                         <span class="d-block fw-bold text-dark" style="font-size: 0.85rem;">Admin Kullanıcı</span>
                         <span class="d-block text-muted" style="font-size: 0.75rem;">Yönetici</span>
                     </div>
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px;">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 38px; height: 38px; font-size: 0.9rem;">
                         A
                     </div>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 180px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="border-radius: 12px; min-width: 200px;">
+                    <li><a class="dropdown-item py-2" href="#"><i data-lucide="user" class="me-2" style="width:16px;"></i> Profilim</a></li>
+                    <li><a class="dropdown-item py-2" href="#"><i data-lucide="settings" class="me-2" style="width:16px;"></i> Ayarlar</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item text-danger d-flex align-items-center gap-2 py-2" asp-controller="Auth" asp-action="Logout">
                             <i data-lucide="log-out" style="width: 16px;"></i> Çıkış Yap
@@ -69,63 +76,79 @@
         </div>
     </header>
 
-    @* Sidebar - Dosya yolunu Partials olarak güncelledik *@
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header d-flex align-items-center justify-content-between p-3 d-md-none">
-             <h5 class="mb-0 fw-bold text-primary">Menu</h5>
-             <button class="btn-close" id="sidebarClose"></button>
+    @* --- SIDEBAR --- *@
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header d-flex align-items-center justify-content-between p-4">
+            <h5 class="mb-0 fw-bold text-primary">W&S Manager</h5>
+            <button class="btn-close d-md-none" id="sidebarClose"></button>
         </div>
         <partial name="Partials/_Sidebar" />
-    </div>
+    </aside>
 
-    @* Main Content - Sidebar genişliği kadar margin-left CSS ile verilmelidir *@
+    @* --- MAIN CONTENT --- *@
     <main class="main-content">
-        @RenderBody()
+        <div class="container-fluid p-0">
+            @RenderBody()
+        </div>
     </main>
 
-    @* Global Modal (AJAX işlemleri için) *@
-    <div class="modal fade" id="globalModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" id="globalModalContent">
-                <!-- Content will be loaded here -->
+    @* --- GLOBAL MODAL (AJAX & Formlar için) Genişliği GlobalUI.js veya CSS üzerinden yöneteceğiz --- *@
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="globalModalDialog">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+                <div id="productModalBody">
+                    @* İçerik AJAX ile buraya dolacak *@
+                </div>
             </div>
         </div>
     </div>
 
-    @* Side Panel (Drawer) Yapısı *@
-    <div id="sidePanelOverlay"></div>
-    <div id="sidePanel">
-        <div class="drawer-header">
-            <h5 class="fw-bold mb-0 text-dark" id="sidePanelTitle">Yükleniyor...</h5>
-            <button type="button" class="btn-close" id="closeSidePanel"></button>
-        </div>
-        <div id="sidePanelContent"></div>
-    </div>
-
-    @* Toast Bildirimleri *@
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="statusToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    @* --- TOAST BİLDİRİMLERİ --- *@
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+        <div id="statusToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px;">
             <div class="d-flex">
                 <div class="toast-body d-flex align-items-center">
                     <i id="toastIcon" data-lucide="check-circle" class="me-2"></i>
-                    <span id="toastMessage"></span>
+                    <span id="toastMessage">İşlem başarıyla tamamlandı.</span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
 
+    @* --- SCRIPTS --- *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @* Lucide İkonları (JS'den önce yüklenmeli) *@
     <script src="https://unpkg.com/lucide@latest"></script>
-    @* Flatpickr - Global Tarih Seçici *@
+
+    @* Flatpickr & Türkçe Dil Desteği *@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
 
+    @* SweetAlert & Site Genel JS *@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="~/js/side-panel.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. İkonları başlat
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 2. Sidebar Toggle Mantığı (Layout'ta merkezi olmalı)
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                    document.querySelector('.main-content').classList.toggle('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

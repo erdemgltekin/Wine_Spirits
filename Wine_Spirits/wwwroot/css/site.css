@@ -1,581 +1,63 @@
-/* Wine & Spirits - Modern Management System Stylesheet 
-    V2.0 - Dashboard & Settings Refactored
-*/
+/* ============================================
+    WINE & SPIRITS - GLOBAL CSS (FIGMA PURPLE)
+   ============================================ */
 
 :root {
-    /* Color Palette */
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --indigo: #6366f1;
-    --indigo-soft: #eef2ff;
-    --emerald: #10b981;
-    --rose: #f43f5e;
-    --amber: #f59e0b;
-    /* Neutral Colors */
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-600: #4b5563;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
-    /* Layout */
-    --sidebar-width: 260px;
-    --sidebar-bg: #ffffff;
-    --main-bg: #f8fafc;
-    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ws-purple: #9333ea; /* Figma Canlı Mor */
+    --ws-purple-hover: #7e22ce;
+    --primary-dark: #1e293b;
+    --gray-50: #f8fafc;
+    --gray-200: #e2e8f0;
+    --gray-500: #64748b;
+    --radius-md: 12px;
+    --radius-lg: 20px;
 }
 
-/* --- Base Styles --- */
-body {
-    background-color: var(--main-bg);
-    color: var(--gray-900);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    overflow-x: hidden;
-}
-
-/* --- Layout Structure --- */
-.main-content {
-    margin-left: var(--sidebar-width);
-    padding: 2.5rem;
-    min-height: 100vh;
-    transition: var(--transition-base);
-}
-
-/* --- TagHelper: ws-page-header --- */
-.ws-page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    gap: 1.5rem;
-}
-
-.ws-page-title {
-    font-size: 1.875rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: var(--gray-900);
-    margin-bottom: 0.25rem;
-}
-
-.ws-page-subtitle {
-    font-size: 0.95rem;
-    color: var(--gray-600);
-}
-
-/* --- TagHelper: ws-card & ws-stat-card --- */
-.ws-card {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 0 1px 2px rgba(0, 0, 0, 0.03);
-    transition: var(--transition-base);
-    text-decoration: none !important;
-}
-
-.ws-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-}
-
-/* Stat Card Specifics */
-.ws-stat-card .ws-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ws-stat-card .ws-icon-box i {
-    width: 24px;
-    height: 24px;
-}
-
-/* --- Settings Page Grid & Specialized Cards --- */
-/* Dashed card for action-based settings (like Add Personnel) */
-.ws-card[style*="dashed"] {
-    background-color: rgba(79, 70, 229, 0.02);
-    border: 1px dashed var(--primary) !important;
-}
-
-.ws-card .rounded-circle {
-    transition: var(--transition-base);
-}
-
-.ws-card:hover .rounded-circle {
-    transform: scale(1.1);
-}
-
-/* --- Buttons --- */
-.btn {
-    padding: 0.625rem 1.25rem;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: var(--transition-base);
-}
-
-/* Global Button Standards */
-/* Vazgeç / İptal Butonu Standartı */
-.ws-btn-secondary {
-    background-color: #ffffff !important;
-    color: #1e293b !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 8px 24px !important;
-    border-radius: 12px !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease;
-}
-
-.ws-btn-secondary:hover {
-    background-color: #f8fafc !important;
-}
-
-/* Kaydet / Ekle Butonu Standartı */
-.ws-btn-primary {
-    background-color: #8b5cf6 !important;
-    /* Görseldeki mor tonu */
+/* GLOBAL BUTON */
+.ws-btn-main {
+    background-color: var(--ws-purple) !important;
     color: #ffffff !important;
     border: none !important;
-    padding: 8px 24px !important;
-    border-radius: 12px !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.2);
-    transition: all 0.2s ease;
-}
-
-.ws-btn-primary:hover {
-    background-color: #7c3aed !important;
-    transform: translateY(-1px);
-}
-
-.ws-modal-footer {
-    margin-top: 2rem !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    gap: 12px !important;
-}
-
-/* --- Global Modern Filter System (V3.0) --- */
-.ws-filter-container {
-    background-color: #ffffff;
-    border-radius: 16px;
-    padding: 1.25rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-    margin-bottom: 2rem;
-}
-
-/* İkonlu İnput Grubu */
-.ws-input-group {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.ws-input-icon {
-    position: absolute;
-    left: 1rem;
-    color: #64748b;
-    pointer-events: none;
-    z-index: 10;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ws-input-control {
-    width: 100%;
-    height: 48px;
-    background-color: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    padding-left: 2.75rem !important;
-    /* İkon boşluğu — sağda chevron için yeterli alan */
-    padding-right: 1rem !important;
-    font-size: 0.9rem !important;
-    color: #1e293b !important;
-    transition: all 0.2s ease !important;
-    /* Metin taşma önlemi */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /* Minimum genişlik: içerik asla kesilmez */
-    min-width: 0;
-}
-
-.ws-input-control:focus {
-    background-color: #ffffff !important;
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1) !important;
-    outline: none;
-}
-
-/* Premium Dropdown Select — chevron oku metni örtmez */
-.ws-select-control {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.875rem center;
-    background-size: 14px;
-    /* Sol ikon (2.75rem) + sağ chevron (2.25rem) = metin için yeterli alan */
-    padding-right: 2.25rem !important;
-    cursor: pointer;
-}
-
-/* Filtrele / Sırala Butonu — taşma önlendi */
-.ws-btn-modern-filter {
-    height: 48px;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    /* Sabit padding, içerik asla dışarı taşmaz */
-    padding: 0 1rem 0 1.125rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    color: #475569;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-    width: 100%;
-    cursor: pointer;
-    /* Kritik: metin asla alt satıra geçmez */
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.ws-btn-modern-filter:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
-    color: #1e293b;
-    transform: translateY(-1px);
-}
-
-/* İkon ve metin grubu — flex ile hizalanmış, taşmaz */
-.ws-btn-modern-filter>span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-    min-width: 0;
-}
-
-/* Sağdaki chevron ikonu — asla ezilmez */
-.ws-btn-modern-filter>i:last-child {
-    flex-shrink: 0;
-    color: #94a3b8;
-}
-
-.ws-btn-modern-filter i {
-    flex-shrink: 0;
-    color: #64748b;
-}
-
-/* --- Global Modern Table System --- */
-.ws-table-card {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
-
-.ws-custom-table {
-    width: 100%;
-    margin-bottom: 0;
-    vertical-align: middle;
-}
-
-.ws-custom-table thead th {
-    background-color: #f8fafc;
-    color: #64748b;
+    border-radius: var(--radius-md);
+    padding: 10px 24px;
     font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.025em;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.ws-custom-table tbody td {
-    padding: 1rem 1.5rem;
-    color: #1e293b;
-    font-size: 0.875rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.ws-custom-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.ws-custom-table tbody tr:hover {
-    background-color: #f8fafc;
-}
-
-/* --- Action Buttons --- */
-.ws-action-container {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-}
-
-.ws-action-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    color: #64748b;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.ws-action-btn:hover {
-    background-color: #f8fafc;
-    color: #1e293b;
-    border-color: #cbd5e1;
-    transform: translateY(-1px);
-}
-
-/* --- Dropdown Extensions --- */
-.dropdown-menu {
-    border-radius: 12px !important;
-    padding: 0.5rem !important;
-    border: 1px solid #f1f5f9 !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-}
-
-.dropdown-item {
-    border-radius: 8px !important;
-    padding: 0.6rem 1rem !important;
-    font-size: 0.85rem !important;
-    color: #475569 !important;
-}
-
-.dropdown-item:hover {
-    background-color: #f1f5f9 !important;
-    color: #1e293b !important;
-}
-
-.dropdown-item.active {
-    background-color: #8b5cf6 !important;
-    color: #fff !important;
-}
-
-/* --- Global Badge System --- */
-.ws-badge {
-    padding: 0.35rem 0.65rem;
-    font-weight: 600;
-    font-size: 0.75rem;
-    border-radius: 6px;
+    font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    text-decoration: none;
 }
 
-.ws-badge-success {
-    background-color: #ecfdf5;
-    color: #059669;
-}
+    .ws-btn-main:hover {
+        background-color: var(--ws-purple-hover) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+    }
 
-.ws-badge-danger {
-    background-color: #fff1f2;
-    color: #e11d48;
-}
-
-.ws-badge-primary {
-    background-color: #eff6ff;
-    color: #2563eb;
-}
-
-.ws-badge-warning {
-    background-color: #fffbeb;
-    color: #d97706;
-}
-
-.ws-badge-neutral {
-    background-color: #f1f5f9;
-    color: #475569;
-}
-
-.ws-icon-14 {
-    width: 14px;
-    height: 14px;
-}
-
-.ws-icon-16 {
-    width: 16px;
-    height: 16px;
-}
-
-.ws-icon-18 {
-    width: 18px;
-    height: 18px;
-}
-
-.ws-icon-20 {
-    width: 20px;
-    height: 20px;
-}
-
-.ws-icon-48 {
-    width: 48px;
-    height: 48px;
-}
-
-.ws-icon-64 {
-    width: 64px;
-    height: 64px;
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary);
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-}
-
-/* --- Layout Structure Refined --- */
-:root {
-    --sidebar-width: 240px;
-    /* Narrower sidebar */
-    --topbar-height: 64px;
-}
-
-body {
-    padding-top: var(--topbar-height);
-    /* Make space for fixed TopBar */
-}
-
-/* --- TopBar --- */
-.ws-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--topbar-height);
-    background: #ffffff;
-    border-bottom: 1px solid var(--gray-200);
+/* STAT KARTLARI VE MOR HOVER */
+.ws-stat-card-v2 {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--gray-200);
+    padding: 1.25rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    padding-left: calc(var(--sidebar-width) + 1.5rem);
-    /* Sidebar'ın önünü açmama gerek yok hamburger solda ama sidebar fixed */
-    z-index: 990;
-    /* Sidebar (1000) altında veya üstünde? Sidebar solda fixed, TopBar üstte. Genelde Sidebar topbarın altında olur veya tam tersi. Figma'da Sidebar full height ise TopBar sidebarın sağında başlar.  */
-    /* Kullanıcı "En üstte... sol tarafta SidePanel'i açıp kapatan menü butonu" dedi. Bu hamburger sidebar kapalıyken mi var? 
-       "Global Layout (Üst Panel & SidePanel): TopBar: En üstte; sol tarafta SidePanel'i açıp kapatan..." 
-       Genelde Dashboardlarda Sidebar solda full height (z-index yüksek), TopBar onun sağında kalan alanda olur. 
-       YA DA TopBar full width, Sidebar onun altında. 
-       Figma görseline bakarsak: Sidebar solda, TopBar sidebarın sağında başlıyor GİBİ veya Sidebar üstüne biniyor.
-       "SidePanel'i açıp kapatan" dediğine göre Sidebar toggle edilebilir. 
-       Ben güvenli yol olarak: Sidebar solda fixed (default açık), TopBar sidebarın sağında (main-content içinde gibi davranan header) yapacağım.
-       FAKAT, "TopBar: En üstte" dedi. 
-       Hadi TopBar'ı full width yapmayalım, Sidebar genişliği kadar soldan padding verelim.
-    */
-    transition: transform 0.3s ease, margin-left 0.3s ease, padding-left 0.3s ease;
+    gap: 1.25rem;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+}
 
-    /* .ws-topbar.expanded removed - using body.sidebar-collapsed instead */
-
-    /* Badge Hidden Class */
-    .badge-hidden {
-        display: none !important;
+    .ws-stat-card-v2:hover {
+        transform: translateY(-8px);
+        border-color: var(--ws-purple);
+        box-shadow: 0 20px 25px -5px rgba(147, 51, 234, 0.25), 0 10px 10px -5px rgba(147, 51, 234, 0.1);
     }
 
-    @media (max-width: 992px) {
-        .ws-topbar {
-            padding-left: 1.5rem;
-            /* Mobilde sidebar gizli */
+        .ws-stat-card-v2:hover .ws-stat-icon-box {
+            transform: scale(1.05);
         }
-    }
-
-    .main-content {
-        margin-left: var(--sidebar-width);
-        padding: 2rem;
-        min-height: calc(100vh - var(--topbar-height));
-        margin-top: 0;
-        /* body padding-top hallediyor */
-    }
-
-    transition: var(--transition-base);
-}
-
-/* Sidebar Collapsed State (Using body class for sync) */
-body.sidebar-collapsed .sidebar {
-    transform: translateX(-100%);
-}
-
-body.sidebar-collapsed .main-content {
-    margin-left: 0;
-}
-
-body.sidebar-collapsed .ws-topbar {
-    padding-left: 1.5rem;
-}
-
-/* Sidebar Logo Area css removed per user request */
-
-.sidebar-nav-item {
-    border-radius: 8px;
-    margin: 0.25rem 0.75rem;
-    padding: 0.65rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.sidebar-nav-item:hover {
-    background-color: var(--gray-50);
-    color: var(--gray-900);
-}
-
-.sidebar-nav-item.active {
-    background-color: #f5f3ff !important;
-    /* Mor soft arka plan (Figma isteği) */
-    color: var(--primary) !important;
-    font-weight: 600;
-}
-
-.sidebar-nav-item.active i {
-    color: var(--primary);
-}
-
-
-/* --- Global Stat Card V2 System --- */
-/* Tek kaynak: Dashboard, Ürünler ve Stok Hareketleri sayfaları bu sınıfları paylaşır */
-.ws-stat-card-v2 {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 100%;
-}
-
-.ws-stat-card-v2:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
-}
 
 .ws-stat-icon-box {
     width: 48px;
@@ -584,124 +66,295 @@ body.sidebar-collapsed .ws-topbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    transition: transform 0.3s ease;
 }
 
-.ws-stat-icon-box i,
-.ws-stat-icon-box svg {
-    width: 22px;
-    height: 22px;
-}
-
-.ws-stat-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.ws-stat-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #64748b;
-    letter-spacing: 0;
-}
-
-.ws-stat-value-text {
-    font-size: 1.625rem;
-    font-weight: 700;
-    color: #1e293b;
-    letter-spacing: -0.5px;
-    line-height: 1.15;
-}
-
-/* --- Modal Tweaks (Global) --- */
-.modal-content {
-    border-radius: 16px;
-}
-
-.modal-backdrop.show {
-    opacity: 0.3;
-}
-
-/* --- Color Utility Classes (for Stat Cards) --- */
+/* Stat İkon Renkleri */
 .bg-indigo-50 {
-    background-color: #eef2ff !important;
-}
-
-.text-indigo-600 {
-    color: #4f46e5 !important;
+    background: #eef2ff !important;
+    color: #6366f1 !important;
 }
 
 .bg-rose-50 {
-    background-color: #fff1f2 !important;
-}
-
-.text-rose-600 {
+    background: #fff1f2 !important;
     color: #e11d48 !important;
 }
 
 .bg-emerald-50 {
-    background-color: #ecfdf5 !important;
-}
-
-.text-emerald-600 {
-    color: #059669 !important;
+    background: #ecfdf5 !important;
+    color: #10b981 !important;
 }
 
 .bg-amber-50 {
-    background-color: #fffbeb !important;
+    background: #fffbeb !important;
+    color: #f59e0b !important;
 }
 
-.text-amber-600 {
-    color: #d97706 !important;
-}
-
-.bg-primary-50 {
-    background-color: #eff6ff !important;
-}
-
-.text-primary-600 {
-    color: #2563eb !important;
-}
-
-.bg-violet-50 {
-    background-color: #f5f3ff !important;
-}
-
-.text-violet-600 {
-    color: #7c3aed !important;
-}
-
-/* --- Responsive --- */
-@media (max-width: 992px) {
-    .main-content {
-        margin-left: 0;
-    }
-
-    .ws-topbar {
-        left: 0;
-    }
-
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.show {
-        transform: translateX(0);
-    }
-}
-
-/* Eski stilleri koru ama üzerine yaz */
-.ws-page-header {
+/* FİLTRE ÇUBUĞU GENEL */
+.ws-inventory-filter-bar {
+    background: #fff;
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 2rem;
 }
 
-.ws-card {
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+/* Filtre Esneklik Sınıfları (HTML'deki style etiketleri yerine) */
+.ws-flex-search {
+    flex: 2;
 }
 
-.btn {
-    border-radius: 10px;
+.ws-flex-date {
+    flex: 1.2;
+}
+
+.ws-flex-cat {
+    flex: 1;
+}
+
+.ws-flex-stock {
+    flex: 1;
+}
+
+.ws-filter-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .ws-filter-icon-wrap i,
+    .ws-filter-icon-wrap svg {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: var(--gray-500);
+        z-index: 5;
+        pointer-events: none;
+        transition: color 0.3s ease;
+    }
+
+/* Filtre Elemanları (Input & Select) */
+.ws-filter-el {
+    height: 48px !important;
+    border-radius: var(--radius-md) !important;
+    border: 1.5px solid var(--gray-200) !important;
+    background-color: var(--gray-50) !important;
+    font-size: 0.85rem !important;
+    padding-left: 42px !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    cursor: pointer;
+}
+
+    .ws-filter-el:hover {
+        background-color: #ffffff !important;
+        border-color: var(--ws-purple) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(147, 51, 234, 0.15) !important;
+    }
+
+.ws-filter-icon-wrap:hover i {
+    color: var(--ws-purple);
+}
+
+/* Sırala Butonu Özel */
+.ws-btn-sort {
+    flex: 0.5;
+    min-width: 110px;
+    background-color: #fff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* TABLO AKSİYONLARI */
+.text-center-actions {
+    text-align: center !important;
+}
+
+.ws-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    color: var(--gray-500);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .ws-action-btn:hover {
+        border-color: var(--ws-purple);
+        color: var(--ws-purple);
+        background-color: #faf5ff;
+    }
+
+    .ws-action-btn i, .ws-action-btn svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+/* Durum Hapları */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-success {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.status-danger {
+    background: #fff1f2;
+    color: #e11d48;
+}
+
+/* MODAL ÖZELLEŞTİRME */
+.ws-modal-custom {
+    border-radius: 24px !important;
+}
+/* --- MODAL & FORM PREMIUM REVIZE --- */
+
+/* Modalı ekranın ortasında ve dikey formda tutmak için (Kompakt Genişlik) */
+.modal-dialog-centered.ws-modal-compact {
+    max-width: 480px; /* Figma tasarımı gibi dar ve zarif */
+}
+
+.ws-modal-custom {
+    border-radius: 28px !important; /* Daha yumuşak köşeler */
+    border: none !important;
+    overflow: hidden;
+}
+
+/* Modal Başlık */
+.ws-modal-title {
+    font-size: 1.25rem;
+    color: var(--primary-dark);
+    letter-spacing: -0.5px;
+}
+
+/* Form Elemanları Global Revize */
+.ws-form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    margin-bottom: 6px;
+    margin-left: 4px;
+}
+
+/* Input ve Select Kutuları */
+.ws-input-premium {
+    height: 46px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid var(--gray-200) !important;
+    background-color: var(--gray-50) !important;
+    font-size: 0.9rem !important;
+    padding: 0 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+    .ws-input-premium:focus {
+        background-color: #fff !important;
+        border-color: var(--ws-purple) !important;
+        box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1) !important;
+        outline: none !important;
+    }
+
+/* Butonlar */
+.ws-btn-secondary {
+    background-color: var(--gray-50) !important;
+    color: var(--gray-500) !important;
+    border: 1.5px solid var(--gray-200) !important;
+    border-radius: 14px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+    .ws-btn-secondary:hover {
+        background-color: var(--gray-200) !important;
+        color: var(--primary-dark) !important;
+    }
+
+/* Mevcut ws-btn-main'e modal içi ekleme */
+.ws-btn-submit {
+    border-radius: 14px !important;
+    padding: 10px 24px !important;
+}
+/* --- IKON GÖRÜNÜRLÜK FIX --- */
+.ws-action-btn i,
+.ws-action-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+    stroke-width: 2.5; /* İkonların netliği için */
+    color: inherit;
+}
+
+.ws-action-btn {
+    padding: 0 !important; /* İkonu ortalamak için */
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+/* Figma Modal Ortalamasını Garanti Altına Al */
+#productModal.modal.fade .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100% - 1rem);
+}
+
+/* Figma Yuvarlak Köşeler */
+.ws-modal-custom {
+    border-radius: 24px !important;
+    background-color: #ffffff;
+}
+
+/* Modal açıldığında arka planı biraz daha koyulaştır (Figma stili) */
+.modal-backdrop.show {
+    opacity: 0.4 !important;
+    background-color: #000;
+}
+/* Modal Genişlik Ayarı (İkinci görseldeki gibi daha derli toplu) */
+.ws-modal-md {
+    max-width: 550px; /* lg (800px) yerine 550px daha dengeli durur */
+    width: 90%; /* Mobil uyum için */
+}
+
+/* Figma Tarzı Kart Yapısı */
+.ws-modal-custom {
+    border-radius: 28px !important; /* Daha yumuşak köşeler */
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Modal içindeki form elemanlarının çok yayılmaması için */
+#productModalBody {
+    padding: 10px; /* Dış çerçeveden hafif bir boşluk */
+}
+
+/* Form başlığı ve butonların Figma ile uyumu */
+.ws-modal-custom .modal-header {
+    padding: 1.5rem 2rem 1rem 2rem;
+    border: none;
+}
+
+.ws-modal-custom .modal-body {
+    padding: 1rem 2rem 2rem 2rem;
+}
+/* SweetAlert'in her zaman modalın üstünde görünmesini sağlar */
+.swal2-container {
+    z-index: 10000 !important;
 }

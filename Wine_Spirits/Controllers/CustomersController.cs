@@ -18,21 +18,18 @@ namespace Wine_Spirits.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            // Context içinde Global Query Filter (IsDeleted) tanımlı olduğu için 
-            // burada tekrar .Where(c => !c.IsDeleted) yazmaya gerek yoktur.
-            var customer = await _context.Customers
-                .Include ( c => c.Orders)
-                .ThenInclude(o => o.OrderDetails)
+            // Global IsDeleted filtresinin DbContext içinde tanımlı olduğu varsayılmıştır.
+            var customers = await _context.Customers
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderDetails)
                 .ToListAsync();
 
-            // İstatistikleri güvenli bir şekilde hesapla (Null-conditional operasyonları ile)
             var stats = new CustomerStats
             {
-                TotalCustomers = customer.Count,
-                ActiveCustomers = customer.Count(c => c.IsActive),
-                TotalOrders = customer.Sum(c => c.Orders?.Count ?? 0),
-                // Ciro hesaplarken decimal cast kullanarak null hatalarını önle ve string'e çevir
-                TotalRevenue = (customer
+                TotalCustomers = customers.Count,
+                ActiveCustomers = customers.Count(c => c.IsActive),
+                TotalOrders = customers.Sum(c => c.Orders?.Count ?? 0),
+                TotalRevenue = (customers
                     .SelectMany(c => c.Orders ?? new List<Order>())
                     .SelectMany(o => o.OrderDetails ?? new List<OrderDetail>())
                     .Sum(od => (decimal?)od.TotalPrice) ?? 0).ToString("C2", new CultureInfo("tr-TR"))
@@ -40,7 +37,7 @@ namespace Wine_Spirits.Controllers
 
             var viewModel = new CustomersIndexViewModel
             {
-                Customer = customer,
+                Customer = customers,
                 Stats = stats
             };
 
@@ -48,11 +45,14 @@ namespace Wine_Spirits.Controllers
         }
 
         // GET: Customers/Create
+        [HttpGet]
         public IActionResult Create()
         {
+            // AJAX isteği gelirse Partial döndür
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView();
+                // Dosya yolunu net vererek belirsizliği ortadan kaldırıyoruz
+                return PartialView("~/Views/Customers/_CreateCustomerPartial.cshtml", new Customer());
             }
             return View();
         }
@@ -81,12 +81,13 @@ namespace Wine_Spirits.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView(customer);
+                return PartialView("_CreateCustomerPartial", customer);
             }
             return View(customer);
         }
 
         // GET: Customers/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null) return NotFound();
@@ -96,7 +97,7 @@ namespace Wine_Spirits.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView(customer);
+                return PartialView("_EditCustomerPartial", customer);
             }
             return View(customer);
         }
@@ -112,6 +113,7 @@ namespace Wine_Spirits.Controllers
             {
                 try
                 {
+                    customer.IsDeleted = false; // Soft delete koruması
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
@@ -130,7 +132,7 @@ namespace Wine_Spirits.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView(customer);
+                return PartialView("_EditCustomerPartial", customer);
             }
             return View(customer);
         }
@@ -140,7 +142,7 @@ namespace Wine_Spirits.Controllers
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
             var customer = await _context.Customers.FindAsync(id);
-            if (customer == null) return NotFound();
+            if (customer == null) return Json(new { success = false, message = "Müşteri bulunamadı." });
 
             customer.IsActive = !customer.IsActive;
             await _context.SaveChangesAsync();
@@ -153,9 +155,9 @@ namespace Wine_Spirits.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var customer = await _context.Customers.FindAsync(id);
-            if (customer == null) return NotFound();
+            if (customer == null) return Json(new { success = false, message = "Müşteri bulunamadı." });
 
-            // Database-First Soft Delete Mantığı
+            // Soft Delete Uygulaması
             customer.IsDeleted = true;
             await _context.SaveChangesAsync();
 
