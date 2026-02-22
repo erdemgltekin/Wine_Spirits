@@ -24,26 +24,46 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
-                <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
+                <div class="ws-stat-icon-box bg-indigo-50">
+                    <i data-lucide="package"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Toplam Ürün</small>
+                    <span class="fw-bold h5">@stats.TotalProducts</span>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
-                <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
+                <div class="ws-stat-icon-box bg-rose-50">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Kritik Stok</small>
+                    <span class="fw-bold h5">@stats.CriticalStockCount</span>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
-                <div><small class="text-muted d-block">Değer</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
+                <div class="ws-stat-icon-box bg-emerald-50">
+                    <i data-lucide="banknote"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Değer</small>
+                    <span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
-                <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
+                <div class="ws-stat-icon-box bg-amber-50">
+                    <i data-lucide="layers"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Kategoriler</small>
+                    <span class="fw-bold h5">@stats.CategoryCount</span>
+                </div>
             </div>
         </div>
     </div>
@@ -105,7 +125,8 @@
                     <th class="text-center-actions py-3 text-muted small">İŞLEMLER</th>
                 </tr>
             </thead>
-            <tbody id="productsTableBody"></tbody>
+            <tbody id="productsTableBody">
+            </tbody>
         </table>
     </div>
 </div>
@@ -127,4 +148,11 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/product/product.js" asp-append-version="true"></script>
+
+    <script>
+        // Sayfa yüklendiğinde Lucide ikonlarını initialize et
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
 }
