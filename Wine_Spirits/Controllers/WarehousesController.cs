@@ -13,37 +13,91 @@ namespace Wine_Spirits.Controllers
             _context = context;
         }
 
-        // Listeleme: Global Query Filter sayesinde IsDeleted=true olanlar gelmez.
+        // Listeleme
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WareHouses.ToListAsync());
+            var warehouses = await _context.WareHouses
+                .OrderByDescending(w => w.CreatedDate)
+                .ToListAsync();
+            return View(warehouses);
         }
 
-        public IActionResult Create() => IsAjaxRequest ? PartialView() : View();
+        // GET: Create
+        public IActionResult Create()
+        {
+            return IsAjaxRequest ? PartialView("_WarehouseFormPartial") : View();
+        }
 
+        // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Location")] WareHouse wareHouse)
         {
             if (!ModelState.IsValid)
-                return IsAjaxRequest ? PartialView(wareHouse) : View(wareHouse);
+                // HATA DÜZELTİLDİ: Dosya ismi _WarehouseFormPartial yapıldı
+                return IsAjaxRequest ? PartialView("_WarehouseFormPartial", wareHouse) : View(wareHouse);
 
-            // BaseEntity sayesinde Id ve CreatedDate otomatik yönetilebilir 
-            // ama burada açıkça set etmek istersen:
-            _context.Add(wareHouse);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Add(wareHouse);
+                await _context.SaveChangesAsync();
 
-            return IsAjaxRequest ? JsonSuccess("Depo başarıyla oluşturuldu.") : RedirectToAction(nameof(Index));
+                return IsAjaxRequest
+                    ? JsonSuccess("Depo başarıyla oluşturuldu.")
+                    : RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return IsAjaxRequest
+                    ? JsonError("Depo kaydedilirken teknik bir sorun oluştu.")
+                    : View(wareHouse);
+            }
         }
 
+        // GET: Edit
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var wareHouse = await _context.WareHouses.FindAsync(id);
+            if (wareHouse == null) return NotFound();
+
+            // Dosya ismi ortak form yapıldı
+            return IsAjaxRequest ? PartialView("_WarehouseFormPartial", wareHouse) : View(wareHouse);
+        }
+
+        // POST: Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Location,CreatedDate")] WareHouse wareHouse)
+        {
+            if (id != wareHouse.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(wareHouse);
+                    await _context.SaveChangesAsync();
+                    return IsAjaxRequest ? JsonSuccess("Depo bilgileri güncellendi.") : RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _context.WareHouses.AnyAsync(e => e.Id == wareHouse.Id)) return NotFound();
+                    throw;
+                }
+            }
+
+            // HATA DÜZELTİLDİ: Dosya ismi _WarehouseFormPartial yapıldı
+            return IsAjaxRequest ? PartialView("_WarehouseFormPartial", wareHouse) : View(wareHouse);
+        }
+
+        // POST: Delete (Soft Delete)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            // 1. KONTROL: Yetki Kontrolü (BaseController'dan geliyor)
             if (!CanDelete)
             {
-                return JsonError("Bu işlem için Müdür veya Müdür Yardımcısı yetkisi gereklidir!");
+                return JsonError("Bu işlem için yönetici yetkisi gereklidir!");
             }
 
             try
@@ -51,24 +105,21 @@ namespace Wine_Spirits.Controllers
                 var wareHouse = await _context.WareHouses.FindAsync(id);
                 if (wareHouse == null) return NotFound();
 
-                // 2. KONTROL: İçinde ürün olan depo silinmesin (İş mantığı)
-                if (await _context.Products.AnyAsync(p => p.WarehouseId == id))
+                var hasProducts = await _context.Products.AnyAsync(p => p.WarehouseId == id);
+                if (hasProducts)
                 {
-                    return JsonError("Bu depo içerisinde ürünler bulunduğu için arşive alınamaz!");
+                    return JsonError("Bu depoda kayıtlı ürünler olduğu için arşive alınamaz!");
                 }
 
-                // 3. İŞLEM: Fiziksel silme yerine Soft Delete (Durum Güncelleme)
                 wareHouse.IsDeleted = true;
-
-                _context.Update(wareHouse); // Remove yerine Update kullanıyoruz
+                _context.Update(wareHouse);
                 await _context.SaveChangesAsync();
 
                 return JsonSuccess("Depo başarıyla arşive kaldırıldı.");
             }
             catch (Exception ex)
             {
-                // BaseController'daki hata yönetimini kullanıyoruz
-                return JsonError("Bir hata oluştu: " + ex.Message);
+                return JsonError("Sistem hatası: " + ex.Message);
             }
         }
     }

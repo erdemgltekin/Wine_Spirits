@@ -1,61 +1,49 @@
 @model Wine_Spirits.Models.WareHouse
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    var isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
-    if (isAjax) { Layout = null; } else { Layout = "_Layout"; }
+    Layout = "_Layout";
+    ViewData["Title"] = "Depo Bilgilerini Düzenle";
 }
 
-<div class="@(isAjax ? "" : "container py-5")">
-    <div class="@(isAjax ? "" : "form-card")">
-        <div class="card shadow-none border-0 bg-transparent">
-            <div class="card-body p-0">
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2 small"></div>
-                    <input type="hidden" asp-for="Id" />
-                    
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label asp-for="Name" class="form-label">Depo Adı</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i data-lucide="building" class="ws-icon-16"></i></span>
-                                <input asp-for="Name" class="form-control" required />
-                            </div>
-                            <span asp-validation-for="Name" class="text-danger small"></span>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0" style="border-radius: 24px; overflow: hidden;">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="ws-stat-icon-box bg-indigo-50 text-primary" style="width: 40px; height: 40px;">
+                            <i data-lucide="edit-3" style="width: 20px;"></i>
                         </div>
-                        
-                        <div class="col-12">
-                            <label asp-for="Location" class="form-label">Depo Konumu / Adres</label>
-                            <div class="input-group">
-                                <span class="input-group-text pt-2"><i data-lucide="map-pin" class="ws-icon-16"></i></span>
-                                <textarea asp-for="Location" class="form-control" rows="3" required></textarea>
-                            </div>
-                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        <div>
+                            <h5 class="fw-bold text-dark m-0">Depo Düzenle</h5>
+                            <p class="text-muted small mb-0">@Model.Name - Kayıt Güncelleme</p>
                         </div>
                     </div>
-                    
-                    <div class="drawer-footer ws-modal-footer">
-                        @if (isAjax) {
-                            <button type="button" class="btn ws-btn-secondary" onclick="SidePanel.close()">
-                                <i data-lucide="x" class="me-2 ws-icon-16"></i> Vazgeç
-                            </button>
-                        } else {
-                            <a asp-action="Index" class="btn ws-btn-secondary">
-                                <i data-lucide="arrow-left" class="me-2 ws-icon-16"></i> Vazgeç
-                            </a>
-                        }
-                        <button type="submit" class="btn ws-btn-primary flex-grow-1">
-                            <i data-lucide="save" class="me-2 ws-icon-18"></i> Değişiklikleri Kaydet
-                        </button>
-                    </div>
-                </form>
+                </div>
+
+                <hr class="mx-4 my-2 opacity-50">
+
+                <partial name="_WarehouseFormPartial" model="Model" />
+
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="text-muted small text-decoration-none">
+                    <i data-lucide="chevron-left" class="size-14"></i> Listeye Geri Dön
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-@if (!isAjax) {
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Sayfa yüklendiğinde ikonları çalıştır
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
 }

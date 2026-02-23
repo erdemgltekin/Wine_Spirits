@@ -4,6 +4,12 @@
 const ProductManager = {
     allProducts: [],
     filteredProducts: [],
+    // Mevcut filtre durumlarını takip etmek için bir nesne
+    currentFilters: {
+        search: "",
+        category: "",
+        stock: ""
+    },
 
     init: function () {
         this.loadProducts();
@@ -29,7 +35,7 @@ const ProductManager = {
             .then(res => {
                 this.allProducts = res.products || [];
                 this.filteredProducts = [...this.allProducts];
-                this.populateCategories();
+                this.populateCategories(); // Dropdown menüsünü doldurur
                 this.renderTable(this.filteredProducts);
             })
             .catch(err => console.error("Veri yükleme hatası:", err));
@@ -76,11 +82,24 @@ const ProductManager = {
         }
     },
 
-    // Filtreleme ve Kategoriler aynı kalıyor...
+    // --- MODERN FİLTRELEME METODLARI ---
+
+    filterCategory: function (val, text) {
+        this.currentFilters.category = val;
+        document.getElementById('selectedCategoryText').innerText = text;
+        this.applyFilters();
+    },
+
+    filterStock: function (val, text) {
+        this.currentFilters.stock = val;
+        document.getElementById('selectedStockText').innerText = text;
+        this.applyFilters();
+    },
+
     applyFilters: function () {
         const s = document.getElementById('inventorySearch')?.value.toLowerCase() || "";
-        const c = document.getElementById('filterCategory')?.value || "";
-        const st = document.getElementById('filterStock')?.value || "";
+        const c = this.currentFilters.category;
+        const st = this.currentFilters.stock;
 
         this.filteredProducts = this.allProducts.filter(p => {
             const matchesSearch = (p.name || "").toLowerCase().includes(s) || (p.productCode || "").toLowerCase().includes(s);
@@ -91,17 +110,42 @@ const ProductManager = {
         this.renderTable(this.filteredProducts);
     },
 
+    // Kategori listesini modern dropdown (ul-li) yapısına göre doldurur
     populateCategories: function () {
-        const catSelect = document.getElementById('filterCategory');
-        if (!catSelect || this.allProducts.length === 0) return;
+        const catMenu = document.getElementById('filterCategoryMenu');
+        if (!catMenu || this.allProducts.length === 0) return;
+
         const cats = [...new Set(this.allProducts.map(p => p.categoryName))].filter(Boolean).sort();
-        catSelect.innerHTML = '<option value="">Kategori</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+
+        let html = `<li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>`;
+        html += cats.map(c => `
+            <li>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('${c}', '${c}')">
+                    ${c}
+                </a>
+            </li>
+        `).join('');
+
+        catMenu.innerHTML = html;
+    },
+
+    sort: function (type) {
+        switch (type) {
+            case 'name-asc':
+                this.filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'price-desc':
+                this.filteredProducts.sort((a, b) => b.price - a.price);
+                break;
+            case 'stock-desc':
+                this.filteredProducts.sort((a, b) => b.stockQuantity - a.stockQuantity);
+                break;
+        }
+        this.renderTable(this.filteredProducts);
     },
 
     attachEvents: function () {
         document.getElementById('inventorySearch')?.addEventListener('input', () => this.applyFilters());
-        document.getElementById('filterCategory')?.addEventListener('change', () => this.applyFilters());
-        document.getElementById('filterStock')?.addEventListener('change', () => this.applyFilters());
 
         document.getElementById('btnCreateNew')?.addEventListener('click', (e) => {
             e.preventDefault();
@@ -109,11 +153,11 @@ const ProductManager = {
         });
     },
 
-    // FONKSİYON TANIMLARINI KLASİK YAPIYA ÇEKTİK (Daha güvenli)
     view: function (id) { GlobalUI.openModal(`/Products/Details/${id}`); },
     edit: function (id) { GlobalUI.openModal(`/Products/Edit/${id}`); },
     delete: function (id) {
         if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+            // Silme işlemi AJAX ile yapılabilir, şimdilik logluyoruz
             console.log("Silinecek ID:", id);
         }
     }

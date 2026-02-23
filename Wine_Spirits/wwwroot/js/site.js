@@ -136,6 +136,7 @@ const GlobalUI = {
         this.initSidebar();
         this.initNotifications();
         this.initTooltips();
+        this.initDropdowns(); // Yeni eklenen dropdown dinleyicisi
         this.refreshLucide();
         console.log('GlobalUI: Initialized.');
     },
@@ -173,6 +174,14 @@ const GlobalUI = {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    },
+
+    // Modern Dropdown Etkileşimi
+    initDropdowns: function () {
+        // Dropdown her açıldığında içindeki Lucide ikonlarını canlandır
+        $(document).on('shown.bs.dropdown', '.dropdown', () => {
+            this.refreshLucide();
         });
     },
 
@@ -215,7 +224,7 @@ const GlobalUI = {
     3. EVENT LISTENERLAR VE BAŞLATMA
    ============================================================ */
 $(document).ready(function () {
-    // GlobalUI Başlat (İkonlar ve genel bileşenler dahil)
+    // GlobalUI Başlat
     GlobalUI.init();
 
     // SidePanel Universal Trigger [data-drawer="true"]
@@ -239,8 +248,7 @@ $(document).ready(function () {
 });
 
 /**
- * AJAX ile herhangi bir sayfa içeriği (tablo, modal vb.) değiştiğinde 
- * ikonların otomatik olarak yeniden çizilmesini sağlar.
+ * AJAX ile içerik değiştiğinde ikonları canlandır
  */
 $(document).ajaxComplete(function () {
     GlobalUI.refreshLucide();

@@ -562,28 +562,53 @@ body {
         }
 
 /* Sağdaki Sıralama/Filtrele Butonu */
-.ws-btn-filter-action {
+.ws-filter-el, .ws-btn-filter-action {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    background: #ffffff;
-    border: 1.5px solid #f1f5f9;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #475569;
-    white-space: nowrap;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    background: #ffffff !important;
+    border: 1.5px solid #e5e7eb !important; /* Standart ince gri çerçeve */
+    border-radius: 12px !important; /* 1. görseldeki yumuşak köşe */
+    padding: 10px 16px !important;
+    color: #4b5563 !important;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     cursor: pointer;
-}    
-    .ws-btn-filter-action:hover {
-        background: #ffffff;
-        border-color: #7c3aed; 
-        color: #7c3aed;
-        transform: translateY(-3px); 
-        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2), 0 6px 6px -5px rgba(124, 58, 237, 0.1) !important;
+    outline: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+    .ws-filter-el:hover, .ws-btn-filter-action:hover {
+        border-color: #6c5ce7 !important; /* Mor çerçeve */
+        color: #6c5ce7 !important;
+        background-color: #fbfaff !important;
+        /* Mor Dış Parlama (Glow) */
+        box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1) !important;
+        transform: translateY(-1px); /* Hafif yükselme hissi */
     }
+/* Dropdown Açıldığında (Aktif Durum) */
+.show > .ws-btn-filter-action,
+.show > .ws-filter-el {
+    border-color: #6c5ce7 !important;
+    background-color: #fbfaff !important;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15) !important;
+}
+
+/* İçerideki İkonların Renk Uyumu */
+.ws-filter-el:hover i, .ws-btn-filter-action:hover i {
+    color: #6c5ce7 !important;
+}
+
+/* Dropdown Açıldığında (Aktif Durum) */
+.show > .ws-btn-filter-action,
+.show > .ws-filter-el {
+    border-color: #6c5ce7 !important;
+    background-color: #fbfaff !important;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15) !important;
+}
+
+/* İçerideki İkonların Renk Uyumu */
+.ws-filter-el:hover i, .ws-btn-filter-action:hover i {
+    color: #6c5ce7 !important;
+}
 /* 11. MOBİL UYUMLULUK */
 @media (max-width: 991.98px) {
     .main-content {
@@ -602,3 +627,158 @@ body {
         width: 100%;
     }
 }
+/* Custom Dropdown Menü Tasarımı */
+/* Dropdown Menülerin Kendisi (Açılan Pencere) */
+.dropdown-menu {
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    padding: 8px !important;
+    margin-top: 8px !important;
+    animation: ws-dropdown-fade 0.2s ease-out;
+}
+
+
+/* Liste Elemanları */
+.dropdown-item {
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    color: #4b5563 !important;
+    font-size: 14px !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+    /* Hover Efekti: Figma stili mor arka plan */
+    .dropdown-item:hover {
+        background-color: #f3f0ff !important;
+        color: #6c5ce7 !important;
+        transform: translateX(5px); /* Hafif kayma efekti */
+    }
+
+/* Dropdown Açılış Animasyonu */
+
+@keyframes ws-dropdown-fade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Select kutularının (Kategori/Stok) fokus hali */
+.ws-filter-el:focus {
+    border-color: #6c5ce7 !important;
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1) !important;
+    outline: none;
+}
+/* Tabloyu sarmalayan ana kap  */
+.ws-table-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Köşelerin taşmasını engeller */
+    margin-bottom: 2rem;
+}
+
+.ws-table-premium {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+}
+
+    /* Header Stili */
+    .ws-table-premium thead th {
+        background-color: #f8fafc;
+        color: var(--gray-600);
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 16px 20px;
+        border-bottom: 1.5px solid var(--gray-200);
+        text-align: left;
+    }
+
+    /* Satır ve Hücre Stili */
+    .ws-table-premium tbody td {
+        padding: 16px 20px;
+        color: var(--gray-700);
+        font-size: 14px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        transition: all 0.2s ease;
+    }
+
+      /* HOVER EFEKTİ */
+    .ws-table-premium tbody tr {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+        .ws-table-premium tbody tr:hover td {
+            background-color: #fbfaff; 
+            color: var(--primary); /* Metin rengi morlaşır */
+        }
+
+        /* Satırın soluna mor bir çizgi */
+        .ws-table-premium tbody tr:hover {
+            box-shadow: inset 4px 0 0 var(--primary);
+        }
+
+        /* Son satırın border'ını kaldır. */
+        .ws-table-premium tbody tr:last-child td {
+            border-bottom: none;
+        }
+    /* ============================================================
+    GÜNCELLENMİŞ TABLO HOVER EFEKTİ
+   ============================================================ */
+
+    .ws-table-premium tbody tr {
+        transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative; /* Sol çizgi vurgusu için */
+    }
+
+        .ws-table-premium tbody tr:hover td {
+            /* Arka planı biraz daha belirgin bir mor-gri tonuna çekiyoruz */
+            background-color: #f3f0ff !important;
+            /* Metin rengini ana mor tonumuza sabitliyoruz */
+            color: var(--gray-900) !important;
+        }
+
+        /* Satırın soluna gelen mor dikey vurgu çizgisini kalınlaştırıyoruz */
+        .ws-table-premium tbody tr:hover {
+            box-shadow: inset 5px 0 0 var(--primary), 0 4px 12px rgba(124, 58, 237, 0.05);
+            transform: scale(1.001); /* Çok hafif bir öne çıkma hissi */
+        }
+
+            /* Hover durumunda ürün adını biraz daha vurgulayalım */
+            .ws-table-premium tbody tr:hover td strong,
+            .ws-table-premium tbody tr:hover td b {
+                color: var(--primary) !important;
+            }
+
+    /* İşlem butonlarını hoverda biraz daha canlandıralım */
+    .ws-table-premium tr:hover .ws-action-btn {
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        color: var(--primary) !important;
+    }
+
+    /* Tablo içindeki aksiyon butonları için ek ayar */
+    .ws-table-premium .ws-action-btn {
+        opacity: 0.7;
+        transition: all 0.2s;
+    }
+
+    .ws-table-premium tr:hover .ws-action-btn {
+        opacity: 1;
+        transform: scale(1.05);
+    }

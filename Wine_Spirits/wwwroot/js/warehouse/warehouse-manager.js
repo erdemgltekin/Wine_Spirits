@@ -1,102 +1,70 @@
 /**
  * @file warehouse-manager.js
- * @description Depo Yönetimi sayfası etkileşimleri.
- * Modal yönetimi, arama ve silme.
+ * @description Modüler Depo Yönetimi Scripti.
+ * Modal yönetimi, arama, filtreleme ve silme işlemlerini içerir.
  */
 
 const WarehouseManager = (function () {
+    let globalModalInstance = null;
 
-    // Global Modal Instance
-    let globalModal = null;
-
+    // Başlatıcı: Sayfa yüklendiğinde temel elementleri bağlar
     function init() {
-        console.log("WarehouseManager: Started");
-
-        // Modal instance'ını al (eğer varsa)
         const modalEl = document.getElementById('globalModal');
         if (modalEl && typeof bootstrap !== 'undefined') {
-            globalModal = new bootstrap.Modal(modalEl);
+            globalModalInstance = new bootstrap.Modal(modalEl);
         }
 
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         bindSearch();
-        bindDeleteActions();
-        bindAddButton();
+        console.log("WarehouseManager: Sistem başarıyla başlatıldı.");
     }
 
-    /**
-     * Yeni Depo Ekle Butonu
-     * AJAX ile Create partial'ı çeker ve Modal içinde gösterir.
-     */
-    function bindAddButton() {
-        // ID veya Class ile butonu bul
-        const addBtns = document.querySelectorAll('.btn-warehouse-add, a[asp-action="Create"]'); // Hem CSS class hem ASP tag helper sonucu
-        // Ancak ASP tag helper 'href="/Warehouses/Create"' üretir. Bunu JS ile yakalayacağız.
+    // Modal İçeriği Yükle (Create / Edit için ortak AJAX yapısı)
+    function loadModal(url) {
+        const contentArea = document.getElementById('globalModalContent');
+        if (!contentArea || !globalModalInstance) return;
 
-        // En sağlamı: .btn-warehouse-add sınıfına sahip olanlar (eğer link ise preventDefault)
-        document.body.addEventListener('click', function (e) {
-            const target = e.target.closest('.btn-warehouse-add');
-            if (target) {
-                e.preventDefault();
-                const url = target.getAttribute('href') || '/Warehouses/Create';
-                openCreateModal(url);
-            }
-        });
-    }
+        // Yükleniyor animasyonu
+        contentArea.innerHTML = '<div class="p-5 text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Yükleniyor...</p></div>';
+        globalModalInstance.show();
 
-    function openCreateModal(url) {
-        const modalContent = document.getElementById('globalModalContent');
-        if (!modalContent || !globalModal) return;
-
-        // Yükleniyor göster
-        modalContent.innerHTML = '<div class="p-5 text-center"><div class="spinner-border text-primary"></div></div>';
-        globalModal.show();
-
-        // fetch ile içeriği al (AJAX)
         fetch(url, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-            .then(response => response.text())
+            .then(res => res.text())
             .then(html => {
-                modalContent.innerHTML = html;
-                // İçerik yüklendikten sonra ikonları yeniden oluştur
+                contentArea.innerHTML = html;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
-
-                // Form submit'i AJAX yap (Opsiyonel, tam SPA hissi için)
-                bindFormSubmit(modalContent.querySelector('form'));
+                bindFormSubmit(contentArea.querySelector('form'));
             })
             .catch(err => {
-                console.error(err);
-                modalContent.innerHTML = '<div class="p-3 text-danger">Yükleme hatası.</div>';
+                console.error("Modal yükleme hatası:", err);
+                contentArea.innerHTML = '<div class="p-4 text-center text-danger"><i data-lucide="alert-triangle"></i><p>İçerik yüklenemedi.</p></div>';
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             });
     }
 
-    // Modal içindeki form submit işlemini yakala
+    // Formu AJAX ile Gönder (Sayfa yenilenmeden doğrulama yapar)
     function bindFormSubmit(form) {
         if (!form) return;
-
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(form);
-            const action = form.getAttribute('action');
 
-            fetch(action, {
+            fetch(form.action, {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(res => {
                     if (res.ok) {
-                        // Başarılı ise modalı kapat ve sayfayı yenile
-                        // Veya sadece grid'i güncelle (daha advanced)
-                        globalModal.hide();
+                        globalModalInstance.hide();
                         window.location.reload();
                     } else {
-                        // Hata varsa (Validation vb) formu güncelle
+                        // Hata durumunda (Validation hatası gibi) formu tekrar yükle
                         return res.text().then(html => {
                             document.getElementById('globalModalContent').innerHTML = html;
-                            if (typeof lucide !== 'undefined') lucide.createIcons();
                             bindFormSubmit(document.getElementById('globalModalContent').querySelector('form'));
                         });
                     }
@@ -104,43 +72,75 @@ const WarehouseManager = (function () {
         });
     }
 
+    // Canlı Arama Fonksiyonu (Input bazlı)
     function bindSearch() {
-        const searchInput = document.getElementById('warehouseSearch');
-        if (!searchInput) return;
+        const input = document.getElementById('warehouseSearch');
+        if (!input) return;
 
-        searchInput.addEventListener('keyup', function (e) {
-            const term = e.target.value.toLowerCase().trim();
-            const wrappers = document.querySelectorAll('.ws-warehouse-card-wrapper'); // Wrapper üzerinden
-
-            wrappers.forEach(wrapper => {
-                const card = wrapper.querySelector('.ws-warehouse-card');
-                const name = (card.getAttribute('data-name') || '').toLowerCase();
-                const location = (card.getAttribute('data-location') || '').toLowerCase();
-
-                if (name.includes(term) || location.includes(term)) {
-                    wrapper.style.display = '';
-                } else {
-                    wrapper.style.display = 'none';
-                }
-            });
+        input.addEventListener('keyup', function () {
+            const term = this.value.toLowerCase().trim();
+            applyFilters(term, null); // Mevcut arama terimiyle filtrele
         });
     }
 
-    function bindDeleteActions() {
-        // Dinamik içerik olabileceği için document level delegation
-        document.body.addEventListener('click', function (e) {
-            const btn = e.target.closest('.btn-delete-warehouse');
-            if (btn) {
-                e.preventDefault();
-                const form = btn.closest('form');
-                if (confirm('Bu depoyu silmek üzeresiniz. Onaylıyor musunuz?')) {
-                    form.submit();
-                }
+    // Genel Filtreleme Mantığı (Arama + Bölge Seçimi)
+    function applyFilters(searchTerm = '', regionValue = 'all') {
+        const items = document.querySelectorAll('.ws-warehouse-card-wrapper');
+        const currentSearch = searchTerm || document.getElementById('warehouseSearch').value.toLowerCase().trim();
+
+        items.forEach(item => {
+            const card = item.querySelector('.ws-warehouse-card');
+            const name = card.getAttribute('data-name').toLowerCase();
+            const loc = card.getAttribute('data-location').toLowerCase();
+            const regionAttr = item.getAttribute('data-location-filter');
+
+            const matchesSearch = name.includes(currentSearch) || loc.includes(currentSearch);
+            const matchesRegion = (regionValue === 'all' || regionValue === null || regionAttr === regionValue);
+
+            if (matchesSearch && matchesRegion) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
             }
         });
     }
 
-    return { init: init };
+    // Dışarıya Açılan Fonksiyonlar (HTML içinden erişilebilir)
+    return {
+        init: init,
+
+        // Modal Tetikleyicileri
+        openCreateModal: function () {
+            loadModal('/Warehouses/Create');
+        },
+        openEditModal: function (id) {
+            loadModal('/Warehouses/Edit/' + id);
+        },
+
+        // Silme İşlemi
+        deleteWarehouse: function (id) {
+            if (confirm('Bu depoyu silmek istediğinize emin misiniz?')) {
+                fetch('/Warehouses/Delete/' + id, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(res => {
+                        if (res.ok) window.location.reload();
+                        else alert('Silme işlemi sırasında bir hata oluştu.');
+                    });
+            }
+        },
+
+        // Filtreleme Fonksiyonu (HTML'deki onclick olayları burayı çağırır)
+        filterByValue: function (value) {
+            const filterText = document.getElementById('selectedRegionText');
+            if (filterText) {
+                filterText.innerText = value === 'all' ? 'Bölge Seçin' : value;
+            }
+            applyFilters(null, value);
+        }
+    };
 })();
 
+// Sayfa hazır olduğunda init fonksiyonunu çalıştır
 document.addEventListener('DOMContentLoaded', WarehouseManager.init);

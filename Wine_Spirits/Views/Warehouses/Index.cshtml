@@ -3,88 +3,152 @@
 @{
     ViewData["Title"] = "Depo Yönetimi";
     Layout = "_Layout";
+    // Türkçe tarih formatı için CultureInfo tanımlıyoruz
+    var turkishCulture = new System.Globalization.CultureInfo("tr-TR");
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/warehouse/warehouse-styles.css" asp-append-version="true" />
 }
 
-<div class="container-fluid px-4 py-4">
+<div class="ws-main-container p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="h4 fw-bold text-dark mb-1">Depo Yönetimi</h2>
-            <p class="text-muted small mb-0">Depolarınızı yönetin ve stok durumunu görüntüleyin.</p>
+            <h2 class="fw-bold text-dark m-0">Depo Yönetimi</h2>
+            <p class="text-muted small mb-0">Depo lokasyonlarını ve kapasite durumlarını yönetin.</p>
         </div>
-        <a asp-action="Create" class="btn ws-btn-primary d-flex align-items-center gap-2 btn-warehouse-add">
-            <i data-lucide="plus" class="btn-icon-plus"></i> Yeni Depo Ekle
-        </a>
+        <button type="button" class="ws-btn-main shadow-sm" onclick="WarehouseManager.openCreateModal()">
+            <i data-lucide="plus"></i> Yeni Depo Ekle
+        </button>
     </div>
 
-    <div class="ws-search-container">
-        <i data-lucide="search" class="ws-search-icon"></i>
-        <input type="text" id="warehouseSearch" class="form-control border-0 shadow-sm ws-search-input" placeholder="Depo ara (Ad, konum)...">
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-indigo-50 text-primary"><i data-lucide="building-2"></i></div>
+                <div><small class="text-muted d-block">Toplam Depo</small><span class="fw-bold h5">@Model.Count()</span></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-emerald-50 text-success"><i data-lucide="navigation"></i></div>
+                <div><small class="text-muted d-block">Aktif Lokasyon</small><span class="fw-bold h5">@Model.Select(x => x.Location).Distinct().Count()</span></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-amber-50 text-warning"><i data-lucide="package-check"></i></div>
+                <div><small class="text-muted d-block">Toplam Kapasite</small><span class="fw-bold h5">94%</span></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-rose-50 text-danger"><i data-lucide="alert-circle"></i></div>
+                <div><small class="text-muted d-block">Kritik Doluluk</small><span class="fw-bold h5">2</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ws-filter-container shadow-sm mb-4">
+        <div class="ws-filter-item flex-grow-1">
+            <i data-lucide="search"></i>
+            <input type="text" id="warehouseSearch" class="ws-filter-el" placeholder="Depo adı veya lokasyon ara...">
+        </div>
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i data-lucide="map-pin"></i> <span id="selectedRegionText">Bölge Seçin</span>
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('all')">Tüm Bölgeler</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    @foreach (var loc in Model.Select(x => x.Location).Distinct())
+                    {
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('@loc')">@loc</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i data-lucide="bar-chart-3"></i> Durum
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg">
+                    <li><a class="dropdown-item" href="javascript:void(0)">Aktif</a></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)">Kritik Doluluk</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <div class="ws-warehouse-grid">
         @foreach (var item in Model)
         {
-            var displayId = item.Id.ToString();
-            var shortCode = displayId.Length >= 4 ? displayId.Substring(0, 4).ToUpper() : displayId.ToUpper();
+            var shortCode = item.Id.ToString().Substring(0, 4).ToUpper();
+            var fillRate = 75;
 
-            <div class="ws-warehouse-card-wrapper">
-                <div class="ws-warehouse-card" data-name="@item.Name" data-code="DPO-@shortCode" data-location="@item.Location">
-                    
-                    <div class="card-header-flex">
-                        <div class="card-header-row">
-                            <div class="warehouse-icon-box">
-                                <i data-lucide="box"></i>
+            <div class="ws-warehouse-card-wrapper" data-location-filter="@item.Location">
+                <div class="ws-warehouse-card shadow-sm" data-name="@item.Name" data-location="@item.Location">
+                    <div class="card-header-flex d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="ws-stat-icon-box ws-warehouse-icon bg-indigo-50 text-primary">
+                                <i data-lucide="warehouse"></i>
                             </div>
-                            <div class="warehouse-header-info">
-                                <div class="warehouse-title">@item.Name</div>
-                                <div class="warehouse-code">DPO-@shortCode</div>
+                            <div>
+                                <h6 class="fw-bold m-0 text-dark">@item.Name</h6>
+                                <span class="text-muted small">DPO-@shortCode</span>
                             </div>
                         </div>
-
-                        <div class="card-actions">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="ws-action-btn ws-edit-icon" title="Düzenle">
-                                <i data-lucide="pencil"></i>
-                            </a>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="ws-delete-form">
-                                <button type="button" class="ws-action-btn ws-delete-icon btn-delete-warehouse" title="Sil">
-                                    <i data-lucide="trash-2"></i>
-                                </button>
-                            </form>
+                        <div class="d-flex gap-1">
+                            <button type="button" onclick="WarehouseManager.openEditModal('@item.Id')" class="ws-action-btn" title="Düzenle">
+                                <i data-lucide="edit-3"></i>
+                            </button>
+                            <button type="button" onclick="WarehouseManager.deleteWarehouse('@item.Id')" class="ws-action-btn" title="Sil">
+                                <i data-lucide="trash-2" class="text-danger"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="warehouse-meta">
-                        <div class="meta-item">
-                            <i data-lucide="map-pin"></i>
-                            <span>@item.Location</span>
+                    <div class="warehouse-info-list mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                            <i data-lucide="map-pin" class="size-14"></i>
+                            <span class="text-truncate">@item.Location</span>
                         </div>
-                        <div class="meta-item">
-                            <i data-lucide="calendar"></i>
-                            <span>@item.CreatedDate.ToString("dd.MM.yyyy")</span>
-                        </div>
-                    </div>
-
-                    <div class="warehouse-stats">
-                        <div class="stat-box purple">
-                            <span class="stat-label">Ürün Çeşidi</span>
-                            <span class="stat-value">0</span>
-                        </div>
-                        <div class="stat-box blue">
-                            <span class="stat-label">Toplam Stok</span>
-                            <span class="stat-value">0</span>
+                        <div class="d-flex align-items-center gap-2 text-muted small">
+                            <i data-lucide="clock" class="size-14"></i>
+                            <span>Kayıt: @item.CreatedDate.ToString("dd MMMM yyyy", turkishCulture)</span>
                         </div>
                     </div>
 
+                    <div class="row g-2 mt-auto">
+                        <div class="col-6"><div class="ws-info-badge"><small class="ws-badge-label">ÜRÜN TİPİ</small><span class="fw-bold">124</span></div></div>
+                        <div class="col-6"><div class="ws-info-badge"><small class="ws-badge-label">TOPLAM STOK</small><span class="fw-bold">1.250</span></div></div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Doluluk</span>
+                            <span class="fw-bold">@fillRate%</span>
+                        </div>
+                        <div class="progress ws-warehouse-progress">
+                            <div class="progress-bar bg-primary shadow-none"
+                                 role="progressbar"
+                                 style="--fill-rate: @(fillRate)%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
     </div>
 </div>
 
+<div class="modal fade" id="globalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content ws-modal-container">
+            <div id="globalModalContent"></div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script src="~/js/pages/warehouse.js" asp-append-version="true"></script>
+    <script src="~/js/warehouse/warehouse-manager.js" asp-append-version="true"></script>
 }
