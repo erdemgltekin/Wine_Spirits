@@ -463,151 +463,107 @@ body {
     }
 /* --- 10.GLOBAL FILTER BAR CONTAINER --- */
 /* --- GLOBAL FILTER BAR (Figma Style) --- */
+/* --- GLOBAL MODERN FILTER SYSTEM --- */
+
 .ws-filter-container {
     display: flex;
-    align-items: center;
+    align-items: stretch; /* Elemanların yüksekliklerini eşitler */
     gap: 12px;
     background: #ffffff;
-    padding: 10px 14px;
+    padding: 10px;
     border-radius: 14px;
     border: 1.5px solid #f1f5f9;
     margin-bottom: 24px;
     transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
 /* Filtre Elemanı Sarıcı (İkon + Input/Select) */
 .ws-filter-item, .ws-btn-filter-action {
     display: flex;
     align-items: center;
-    background: #f8fafc;
-    border: 1.5px solid #f1f5f9;
-    border-radius: 10px;
-    padding: 2px 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    flex: 1;
+    background: #ffffff !important; /* Arka planı temizledik */
+    border: 1.5px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex: 1; /* Eşit genişlik sağlar */
+    cursor: pointer;
+    min-width: 0; /* Text truncate çalışması için gerekli */
 }
-    /* Hover Efekti: Hem kutular hem buton mor shadow alsın */
-    .ws-filter-item:hover, .ws-btn-filter-action:hover {
-        transform: translateY(-3px) !important;
-        border-color: #7c3aed !important;
-        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2), 0 6px 6px -5px rgba(124, 58, 237, 0.1) !important;
+
+    /* Hover Efekti: Mor Parlama ve Yükselme */
+    .ws-filter-item:hover,
+    .ws-btn-filter-action:hover,
+    .show > .ws-btn-filter-action {
+        transform: translateY(-2px) !important;
+        border-color: #7c3aed !important; /* Premium Mor */
+        color: #7c3aed !important;
+        background-color: #fbfaff !important;
+        box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.1), 0 0 0 4px rgba(124, 58, 237, 0.05) !important;
     }
 
-        /* İkon Efekti: Hover anında ikonları canlandır */
-        .ws-filter-item:hover i,
-        .ws-filter-item:hover svg,
-        .ws-btn-filter-action:hover i,
-        .ws-btn-filter-action:hover svg {
-            color: #7c3aed !important;
-            transform: scale(1.1);
-            transition: all 0.2s ease;
-        }
-
-    /* Odaklanma Efekti (Mor Çerçeve) */
-    .ws-filter-item:focus-within {
-        border-color: #7c3aed;
-        background: #ffffff;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.2) !important;
-    }
-    
-
-    .ws-filter-item i, .ws-filter-item svg {
+    /* İkonlar */
+    .ws-filter-item i, .ws-filter-item svg,
+    .ws-btn-filter-action i, .ws-btn-filter-action svg {
         color: #94a3b8;
         margin-right: 10px;
         width: 18px;
         height: 18px;
         flex-shrink: 0;
+        transition: all 0.3s ease;
     }
 
-/* Input/Select Temizliği */
+    /* Hover anında ikon canlanması */
+    .ws-filter-item:hover i, .ws-filter-item:hover svg,
+    .ws-btn-filter-action:hover i, .ws-btn-filter-action:hover svg {
+        color: #7c3aed !important;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Odaklanma Efekti (Input içindeyken) */
+    .ws-filter-item:focus-within {
+        border-color: #7c3aed !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
+    }
+
+/* Input/Select İçerik Temizliği */
 .ws-filter-el {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
-    padding: 8px 0;
+    padding: 0 !important;
     font-size: 14px;
+    font-weight: 500;
     color: #334155;
     width: 100%;
     outline: none;
+    cursor: pointer;
 }
 
-/* Sırala/Filtrele Butonu */
+    /* Select kutusu ok işareti (Native Select kullanacaksan) */
+    .ws-filter-el.ws-select-control {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0 center;
+        padding-right: 20px !important;
+    }
+
+/* Filtrele Butonu Özel Ayar (Dropdown) */
 .ws-btn-filter-action {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: #ffffff;
-    border: 1.5px solid #f1f5f9;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #475569;
+    flex: 0 0 auto; /* Butonun içeriği kadar geniş kalmasını sağlar, istersen flex:1 yapabilirsin */
     white-space: nowrap;
-    transition: all 0.2s;
-    cursor: pointer;
+    gap: 8px;
 }
 
-    .ws-btn-filter-action:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-        color: #7c3aed;
-    }
-        .ws-btn-filter-action:hover i,
-        .ws-btn-filter-action:hover svg {
-            transform: rotate(15deg); 
-            color: #7c3aed;
-            transition: transform 0.3s ease;
-        }
-
-/* Sağdaki Sıralama/Filtrele Butonu */
-.ws-filter-el, .ws-btn-filter-action {
-    display: flex;
-    align-items: center;
-    background: #ffffff !important;
-    border: 1.5px solid #e5e7eb !important; /* Standart ince gri çerçeve */
-    border-radius: 12px !important; /* 1. görseldeki yumuşak köşe */
-    padding: 10px 16px !important;
-    color: #4b5563 !important;
-    font-weight: 500;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    cursor: pointer;
-    outline: none !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-    .ws-filter-el:hover, .ws-btn-filter-action:hover {
-        border-color: #6c5ce7 !important; /* Mor çerçeve */
-        color: #6c5ce7 !important;
-        background-color: #fbfaff !important;
-        /* Mor Dış Parlama (Glow) */
-        box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1) !important;
-        transform: translateY(-1px); /* Hafif yükselme hissi */
-    }
-/* Dropdown Açıldığında (Aktif Durum) */
-.show > .ws-btn-filter-action,
-.show > .ws-filter-el {
-    border-color: #6c5ce7 !important;
-    background-color: #fbfaff !important;
-    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15) !important;
-}
-
-/* İçerideki İkonların Renk Uyumu */
-.ws-filter-el:hover i, .ws-btn-filter-action:hover i {
-    color: #6c5ce7 !important;
-}
-
-/* Dropdown Açıldığında (Aktif Durum) */
-.show > .ws-btn-filter-action,
-.show > .ws-filter-el {
-    border-color: #6c5ce7 !important;
-    background-color: #fbfaff !important;
-    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15) !important;
-}
-
-/* İçerideki İkonların Renk Uyumu */
-.ws-filter-el:hover i, .ws-btn-filter-action:hover i {
-    color: #6c5ce7 !important;
+/* Option Listesi */
+.ws-filter-el option {
+    background: #ffffff;
+    color: #334155;
+    padding: 12px;
 }
 /* 11. MOBİL UYUMLULUK */
 @media (max-width: 991.98px) {
@@ -629,6 +585,8 @@ body {
 }
 /* Custom Dropdown Menü Tasarımı */
 /* Dropdown Menülerin Kendisi (Açılan Pencere) */
+/* --- MODERN DROPDOWN SYSTEM (Eksiksiz Versiyon) --- */
+
 .dropdown-menu {
     border: none !important;
     border-radius: 12px !important;
@@ -636,8 +594,8 @@ body {
     padding: 8px !important;
     margin-top: 8px !important;
     animation: ws-dropdown-fade 0.2s ease-out;
+    background-color: #ffffff !important;
 }
-
 
 /* Liste Elemanları */
 .dropdown-item {
@@ -647,6 +605,9 @@ body {
     font-size: 14px !important;
     font-weight: 500;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* İkon ve yazı arası denge için */
 }
 
     /* Hover Efekti: Figma stili mor arka plan */
@@ -656,12 +617,43 @@ body {
         transform: translateX(5px); /* Hafif kayma efekti */
     }
 
-/* Dropdown Açılış Animasyonu */
+    /* Aktif/Seçili Filtre Durumu */
+    .dropdown-item.active,
+    .dropdown-item:active {
+        background-color: #f3f0ff !important; /* Hover ile aynı veya bir tık daha koyusu tercih edilebilir */
+        color: #6c5ce7 !important;
+        font-weight: 600 !important;
+    }
 
+    /* Dropdown içindeki ikonlar için (Lucide vb.) */
+    .dropdown-item i, .dropdown-item svg {
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+        transition: all 0.2s ease;
+    }
+
+/* Başlıklar ve Ayraçlar */
+.dropdown-header {
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8 !important;
+    padding: 10px 15px !important;
+}
+
+.dropdown-divider {
+    border-top: 1px solid #f1f5f9 !important;
+    margin: 6px 0 !important;
+    opacity: 1 !important;
+}
+
+/* Dropdown Animasyonu (Eğer tanımlı değilse) */
 @keyframes ws-dropdown-fade {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(-10px);
     }
 
     to {
@@ -782,3 +774,51 @@ body {
         opacity: 1;
         transform: scale(1.05);
     }
+
+/* --- FLATPICKR PREMIUM CUSTOMIZATION --- */
+.flatpickr-calendar {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.prevMonthDay.selected,
+.flatpickr-day.nextMonthDay.selected {
+    background: var(--primary) !important; /* #7c3aed */
+    border-color: var(--primary) !important;
+}
+
+.flatpickr-day.inRange {
+    background: #f3f0ff !important;
+    box-shadow: -5px 0 0 #f3f0ff, 5px 0 0 #f3f0ff !important;
+    color: var(--primary) !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    color: var(--gray-800) !important;
+    fill: var(--gray-800) !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    font-weight: 700 !important;
+}
+
+.flatpickr-weekday {
+    font-weight: 600 !important;
+    color: var(--gray-400) !important;
+}

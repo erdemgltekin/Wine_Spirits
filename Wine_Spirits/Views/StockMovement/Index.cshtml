@@ -6,242 +6,232 @@
 }
 
 @section Styles {
+    @* Sadece bu sayfaya özel çok spesifik ayarlar varsa kalabilir, 
+       yoksa global CSS artık her şeyi karşılıyor. *@
     <link rel="stylesheet" href="~/css/stock-movement/stock-movement.css" asp-append-version="true" />
 }
 
-<div class="ws-stock-movement-container">
-    @* Sayfa Başlığı ve Aksiyonlar *@
-    <div class="ws-page-header mb-4">
+<div class="container-fluid py-4">
+    @* --- SAYFA BAŞLIĞI --- *@
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h2 class="ws-page-title">Stok Hareketleri</h2>
-            <p class="ws-page-subtitle">Tüm stok giriş ve çıkışlarını görüntüleyin ve yönetin.</p>
+            <h2 class="fw-bold mb-1" style="color: var(--gray-900); letter-spacing: -0.02em;">Stok Hareketleri</h2>
+            <p class="text-muted mb-0 small">Tüm depo giriş, çıkış ve transfer süreçlerini buradan yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-primary" id="btnNewMovement">
-            <i data-lucide="plus-circle" class="ws-icon-18"></i>
+        <button type="button" class="ws-btn-primary" data-bs-toggle="modal" data-bs-target="#newMovementModal">
+            <i data-lucide="plus-circle"></i>
             <span>Yeni Hareket Ekle</span>
         </button>
     </div>
 
-    @* İstatistik Kartları *@
+    @* --- 8. GLOBAL STAT KARTLARI --- *@
     <div class="row g-4 mb-4">
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalMovements", Label = "Toplam Hareket", Value = "1.248", Icon = "activity", IconClass = "bg-primary-50 text-primary-600" }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-indigo-50">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">Toplam Hareket</div>
+                    <div class="fs-4 fw-bold text-dark">1.248</div>
+                </div>
+            </div>
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "todayMovements", Label = "Bugünkü Hareket", Value = "24", Icon = "calendar", IconClass = "bg-violet-50 text-violet-600" }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-emerald-50">
+                    <i data-lucide="calendar"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">Bugünkü Hareket</div>
+                    <div class="fs-4 fw-bold text-dark">24</div>
+                </div>
+            </div>
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "cancelledMovements", Label = "İptal Edilen", Value = "7", Icon = "x-circle", IconClass = "bg-rose-50 text-rose-600" }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-rose-50">
+                    <i data-lucide="x-circle"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">İptal Edilen</div>
+                    <div class="fs-4 fw-bold text-dark">7</div>
+                </div>
+            </div>
         </div>
         <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "pendingMovements", Label = "Onay Bekleyen", Value = "13", Icon = "clock", IconClass = "bg-amber-50 text-amber-600" }' />
-        </div>
-    </div>
-
-    @* Premium Filtreleme Paneli (V3.0) *@
-    <div class="ws-filter-container">
-        <div class="row g-3 align-items-center">
-            @* Arama *@
-            <div class="col-lg-3 col-md-12">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="search"></i></span>
-                    <input type="text" class="ws-input-control" placeholder="Hareket ara (ID, ürün, depo)..." id="movementSearch">
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-amber-50">
+                    <i data-lucide="clock"></i>
                 </div>
-            </div>
-            
-            @* Hareket Tipi *@
-            <div class="col-lg-2 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="activity"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterType">
-                        <option value="">Tüm Tipler</option>
-                        <option>Açılış Stoğu</option>
-                        <option>Giriş</option>
-                        <option>Çıkış</option>
-                        <option>Transfer</option>
-                        <option>Sayım Farkı</option>
-                    </select>
-                </div>
-            </div>
-
-            @* Depo *@
-            <div class="col-lg-2 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="warehouse"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterWarehouse">
-                        <option value="">Tüm Depolar</option>
-                        <option>Ana Depo</option>
-                        <option>Şube Depo A</option>
-                        <option>Şantiye Depo</option>
-                    </select>
-                </div>
-            </div>
-
-            @* Tarih Seçici (Flatpickr) *@
-            <div class="col-lg-3 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="calendar"></i></span>
-                    <input type="text" class="ws-input-control ws-datepicker" id="dateFilter" placeholder="Tarih Seçin" readonly>
-                </div>
-            </div>
-
-            @* Filtrele / Sırala *@
-            <div class="col-lg-2 col-md-12">
-                <div class="dropdown">
-                    <button class="ws-btn-modern-filter dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="d-flex align-items-center gap-2">
-                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
-                            Filtrele / Sırala
-                        </span>
-                        <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
-                        <li><h6 class="dropdown-header">Sıralama</h6></li>
-                        <li><a class="dropdown-item active" href="#" data-sort="date-desc">Yeniden Eskiye</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="date-asc">Eskiden Yeniye</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" data-sort="qty-desc">Miktar (Yüksek)</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="qty-asc">Miktar (Düşük)</a></li>
-                    </ul>
+                <div>
+                    <div class="text-muted small fw-medium">Onay Bekleyen</div>
+                    <div class="fs-4 fw-bold text-dark">13</div>
                 </div>
             </div>
         </div>
     </div>
 
-    @* Hareketler Tablosu *@
-    <div class="ws-table-card">
-        <div class="table-responsive">
-            <table class="table ws-custom-table align-middle">
-                <thead>
-                    <tr>
-                        <th class="ps-4">HAREKET NO</th>
-                        <th>ÜRÜN</th>
-                        <th>DEPO</th>
-                        <th>TİP</th>
-                        <th>MİKTAR</th>
-                        <th>TARİH</th>
-                        <th>DURUM</th>
-                        <th class="text-end pe-4">İŞLEMLER</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="ps-4"><span class="ws-movement-no">#SH-8291</span></td>
-                        <td>
-                            <div class="fw-bold">Chardonnay Reserve 2022</div>
-                            <div class="text-muted small">8690001122</div>
-                        </td>
-                        <td>Ana Depo</td>
-                        <td><span class="ws-badge ws-badge-neutral"><i data-lucide="play-circle" class="ws-icon-16"></i> Açılış Stoğu</span></td>
-                        <td><span class="fw-bold">500</span></td>
-                        <td>01.02.2026</td>
-                        <td><span class="ws-badge ws-badge-primary">Tamamlandı</span></td>
-                        <td class="text-end pe-4">
-                            <div class="ws-action-container">
-                                <button class="ws-action-btn" title="Detay"><i data-lucide="eye" class="ws-icon-16"></i></button>
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-movement-no">#SH-8290</span></td>
-                        <td>
-                            <div class="fw-bold">Merlot Special Selection</div>
-                            <div class="text-muted small">8690001145</div>
-                        </td>
-                        <td>Şube Depo A</td>
-                        <td><span class="ws-badge ws-badge-warning"><i data-lucide="arrow-right-left" class="ws-icon-16"></i> Transfer</span></td>
-                        <td><span class="fw-bold">60</span></td>
-                        <td>18.02.2026</td>
-                        <td><span class="ws-badge ws-badge-primary">Tamamlandı</span></td>
-                        <td class="text-end pe-4">
-                            <div class="ws-action-container">
-                                <button class="ws-action-btn" title="Detay"><i data-lucide="eye" class="ws-icon-16"></i></button>
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-movement-no">#SH-8289</span></td>
-                        <td>
-                            <div class="fw-bold">Vintage Cognac 50cl</div>
-                            <div class="text-muted small">8690001190</div>
-                        </td>
-                        <td>Ana Depo</td>
-                        <td><span class="ws-badge ws-badge-success"><i data-lucide="arrow-down-left" class="ws-icon-16"></i> Giriş</span></td>
-                        <td><span class="fw-bold">24</span></td>
-                        <td>17.02.2026</td>
-                        <td><span class="ws-badge ws-badge-warning">Bekliyor</span></td>
-                        <td class="text-end pe-4">
-                            <div class="ws-action-container">
-                                <button class="ws-action-btn" title="Detay"><i data-lucide="eye" class="ws-icon-16"></i></button>
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" class="ws-icon-16"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    @* --- 10. GLOBAL FILTER BAR --- *@
+    <div class="ws-filter-container shadow-sm d-flex align-items-stretch">
+        @* Arama *@
+        <div class="ws-filter-item flex-fill">
+            <i data-lucide="search"></i>
+            <input type="text" class="ws-filter-el w-100" placeholder="Hareket No veya Ürün ara..." id="movementSearch">
         </div>
+
+        @* Hareket Tipi (Dropdown Yapıldı) *@
+        <div class="dropdown flex-fill">
+            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button" aria-expanded="false" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-2">
+                    <i data-lucide="layers"></i>
+                    <span id="selectedMovementType" class="ws-filter-label">Tüm Tipler</span>
+                </div>
+                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
+            </div>
+            <ul class="dropdown-menu shadow-lg border-0 w-100">
+                <li><a class="dropdown-item active" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Tüm Tipler')">Tüm Tipler</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Giriş')">Giriş</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Çıkış')">Çıkış</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Transfer')">Transfer</a></li>
+            </ul>
+        </div>
+
+        @* Depo (Dropdown Yapıldı) *@
+        <div class="dropdown flex-fill">
+            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-2">
+                    <i data-lucide="warehouse"></i>
+                    <span id="selectedWarehouse" class="ws-filter-label">Tüm Depolar</span>
+                </div>
+                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
+            </div>
+            <ul class="dropdown-menu shadow-lg border-0 w-100">
+                <li><a class="dropdown-item active" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Tüm Depolar')">Tüm Depolar</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Ana Depo')">Ana Depo</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Şube Depo A')">Şube Depo A</a></li>
+            </ul>
+        </div>
+
+        @* Tarih *@
+        <div class="ws-filter-item flex-fill">
+            <i data-lucide="calendar"></i>
+            <input type="text" class="ws-filter-el ws-datepicker w-100" id="dateFilter" placeholder="Tarih Seçin" readonly>
+        </div>
+
+        @* Sırala *@
+        <div class="dropdown">
+            <button class="ws-btn-filter-action dropdown-toggle border-0 h-100 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="sliders-horizontal"></i>
+                <span>Sırala</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+                <li><a class="dropdown-item active" href="#" data-sort="newest">Yeniden Eskiye</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="oldest">Eskiden Yeniye</a></li>
+                <li><hr class="dropdown-divider opacity-50"></li>
+                <li><a class="dropdown-item" href="#" data-sort="qty-desc">Miktar (Yüksek)</a></li>
+            </ul>
+        </div>
+    </div>
+
+    @* --- TABLO YAPISI --- *@
+    <div class="ws-table-wrapper">
+        <table class="ws-table-premium">
+            <thead>
+                <tr>
+                    <th class="ps-4">HAREKET NO</th>
+                    <th>ÜRÜN / KOD</th>
+                    <th>DEPO</th>
+                    <th>TİP</th>
+                    <th>MİKTAR</th>
+                    <th>TARİH</th>
+                    <th>DURUM</th>
+                    <th class="text-end pe-4">İŞLEMLER</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="ps-4 text-primary fw-bold">#SH-8291</td>
+                    <td>
+                        <div class="fw-bold text-dark">Chardonnay Reserve 2022</div>
+                        <div class="text-muted extra-small">SKU: 8690001122</div>
+                    </td>
+                    <td>Ana Depo</td>
+                    <td><span class="status-pill" style="background: #f1f5f9; color: #475569;"><i data-lucide="play-circle" class="ws-icon-14"></i> Açılış</span></td>
+                    <td><span class="fw-bold text-dark">500</span></td>
+                    <td>01.02.2026</td>
+                    <td><span class="status-pill status-success">Tamamlandı</span></td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="ws-action-btn" title="Detay"><i data-lucide="eye"></i></button>
+                            <button class="ws-action-btn" title="Yazdır"><i data-lucide="printer"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
-@* Yeni Stok Hareketi Modalı *@
+@* Modalı da global .ws-modal-custom yapısına göre güncelledik *@
 <div class="modal fade" id="newMovementModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content ws-modal-content">
+        <div class="modal-content ws-modal-custom p-2">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark">Yeni Stok Hareketi</h5>
-                <button type="button" class="btn-close ws-btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="fw-bold text-dark mb-0">Yeni Stok Hareketi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pt-4">
                 <form id="formNewMovement">
-                    <div class="row g-4">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="ws-modal-label">Ürün <span class="text-danger">*</span></label>
-                            <select class="form-select ws-modal-input" required>
-                                <option value="" selected disabled>Ürün seçin</option>
-                                <option>Chardonnay Reserve 2022</option>
+                            <label class="ws-form-label">Ürün Seçimi</label>
+                            <select class="ws-input-premium form-select" required>
+                                <option value="" selected disabled>Ürün ara...</option>
                                 <option>Merlot Special Selection</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="ws-modal-label">Depo <span class="text-danger">*</span></label>
-                            <select class="form-select ws-modal-input" required>
-                                <option value="" selected disabled>Depo seçin</option>
+                            <label class="ws-form-label">Depo</label>
+                            <select class="ws-input-premium form-select" required>
                                 <option>Ana Depo</option>
                                 <option>Şube Depo A</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="ws-modal-label">Hareket Tipi <span class="text-danger">*</span></label>
-                            <select class="form-select ws-modal-input" required>
-                                <option value="" selected disabled>Tip seçin</option>
-                                <option>Açılış Stoğu</option>
+                            <label class="ws-form-label">Hareket Tipi</label>
+                            <select class="ws-input-premium form-select" required>
                                 <option>Giriş</option>
                                 <option>Çıkış</option>
                                 <option>Transfer</option>
-                                <option>Sayım Farkı</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="ws-modal-label">Miktar <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control ws-modal-input" placeholder="0" required>
+                            <label class="ws-form-label">Miktar</label>
+                            <input type="number" class="ws-input-premium" placeholder="0" required>
                         </div>
                         <div class="col-12">
-                            <label class="ws-modal-label">Açıklama <span class="text-danger">*</span></label>
-                            <textarea class="form-control ws-modal-input ws-modal-textarea" rows="3" placeholder="Stok hareketi açıklaması" required></textarea>
+                            <label class="ws-form-label">Açıklama</label>
+                            <textarea class="ws-input-premium py-2" rows="3" placeholder="Hareket notlarını buraya yazın..." style="height: auto;"></textarea>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer ws-modal-footer border-0 pt-3 pb-4">
-                <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="submit" form="formNewMovement" class="ws-btn-primary">Kaydet</button>
+            <div class="modal-footer border-0 pt-3 pb-4">
+                <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="submit" form="formNewMovement" class="ws-btn-primary">Hareketi Kaydet</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/stock-movement/stock-movement.js" asp-append-version="true"></script>
+
 }

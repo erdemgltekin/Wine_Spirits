@@ -67,3 +67,25 @@ const StockMovementManager = {
 document.addEventListener('DOMContentLoaded', () => {
     StockMovementManager.init();
 });
+
+/**
+ * Filtre Seçimlerini Güncelle
+ */
+function updateFilter(type, value) {
+    if (type === 'MovementType') {
+        document.getElementById('selectedMovementType').innerText = value;
+    } else if (type === 'Warehouse') {
+        document.getElementById('selectedWarehouse').innerText = value;
+    }
+
+    // Aktiflik sınıfını güncelle (UI Feedback)
+    const dropdownItems = event.target.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => item.classList.remove('active'));
+    event.target.classList.add('active');
+
+    console.log(`${type} Filtresi Uygulandı: ${value}`);
+    // Buraya tabloyu yenileyecek AJAX fonksiyonunu bağlayabiliriz.
+}
+
+// Global erişim için window objesine bağla
+window.updateFilter = updateFilter;

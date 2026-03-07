@@ -5,217 +5,176 @@
     Layout = "_Layout";
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/report/report.css" asp-append-version="true" />
-}
-
-<div class="ws-report-container">
-
-    @* ── Sayfa Başlığı ── *@
-    <div class="ws-page-header mb-4">
+<div class="container-fluid py-4">
+    @* --- SAYFA BAŞLIĞI --- *@
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h2 class="ws-page-title">Stok Raporu</h2>
-            <p class="ws-page-subtitle">Anlık stok durumu, değer analizi ve kritik seviye takibi.</p>
+            <h2 class="fw-bold mb-1" style="color: var(--gray-900); letter-spacing: -0.02em;">Stok Raporu</h2>
+            <p class="text-muted mb-0 small">Anlık stok durumu, değer analizi ve kritik seviye takibi.</p>
         </div>
-        <button type="button" class="ws-btn-secondary ws-btn-download d-flex align-items-center gap-2" id="btnDownloadReport">
-            <i data-lucide="download" class="ws-icon-16"></i> Rapor İndir
+        <button type="button" class="ws-btn-secondary" id="btnDownloadReport">
+            <i data-lucide="download"></i>
+            <span>Excel Olarak İndir</span>
         </button>
     </div>
 
-    @* ── İstatistik Kartları (V2 Global Standard) ── *@
+    @* --- İSTATİSTİK KARTLARI (Global StatCard Yapısı) --- *@
     <div class="row g-4 mb-4">
         <div class="col-xl-4 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey  = "totalStock",
-                Label    = "Toplam Stok Miktarı",
-                Value    = "12.480",
-                Icon     = "boxes",
-                IconClass = "bg-indigo-50 text-indigo-600"
-            }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-indigo-50">
+                    <i data-lucide="boxes"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">Toplam Stok Miktarı</div>
+                    <div class="fs-4 fw-bold text-dark">12.480 <small class="fs-6 fw-normal text-muted">Adet</small></div>
+                </div>
+            </div>
         </div>
         <div class="col-xl-4 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey  = "totalValue",
-                Label    = "Toplam Stok Değeri",
-                Value    = "₺2.847.650",
-                Icon     = "banknote",
-                IconClass = "bg-emerald-50 text-emerald-600"
-            }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-emerald-50">
+                    <i data-lucide="banknote"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">Toplam Stok Değeri</div>
+                    <div class="fs-4 fw-bold text-dark">₺2.847.650</div>
+                </div>
+            </div>
         </div>
         <div class="col-xl-4 col-sm-12">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel {
-                StatKey  = "criticalLevel",
-                Label    = "Kritik Seviye",
-                Value    = "14 Ürün",
-                Icon     = "alert-triangle",
-                IconClass = "bg-rose-50 text-rose-600"
-            }' />
+            <div class="ws-stat-card-v2">
+                <div class="ws-stat-icon-box bg-rose-50">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-medium">Kritik Seviyedeki Ürünler</div>
+                    <div class="fs-4 fw-bold text-dark">14 <small class="fs-6 fw-normal text-muted">Kalem</small></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    @* ── Modern Filtreleme Konteyneri (V3.0 Global Standard) ── *@
-    <div class="ws-filter-container">
-        <div class="row g-3 align-items-center">
+    @* --- FİLTRELEME BAR --- *@
+    
+    <div class="ws-filter-container d-flex align-items-stretch gap-3 shadow-sm mb-4 p-2">
 
-            @* Ürün Arama *@
-            <div class="col-lg-3 col-md-12">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="search"></i></span>
-                    <input type="text" class="ws-input-control" placeholder="Ürün ara..." id="reportSearch">
+        @* 1. Ürün Arama *@
+        <div class="ws-filter-item flex-fill">
+            <i data-lucide="search" class="ws-icon-18 text-muted"></i>
+            <input type="text" class="ws-filter-el w-100" placeholder="Ürün veya Kod ara..." id="reportSearch">
+        </div>
+
+        @* 2. Depo Seçimi (Custom Dropdown) *@
+        <div class="dropdown flex-fill">
+            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100"
+                 data-bs-toggle="dropdown"
+                 aria-expanded="false"
+                 role="button">
+                <div class="d-flex align-items-center gap-2">
+                    <i data-lucide="warehouse" class="ws-icon-18 text-muted"></i>
+                    <span id="selectedWarehouse" class="ws-filter-label text-truncate">Tüm Depolar</span>
                 </div>
+                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50 ms-2"></i>
             </div>
+            <ul class="dropdown-menu shadow-lg border-0 w-100 mt-2">
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Tüm Depolar')">Tüm Depolar</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Ana Depo')">Ana Depo</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Şube Depo A')">Şube Depo A</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Şantiye Deposu')">Şantiye Deposu</a></li>
+            </ul>
+        </div>
 
-            @* Depo Seçimi *@
-            <div class="col-lg-3 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="warehouse"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterWarehouse">
-                        <option value="">Tüm Depolar</option>
-                        <option value="ana">Ana Depo</option>
-                        <option value="sube-a">Şube Depo A</option>
-                        <option value="santiye">Şantiye Depo</option>
-                    </select>
-                </div>
-            </div>
+        @* 3. Tarih Aralığı *@
+        <div class="ws-filter-item flex-fill">
+            <i data-lucide="calendar-range" class="ws-icon-18 text-muted"></i>
+            <input type="text" class="ws-filter-el ws-datepicker w-100" id="reportDateRange" placeholder="Tarih Aralığı" readonly>
+        </div>
 
-            @* Tarih Aralığı (Flatpickr) *@
-            <div class="col-lg-3 col-md-4">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="calendar-range"></i></span>
-                    <input type="text" class="ws-input-control ws-datepicker" id="reportDateRange" placeholder="Tarih Aralığı Seçin" readonly>
-                </div>
-            </div>
+        @* 4. Filtrele / Sırala *@
+        <div class="dropdown">
+            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    style="white-space: nowrap;">
+                <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
+                <span>Filtrele</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="min-width: 220px;">
+                <li><h6 class="dropdown-header text-primary fw-bold">Stok Durumu</h6></li>
+                <li><a class="dropdown-item active d-flex align-items-center justify-content-between" href="#" data-sort="all">Tümü <i data-lucide="check" class="ws-icon-14"></i></a></li>
+                <li><a class="dropdown-item" href="#" data-sort="critical">Kritik Stoklar</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="low">Düşük Stoklar</a></li>
+                <li><hr class="dropdown-divider opacity-50"></li>
+                <li><h6 class="dropdown-header text-primary fw-bold">Değer Sıralaması</h6></li>
+                <li><a class="dropdown-item" href="#" data-sort="value-desc">Değer: Yüksekten Düşüğe</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="value-asc">Değer: Düşükten Yükseğe</a></li>
+            </ul>
+        </div>
+    </div>
 
-            @* Filtrele / Sırala *@
-            <div class="col-lg-3 col-md-4">
-                <div class="dropdown">
-                    <button class="ws-btn-modern-filter dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="d-flex align-items-center gap-2">
-                            <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
-                            Filtrele / Sırala
+    @* --- RAPOR TABLOSU --- *@
+    <div class="ws-table-wrapper">
+        <table class="ws-table-premium" id="reportTable">
+            <thead>
+                <tr>
+                    <th class="ps-4">ÜRÜN BİLGİSİ</th>
+                    <th>KATEGORİ</th>
+                    <th>DEPO</th>
+                    <th>STOK MİKTARI</th>
+                    <th>BİRİM FİYAT</th>
+                    <th>TOPLAM DEĞER</th>
+                    <th class="text-center">DURUM</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* Örnek Satır 1 *@
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">Chardonnay Reserve 2022</div>
+                        <div class="text-muted extra-small">ID: #PRD-001</div>
+                    </td>
+                    <td><span class="badge bg-light text-dark fw-medium border">Beyaz Şarap</span></td>
+                    <td>Ana Depo</td>
+                    <td><span class="fw-bold text-danger">8 Adet</span></td>
+                    <td>₺485,00</td>
+                    <td class="fw-bold text-dark">₺3.880,00</td>
+                    <td class="text-center">
+                        <span class="status-pill status-danger">
+                            <i data-lucide="alert-circle" style="width:14px; height:14px;"></i> Kritik
                         </span>
-                        <i data-lucide="chevron-down" class="ws-icon-16 opacity-50"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
-                        <li><h6 class="dropdown-header">Stok Durumu</h6></li>
-                        <li><a class="dropdown-item active" href="#" data-sort="all">Tümü</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="critical">Kritik Stoklar</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="low">Düşük Stoklar</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header">Değer Sıralaması</h6></li>
-                        <li><a class="dropdown-item" href="#" data-sort="value-desc">Değer: Yüksekten Düşüğe</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="value-asc">Değer: Düşükten Yükseğe</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h6 class="dropdown-header">İsim Sıralaması</h6></li>
-                        <li><a class="dropdown-item" href="#" data-sort="name-asc">A'dan Z'ye</a></li>
-                        <li><a class="dropdown-item" href="#" data-sort="name-desc">Z'den A'ya</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+                    </td>
+                </tr>
+                @* Örnek Satır 2 *@
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">Vintage Cognac 50cl</div>
+                        <div class="text-muted extra-small">ID: #PRD-003</div>
+                    </td>
+                    <td><span class="badge bg-light text-dark fw-medium border">Sert Alkol</span></td>
+                    <td>Şube Depo A</td>
+                    <td><span class="fw-bold text-dark">124 Adet</span></td>
+                    <td>₺1.250,00</td>
+                    <td class="fw-bold text-dark">₺155.000,00</td>
+                    <td class="text-center">
+                        <span class="status-pill status-success">
+                            <i data-lucide="check-circle" style="width:14px; height:14px;"></i> Yeterli
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+            @* Özet Satırı *@
+            <tfoot style="background-color: var(--gray-50);">
+                <tr class="fw-bold" style="border-top: 2px solid var(--gray-200);">
+                    <td class="ps-4" colspan="3">GENEL TOPLAM</td>
+                    <td class="text-primary">132 Adet</td>
+                    <td>—</td>
+                    <td class="text-primary">₺158.880,00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-
-    @* ── Rapor Tablosu ── *@
-    <div class="ws-table-card">
-        <div class="table-responsive">
-            <table class="table ws-custom-table align-middle" id="reportTable">
-                <thead>
-                    <tr>
-                        <th class="ps-4">ÜRÜN ID</th>
-                        <th>ÜRÜN ADI</th>
-                        <th>KATEGORİ</th>
-                        <th>DEPO</th>
-                        <th>STOK</th>
-                        <th>BİRİM FİYAT</th>
-                        <th>TOPLAM DEĞER</th>
-                        <th class="text-center">DURUM</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="ps-4"><span class="ws-report-product-id">#PRD-001</span></td>
-                        <td><span class="ws-report-product-name">Chardonnay Reserve 2022</span></td>
-                        <td>Beyaz Şarap</td>
-                        <td>Ana Depo</td>
-                        <td><span class="fw-bold text-danger">8</span></td>
-                        <td><span class="ws-report-price">₺485,00</span></td>
-                        <td><span class="ws-report-total">₺3.880,00</span></td>
-                        <td class="text-center">
-                            <span class="ws-badge ws-badge-stock-critical">
-                                <i data-lucide="alert-circle" class="ws-icon-16"></i> Kritik
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-report-product-id">#PRD-002</span></td>
-                        <td><span class="ws-report-product-name">Merlot Special Selection</span></td>
-                        <td>Kırmızı Şarap</td>
-                        <td>Ana Depo</td>
-                        <td><span class="fw-bold text-warning">18</span></td>
-                        <td><span class="ws-report-price">₺620,00</span></td>
-                        <td><span class="ws-report-total">₺11.160,00</span></td>
-                        <td class="text-center">
-                            <span class="ws-badge ws-badge-stock-low">
-                                <i data-lucide="minus-circle" class="ws-icon-16"></i> Düşük
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-report-product-id">#PRD-003</span></td>
-                        <td><span class="ws-report-product-name">Vintage Cognac 50cl</span></td>
-                        <td>Sert Alkol</td>
-                        <td>Şube Depo A</td>
-                        <td><span class="fw-bold text-dark">124</span></td>
-                        <td><span class="ws-report-price">₺1.250,00</span></td>
-                        <td><span class="ws-report-total">₺155.000,00</span></td>
-                        <td class="text-center">
-                            <span class="ws-badge ws-badge-stock-ok">
-                                <i data-lucide="check-circle" class="ws-icon-16"></i> Yeterli
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-report-product-id">#PRD-004</span></td>
-                        <td><span class="ws-report-product-name">Rosé Provence 2023</span></td>
-                        <td>Rosé Şarap</td>
-                        <td>Ana Depo</td>
-                        <td><span class="fw-bold text-dark">56</span></td>
-                        <td><span class="ws-report-price">₺340,00</span></td>
-                        <td><span class="ws-report-total">₺19.040,00</span></td>
-                        <td class="text-center">
-                            <span class="ws-badge ws-badge-stock-ok">
-                                <i data-lucide="check-circle" class="ws-icon-16"></i> Yeterli
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="ps-4"><span class="ws-report-product-id">#PRD-005</span></td>
-                        <td><span class="ws-report-product-name">Scotch Whisky 12Y</span></td>
-                        <td>Viski</td>
-                        <td>Şantiye Depo</td>
-                        <td><span class="fw-bold text-danger">5</span></td>
-                        <td><span class="ws-report-price">₺2.100,00</span></td>
-                        <td><span class="ws-report-total">₺10.500,00</span></td>
-                        <td class="text-center">
-                            <span class="ws-badge ws-badge-stock-critical">
-                                <i data-lucide="alert-circle" class="ws-icon-16"></i> Kritik
-                            </span>
-                        </td>
-                    </tr>
-                    @* ── Özet Satırı ── *@
-                    <tr class="ws-report-summary-row">
-                        <td class="ps-4" colspan="4">GENEL TOPLAM</td>
-                        <td><span class="fw-bold">211 Adet</span></td>
-                        <td>—</td>
-                        <td><span class="ws-report-total">₺199.580,00</span></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </div>
 
 @section Scripts {

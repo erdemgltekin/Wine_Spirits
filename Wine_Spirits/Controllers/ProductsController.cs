@@ -14,10 +14,29 @@ namespace Wine_Spirits.Controllers
 
         public IActionResult Index() => View();
 
+        [HttpGet]
         public IActionResult Create()
         {
             PopulateSelectLists();
-            return PartialView("_CreateProductPartial"); // View yerine PartialView döndür
+
+            // AJAX çağrısı ise sadece Formu (Partial), normal çağrı ise Create.cshtml'i (View) dön
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("_ProductFormPartial", new Product());
+
+            return View(new Product());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return NotFound();
+            PopulateSelectLists(product);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("_ProductFormPartial", product);
+
+            return View(product);
         }
 
         [HttpPost]
