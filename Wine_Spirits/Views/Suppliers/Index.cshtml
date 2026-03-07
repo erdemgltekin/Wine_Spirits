@@ -1,5 +1,5 @@
 @using Wine_Spirits.Models.ViewModels
-@model Wine_Spirits.Models.ViewModels.SuppliersIndexViewModel
+@model SuppliersIndexViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
@@ -8,170 +8,194 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/supplier.css" asp-append-version="true" />
+    @* Kütüphane CSS'leri *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="~/css/supplier/supplier.css" asp-append-version="true" />
 }
 
-<div class="ws-page-container px-4 py-4">
-    @* SAYFA BAŞLIĞI *@
-    <div class="ws-page-header mb-4">
+<div class="ws-page-container p-4">
+    @* ÜST BAŞLIK VE AKSİYON *@
+    <div class="ws-page-header d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="ws-page-title">Tedarikçi Yönetimi</h2>
-            <p class="ws-page-subtitle">Global ağdaki tedarikçi ortaklarınızı ve ürün portföylerini izleyin.</p>
+            <h2 class="ws-page-title fs-4 fw-bold text-dark mb-1">Tedarikçi Yönetimi</h2>
+            <p class="ws-page-subtitle text-muted mb-0 opacity-75">Global tedarik ağınızı ve alım performansınızı izleyin.</p>
         </div>
-        <a asp-action="Create" class="ws-btn-primary shadow-sm" data-drawer="true" data-title="Yeni Tedarikçi Ekle">
-            <i data-lucide="plus" class="ws-icon-18"></i> Yeni Tedarikçi Ekle
-        </a>
+        <button type="button" class="ws-btn-main shadow-sm d-flex align-items-center gap-2" id="btnCreateSupplier">
+            <i data-lucide="plus-circle" class="size-18"></i> Yeni Tedarikçi Ekle
+        </button>
     </div>
 
-    @* STATCARD PANELİ *@
+    @* İSTATİSTİK KARTLARI (v2 Yapısı) *@
     <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalSuppliers", Label = "Toplam Tedarikçi", Value = Model.Stats.TotalSuppliers.ToString(), Icon = "truck", IconClass = "bg-gray-100 text-gray-900", HideIcon = true }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "activeSuppliers", Label = "Aktif Tedarikçi", Value = Model.Stats.ActiveSuppliers.ToString(), Icon = "check-circle", IconClass = "bg-emerald-50 text-emerald-600", HideIcon = true }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Label = "Toplam Ürün", Value = Model.Stats.TotalProducts.ToString(), Icon = "package", IconClass = "bg-primary-50 text-primary-600", HideIcon = true }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalPurchase", Label = "Toplam Alım", Value = Model.Stats.TotalPurchase, Icon = "banknote", IconClass = "bg-violet-50 text-violet-600", HideIcon = true }' />
-        </div>
-    </div>
-
-    @* MODERN FİLTRELEME KONTEYNERİ *@
-    <div class="ws-filter-container mb-4">
-        <div class="row g-3 w-100 m-0">
-            <div class="col-md-4 ps-0">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="search"></i></span>
-                    <input type="text" class="ws-input-control" placeholder="Tedarikçi ismi veya kod ile ara..." id="supplierSearch">
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-indigo-50 text-primary">
+                    <i data-lucide="truck"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Toplam Tedarikçi</small>
+                    <span class="fw-bold h5 mb-0">@Model.Stats.TotalSuppliers</span>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="globe"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterCountry">
-                        <option value="">Tüm Ülkeler</option>
-                        @foreach (var country in Model.Suppliers.Select(s => s.Country?.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct())
-                        {
-                            <option value="@country">@country</option>
-                        }
-                    </select>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-emerald-50 text-success">
+                    <i data-lucide="check-circle"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Aktif Tedarikçi</small>
+                    <span class="fw-bold h5 mb-0">@Model.Stats.ActiveSuppliers</span>
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="filter"></i></span>
-                    <select class="ws-input-control ws-select-control" id="filterStatus">
-                        <option value="">Tüm Durumlar</option>
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Pasif</option>
-                    </select>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-amber-50 text-warning">
+                    <i data-lucide="package"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Toplam Ürün</small>
+                    <span class="fw-bold h5 mb-0">@Model.Stats.TotalProducts</span>
                 </div>
             </div>
-            <div class="col-md-3 pe-0">
-                <div class="ws-input-group">
-                    <span class="ws-input-icon"><i data-lucide="calendar"></i></span>
-                    <input type="text" class="ws-input-control flatpickr-date" id="filterDate" placeholder="Kayıt Tarihi Aralığı" readonly>
+        </div>
+        <div class="col-md-3">
+            <div class="ws-stat-card-v2 shadow-sm">
+                <div class="ws-stat-icon-box bg-rose-50 text-danger">
+                    <i data-lucide="shopping-cart"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Toplam Alım</small>
+                    <span class="fw-bold h5 mb-0 text-nowrap">@Model.Stats.TotalPurchase</span>
                 </div>
             </div>
         </div>
     </div>
 
-    @* PREMIUM TEDARİKÇİ GRID ALANI *@
-    <div class="ws-supplier-grid" id="suppliersCardContainer">
+    @* FİLTRELEME KONTEYNERI (Ürünler Sayfasıyla Aynı) *@
+    <div class="ws-filter-container shadow-sm mb-4">
+        <div class="ws-filter-item flex-grow-1">
+            <i data-lucide="search" class="text-muted"></i>
+            <input type="text" id="supplierSearch" class="ws-filter-el" placeholder="Tedarikçi adı veya e-posta ara...">
+        </div>
+
+        <div class="ws-filter-item">
+            <i data-lucide="calendar" class="text-muted"></i>
+            <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Kayıt Tarihi" readonly>
+        </div>
+
+        <div class="dropdown">
+            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="activity"></i> <span id="selectedStatusText">Durum</span>
+                <i data-lucide="chevron-down" class="ms-2 opacity-50 size-14"></i>
+            </button>
+            <ul class="dropdown-menu shadow border-0">
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterStatus('', 'Tüm Durumlar')">Tüm Durumlar</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterStatus('active', 'Aktif')">Aktif</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterStatus('passive', 'Pasif')">Pasif</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="sliders-horizontal"></i> Sırala
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="sortSuppliers('name-asc')"><i data-lucide="sort-asc" class="me-2 size-18 text-muted"></i> İsim (A-Z)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="sortSuppliers('date-desc')"><i data-lucide="calendar" class="me-2 size-18 text-muted"></i> Yeni Kayıt</a></li>
+            </ul>
+        </div>
+    </div>
+
+    @* TEDARİKÇİ KART GRİD YAPISI *@
+    @* Grid kapsayıcısının doğru olduğundan emin ol *@
+    <div class="ws-supplier-grid">
         @foreach (var supplier in Model.Suppliers)
         {
-            var shortCode = supplier.Id.ToString().Substring(0, 4).ToUpper();
-            
-            <div class="ws-supplier-card-wrapper" data-date="@supplier.CreatedDate.ToString("yyyy-MM-dd")">
-                <div class="ws-supplier-card">
-                    <div class="supplier-status-indicator">
-                        @if (supplier.IsActive)
-                        {
-                            <span class="ws-status-dot bg-success" id="dot-@supplier.Id"></span>
-                            <span class="ws-status-text text-success" id="badge-@supplier.Id">Aktif</span>
-                        }
-                        else
-                        {
-                            <span class="ws-status-dot bg-secondary" id="dot-@supplier.Id"></span>
-                            <span class="ws-status-text text-muted" id="badge-@supplier.Id">Pasif</span>
-                        }
-                    </div>
-
-                    <div class="card-header-v3">
+            <div class="ws-supplier-card">
+                @* Üst Kısım: İkon ve Butonlar *@
+                <div class="card-header-v3">
+                    <div class="d-flex align-items-center gap-3">
                         <div class="supplier-avatar-box">
                             <i data-lucide="building-2"></i>
                         </div>
                         <div class="supplier-info-v3">
-                            <h3 class="supplier-name-v3">@supplier.Name</h3>
-                            <span class="supplier-code-v3">#TDR-@shortCode</span>
-                        </div>
-                        <div class="card-actions-v3">
-                            <button class="ws-btn-icon-v3 btn-toggle-status" data-id="@supplier.Id" title="@(supplier.IsActive ? "Durdur" : "Başlat")">
-                                <i data-lucide="power" class="@(supplier.IsActive ? "text-success" : "text-muted")"></i>
-                            </button>
-                            <a asp-action="Edit" asp-route-id="@supplier.Id" class="ws-btn-icon-v3" title="Düzenle">
-                                <i data-lucide="pencil" class="text-primary"></i>
-                            </a>
+                            <h6 class="supplier-name-v3">@supplier.Name</h6>
+                            <span class="supplier-code-v3">TDR-@supplier.Id.ToString().Substring(0, 4).ToUpper()</span>
                         </div>
                     </div>
 
-                    <div class="supplier-details-v3">
-                        <div class="detail-row">
-                            <i data-lucide="mail"></i>
-                            <span>@supplier.Email</span>
-                        </div>
-                        <div class="detail-row">
-                            <i data-lucide="phone"></i>
-                            <span>@supplier.Phone</span>
-                        </div>
-                        <div class="detail-row">
-                            <i data-lucide="map-pin"></i>
-                            <span class="ws-detail-country">@(supplier.Country?.Name ?? "Uluslararası")</span>
-                        </div>
-                    </div>
-
-                    <div class="supplier-footer-v3">
-                        <div class="kpi-box">
-                            <span class="kpi-label">Ürünler</span>
-                            <span class="kpi-value">@supplier.Products.Count</span>
-                        </div>
-                        <div class="kpi-box text-end">
-                            <span class="kpi-label">Toplam Hacim</span>
-                            @{
-                                decimal total = 0;
-                                foreach(var p in supplier.Products) {
-                                    total += p.StockMovements.Where(sm => sm.MovementType == "IN").Sum(sm => sm.Quantity) * p.Price;
-                                }
-                                string formatted = total >= 1000000 ? $"₺{(total/1000000):0.##}M" : (total >= 1000 ? $"₺{(total/1000):0.##}K" : $"₺{total:N0}");
-                            }
-                            <span class="kpi-value">@formatted</span>
-                        </div>
-                        <button class="ws-btn-delete-v3 btn-delete-supplier" data-id="@supplier.Id" title="Tedarikçiyi Arşivle">
-                            <i data-lucide="archive"></i>
+                    <div class="card-actions-v3">
+                        <button class="ws-btn-icon-v3 btn-edit-supplier" data-id="@supplier.Id">
+                            <i data-lucide="edit-3"></i>
                         </button>
+                        <button class="ws-btn-icon-v3 btn-toggle-status" data-id="@supplier.Id">
+                            <i data-lucide="power" class="@(supplier.IsActive ? "text-success" : "text-muted")"></i>
+                        </button>
+                    </div>
+                </div>
+
+                @* Orta Kısım: İletişim *@
+                <div class="supplier-details-v3">
+                    <div class="detail-row">
+                        <i data-lucide="mail"></i>
+                        <span>@supplier.Email</span>
+                    </div>
+                    <div class="detail-row">
+                        <i data-lucide="phone"></i>
+                        <span>@supplier.Phone</span>
+                    </div>
+                    <div class="detail-row">
+                        <i data-lucide="calendar"></i>
+                        <span>Kayıt: @supplier.CreatedDate.ToString("dd MMM yyyy")</span>
+                    </div>
+                </div>
+
+                @* Alt Kısım: KPI Verileri *@
+                <div class="supplier-footer-v3">
+                    <div class="kpi-box">
+                        <span class="kpi-label">ÜRÜN SAYISI</span>
+                        <span class="kpi-value">@supplier.Products?.Count</span>
+                    </div>
+                    <div class="kpi-box text-center">
+                        <span class="kpi-label">DURUM</span>
+                        <span class="kpi-value @(supplier.IsActive ? "text-success" : "text-danger")">
+                            @(supplier.IsActive ? "AKTİF" : "PASİF")
+                        </span>
+                    </div>
+                </div>
+
+                @* Progress Bar *@
+                <div class="ws-supplier-progress-container mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-muted fw-bold" style="font-size:10px;">GÜVENİLİRLİK</small>
+                        <small class="fw-bold text-dark" style="font-size:10px;">90%</small>
+                    </div>
+                    <div class="progress ws-supplier-progress">
+                        <div class="progress-bar bg-success" style="width: 90%"></div>
                     </div>
                 </div>
             </div>
         }
     </div>
-
-    @if (!Model.Suppliers.Any())
-    {
-        <div class="ws-empty-state-v3">
-            <div class="empty-icon-box">
-                <i data-lucide="truck"></i>
-            </div>
-            <h4>Tedarikçi Bulunamadı</h4>
-            <p>Sistemde kayıtlı tedarikçi bulunmamaktadır.</p>
-        </div>
-    }
 </div>
 
-@Html.AntiForgeryToken()
+@* MODAL *@
+<div class="modal fade" id="supplierModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4" id="supplierModalContent">
+            @* AJAX *@
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    <script src="~/js/pages/supplier.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/supplier/supplier.js" asp-append-version="true"></script>
 }

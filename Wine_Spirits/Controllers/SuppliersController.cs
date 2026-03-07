@@ -66,7 +66,7 @@ namespace Wine_Spirits.Controllers
             ViewData["WarehouseId"] = new SelectList(_context.WareHouses, "Id", "Name");
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView();
+                return PartialView("_SupplierFormPartial", new Supplier()); // Boş model ile gönder
 
             return View();
         }
@@ -92,11 +92,12 @@ namespace Wine_Spirits.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // HATA DURUMU: SelectList'leri tekrar doldur
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", supplier.CountryId);
             ViewData["WarehouseId"] = new SelectList(_context.WareHouses, "Id", "Name", supplier.WarehouseId);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView(supplier);
+                return PartialView("_SupplierFormPartial", supplier); // Hataları gösteren partial
 
             return View(supplier);
         }
@@ -113,7 +114,7 @@ namespace Wine_Spirits.Controllers
             ViewData["WarehouseId"] = new SelectList(_context.WareHouses, "Id", "Name", supplier.WarehouseId);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView(supplier);
+                return PartialView("_SupplierFormPartial", supplier);
 
             return View(supplier);
         }
@@ -129,6 +130,8 @@ namespace Wine_Spirits.Controllers
             {
                 try
                 {
+                    // IsDeleted flag'ini koru (Bind edilmediği için veritabanından takip edilmeli veya manuel set edilmeli)
+                    supplier.IsDeleted = false;
                     _context.Update(supplier);
                     await _context.SaveChangesAsync();
                 }
@@ -146,6 +149,9 @@ namespace Wine_Spirits.Controllers
 
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", supplier.CountryId);
             ViewData["WarehouseId"] = new SelectList(_context.WareHouses, "Id", "Name", supplier.WarehouseId);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("_SupplierFormPartial", supplier);
 
             return View(supplier);
         }

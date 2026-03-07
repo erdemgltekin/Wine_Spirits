@@ -1,0 +1,78 @@
+﻿@model Wine_Spirits.Models.Supplier
+
+<div class="modal-header border-0 pb-0">
+    <div class="d-flex align-items-center gap-3">
+        <div class="ws-icon-box bg-primary-subtle text-primary rounded-3">
+            <i data-lucide="@(Model.Id == Guid.Empty ? "plus-circle" : "edit")"></i>
+        </div>
+        <div>
+            <h5 class="modal-title fw-bold text-dark">@(Model.Id == Guid.Empty ? "Yeni Tedarikçi" : "Tedarikçi Düzenle")</h5>
+            <p class="text-muted fs-xs mb-0">Tedarikçi bilgilerini eksiksiz doldurun.</p>
+        </div>
+    </div>
+    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="supplierForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedDate" />
+
+    <div class="modal-body py-4">
+        <div class="row g-3">
+            <div class="col-12">
+                <label asp-for="Name" class="form-label fs-xs fw-bold text-uppercase text-muted">Tedarikçi Adı / Firma *</label>
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="building"></i></span>
+                    <input asp-for="Name" class="ws-input-control" placeholder="Örn: Global Lojistik A.Ş." required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label fs-xs fw-bold text-uppercase text-muted">E-Posta</label>
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="mail"></i></span>
+                    <input asp-for="Email" type="email" class="ws-input-control" placeholder="destek@firma.com">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Phone" class="form-label fs-xs fw-bold text-uppercase text-muted">Telefon</label>
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="phone"></i></span>
+                    <input asp-for="Phone" class="ws-input-control" placeholder="05xx xxx xx xx">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="CountryId" class="form-label fs-xs fw-bold text-uppercase text-muted">Menşei Ülke</label>
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="globe"></i></span>
+                    <select asp-for="CountryId" class="ws-input-control" asp-items="ViewBag.CountryId"></select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="WarehouseId" class="form-label fs-xs fw-bold text-uppercase text-muted">Bağlı Depo</label>
+                <div class="ws-input-group">
+                    <span class="ws-input-icon"><i data-lucide="warehouse"></i></span>
+                    <select asp-for="WarehouseId" class="ws-input-control" asp-items="ViewBag.WarehouseId">
+                        <option value="">Depo Seçin (Opsiyonel)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="ws-info-alert mt-4 d-flex align-items-center gap-2 p-3 rounded-3 bg-primary-subtle text-primary border border-primary-subtle">
+            <i data-lucide="info" class="ws-icon-18"></i>
+            <span class="fs-xs fw-medium">Tedarikçi eklendiğinde sistem üzerinden satın alma operasyonları başlatılabilir.</span>
+        </div>
+    </div>
+
+    <div class="modal-footer border-0 pt-0">
+        <button type="button" class="ws-btn-secondary px-4" data-bs-dismiss="modal">Vazgeç</button>
+        <button type="submit" class="ws-btn-main px-4">
+            <i data-lucide="save" class="me-1"></i> Kaydet
+        </button>
+    </div>
+</form>

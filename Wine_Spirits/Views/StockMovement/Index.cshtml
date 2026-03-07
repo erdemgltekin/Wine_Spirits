@@ -5,9 +5,7 @@
     Layout = "_Layout";
 }
 
-@section Styles {
-    @* Sadece bu sayfaya özel çok spesifik ayarlar varsa kalabilir, 
-       yoksa global CSS artık her şeyi karşılıyor. *@
+@section Styles {   
     <link rel="stylesheet" href="~/css/stock-movement/stock-movement.css" asp-append-version="true" />
 }
 
@@ -154,7 +152,7 @@
                     <td class="ps-4 text-primary fw-bold">#SH-8291</td>
                     <td>
                         <div class="fw-bold text-dark">Chardonnay Reserve 2022</div>
-                        <div class="text-muted extra-small">SKU: 8690001122</div>
+                        
                     </td>
                     <td>Ana Depo</td>
                     <td><span class="status-pill" style="background: #f1f5f9; color: #475569;"><i data-lucide="play-circle" class="ws-icon-14"></i> Açılış</span></td>
@@ -173,7 +171,6 @@
     </div>
 </div>
 
-@* Modalı da global .ws-modal-custom yapısına göre güncelledik *@
 <div class="modal fade" id="newMovementModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content ws-modal-custom p-2">

@@ -1,222 +1,162 @@
 /**
- * @file supplier.js
- * @description Premium V3 Tedarikçi Yönetimi Script Dosyası
- * @global Standards: No inline scripts, robust error handling, AJAX integration.
+ * @description Tedarikçi Yönetimi AJAX, Modal ve Filtreleme İşlemleri
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initLucide();
-    initDatePicker();
-    initSearchAndFilters();
     initActionEvents();
+    initSearchAndFilters();
+    initFlatpickr(); // Takvimi başlat
 });
 
-function initLucide() {
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-}
+// Modal referansını global tanımlayalım
+const supplierModalElement = document.getElementById('supplierModal');
+const supplierModal = supplierModalElement ? new bootstrap.Modal(supplierModalElement) : null;
+const modalContent = document.getElementById('supplierModalContent');
 
 /**
- * Flatpickr (Tarih Aralığı) yapılandırması
+ * BUTON VE FORM OLAYLARI
  */
-function initDatePicker() {
-    if (typeof flatpickr !== 'undefined' && document.querySelector(".flatpickr-date")) {
-        flatpickr(".flatpickr-date", {
-            locale: "tr",
-            mode: "range",
-            dateFormat: "d.m.Y",
-            allowInput: true,
-            disableMobile: true,
-            onClose: () => filterCards()
-        });
-    }
+function initActionEvents() {
+    // YENİ EKLE BUTONU
+    const btnCreate = document.getElementById('btnCreateSupplier');
+    btnCreate?.addEventListener('click', () => loadModalContent('/Suppliers/Create'));
+
+    // DÜZENLE VE DURUM DEĞİŞTİRME (Event Delegation)
+    document.addEventListener('click', async (e) => {
+        // Düzenle
+        const editBtn = e.target.closest('.btn-edit-supplier');
+        if (editBtn) {
+            const id = editBtn.getAttribute('data-id');
+            loadModalContent(`/Suppliers/Edit/${id}`);
+        }
+
+        // Durum Toggle (Aktif/Pasif)
+        const toggleBtn = e.target.closest('.btn-toggle-status');
+        if (toggleBtn) {
+            const id = toggleBtn.getAttribute('data-id');
+            await toggleSupplierStatus(id);
+        }
+    });
+
+    // FORM SUBMIT (Kaydet Butonu)
+    document.addEventListener('submit', (e) => {
+        if (e.target && e.target.id === 'supplierForm') {
+            e.preventDefault();
+            submitSupplierForm(e.target);
+        }
+    });
 }
 
 /**
- * Arama ve Filtreleme İşlemleri
+ * FİLTRELEME VE ARAMA İŞLEMLERİ
  */
 function initSearchAndFilters() {
     const searchInput = document.getElementById('supplierSearch');
-    const countryFilter = document.getElementById('filterCountry');
-    const statusFilter = document.getElementById('filterStatus');
+    searchInput?.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase();
+        // Tablo satırı yerine kartları seçiyoruz
+        const cards = document.querySelectorAll('.supplier-card-item');
 
-    searchInput?.addEventListener('input', debounce(() => filterCards(), 300));
-    countryFilter?.addEventListener('change', () => filterCards());
-    statusFilter?.addEventListener('change', () => filterCards());
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(keyword) ? '' : 'none';
+        });
+    });
 }
 
 /**
- * Kartları arama ve filtrelere göre gizle/göster
+ * FLATPICKR (TAKVİM) BAŞLATMA
  */
-function filterCards() {
-    const searchTerm = document.getElementById('supplierSearch')?.value.toLowerCase() || '';
-    const selectedCountry = document.getElementById('filterCountry')?.value.toLowerCase() || '';
-    const statusValue = document.getElementById('filterStatus')?.value || '';
-    const dateRangeStr = document.getElementById('filterDate')?.value || '';
-
-    const cards = document.querySelectorAll('#suppliersCardContainer .ws-supplier-card-wrapper');
-
-    let startDate = null;
-    let endDate = null;
-
-    if (dateRangeStr.includes(' — ')) {
-        const parts = dateRangeStr.split(' — ');
-        startDate = parseTurkishDate(parts[0]);
-        endDate = parseTurkishDate(parts[1]);
+function initFlatpickr() {
+    const dateInput = document.getElementById('dateFilter');
+    if (dateInput && typeof flatpickr !== 'undefined') {
+        flatpickr(dateInput, {
+            mode: "range",
+            dateFormat: "d.m.Y",
+            locale: "tr",
+            onChange: function (selectedDates, dateStr) {
+                console.log("Seçilen Tarih Aralığı:", dateStr);
+                // Burada tarih bazlı tablo filtreleme mantığı eklenebilir
+            }
+        });
     }
+}
 
-    cards.forEach(cardWrapper => {
-        const text = cardWrapper.textContent.toLowerCase();
-        const matchesSearch = text.includes(searchTerm);
+/**
+ * DROPDOWN FİLTRELEME FONKSİYONLARI (HTML onclick'ler için)
+ */
+window.filterStatus = function (status, text) {
+    const statusText = document.getElementById('selectedStatusText');
+    if (statusText) statusText.innerText = text;
 
-        const countryEl = cardWrapper.querySelector('.ws-detail-country');
-        const cardCountry = countryEl ? countryEl.textContent.toLowerCase() : '';
-        const matchesCountry = selectedCountry === '' || cardCountry.includes(selectedCountry);
-
-        const badgeEl = cardWrapper.querySelector('.ws-status-text');
-        let cardStatus = badgeEl?.textContent.toLowerCase().includes('aktif') ? 'active' : 'inactive';
-        const matchesStatus = statusValue === '' || cardStatus === statusValue;
-
-        let matchesDate = true;
-        const cardDateStr = cardWrapper.getAttribute('data-date');
-        if (cardDateStr && (startDate || endDate)) {
-            const cardDate = new Date(cardDateStr);
-            cardDate.setHours(0, 0, 0, 0);
-            if (startDate && cardDate < startDate) matchesDate = false;
-            if (endDate && cardDate > endDate) matchesDate = false;
+    const rows = document.querySelectorAll('#suppliersTableBody tr');
+    rows.forEach(row => {
+        const badge = row.querySelector('.ws-status-badge');
+        if (!status) {
+            row.style.display = '';
+        } else {
+            const isActive = badge.classList.contains('active');
+            if (status === 'active') row.style.display = isActive ? '' : 'none';
+            if (status === 'passive') row.style.display = !isActive ? '' : 'none';
         }
-
-        cardWrapper.style.display = (matchesSearch && matchesCountry && matchesStatus && matchesDate) ? 'block' : 'none';
     });
-}
+};
 
 /**
- * Event Listener'ları bağla
+ * MODAL VE FORM YÖNETİMİ (AJAX)
  */
-function initActionEvents() {
-    // Aktif/Pasif Değişimi
-    document.querySelectorAll('.btn-toggle-status').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const id = this.getAttribute('data-id');
-            toggleSupplierStatus(id, this);
-        });
-    });
-
-    // Silme (Arşivleme)
-    document.querySelectorAll('.btn-delete-supplier').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const id = this.getAttribute('data-id');
-            const card = this.closest('.ws-supplier-card-wrapper');
-
-            Swal.fire({
-                title: 'Emin misiniz?',
-                text: "Tedarikçi sistemden kaldırılarak arşive aktarılacak.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#6366f1',
-                cancelButtonColor: '#f43f5e',
-                confirmButtonText: 'Evet, Arşivle',
-                cancelButtonText: 'Vazgeç'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteSupplier(id, card);
-                }
-            });
-        });
-    });
-}
-
-/**
- * AJAX: Durum Değiştir
- */
-async function toggleSupplierStatus(id, btnElement) {
-    const icon = btnElement.querySelector('i');
-    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
+async function loadModalContent(url) {
     try {
-        const response = await fetch(`/Suppliers/ToggleStatus?id=${id}`, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'RequestVerificationToken': csrfToken
-            }
+        const response = await fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
-
         if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                const isActive = result.isActive;
-
-                // UI Güncelleme
-                icon.className = isActive ? 'text-success' : 'text-muted';
-                btnElement.title = isActive ? 'Durdur' : 'Başlat';
-
-                const dot = document.getElementById(`dot-${id}`);
-                const badge = document.getElementById(`badge-${id}`);
-
-                if (dot) dot.className = `ws-status-dot ${isActive ? 'bg-success' : 'bg-secondary'}`;
-                if (badge) {
-                    badge.className = `ws-status-text ${isActive ? 'text-success' : 'text-muted'}`;
-                    badge.textContent = isActive ? 'Aktif' : 'Pasif';
-                }
-
-                // Lucide ikonlarını tazele
-                initLucide();
-            }
+            const html = await response.text();
+            modalContent.innerHTML = html;
+            supplierModal.show();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (error) {
-        console.error('Status Toggle Error:', error);
+        console.error('Modal yükleme hatası:', error);
     }
 }
 
-/**
- * AJAX: Soft Delete
- */
-async function deleteSupplier(id, cardElement) {
-    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+async function submitSupplierForm(form) {
+    const formData = new FormData(form);
+    const url = form.getAttribute('action') || (formData.get('Id') === '00000000-0000-0000-0000-000000000000' ? '/Suppliers/Create' : '/Suppliers/Edit');
 
     try {
-        const response = await fetch(`/Suppliers/SoftDelete?id=${id}`, {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'RequestVerificationToken': csrfToken
-            }
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 
-        if (response.ok) {
+        if (response.headers.get("content-type")?.includes("application/json")) {
             const result = await response.json();
             if (result.success) {
-                cardElement.style.transform = 'scale(0.95)';
-                cardElement.style.opacity = '0';
-                setTimeout(() => cardElement.remove(), 300);
-
-                Swal.fire('Başarılı', 'Tedarikçi arşive kaldırıldı.', 'success');
+                supplierModal.hide();
+                Swal.fire({ icon: 'success', title: 'Başarılı!', text: 'Kaydedildi.', timer: 1000, showConfirmButton: false })
+                    .then(() => location.reload());
             }
+        } else {
+            // Hata varsa partialView döner (Validation mesajları için)
+            modalContent.innerHTML = await response.text();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     } catch (error) {
-        console.error('Delete Error:', error);
+        console.error('Form gönderme hatası:', error);
     }
 }
 
-/**
- * Utility: Debounce
- */
-function debounce(func, wait) {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
-/**
- * Utility: Tarih Ayrıştırıcı (tr)
- */
-function parseTurkishDate(dateStr) {
-    if (!dateStr) return null;
-    const parts = dateStr.split('.');
-    if (parts.length !== 3) return null;
-    return new Date(parts[2], parts[1] - 1, parts[0]);
+async function toggleSupplierStatus(id) {
+    try {
+        const response = await fetch(`/Suppliers/ToggleStatus/${id}`, { method: 'POST' });
+        const result = await response.json();
+        if (result.success) {
+            location.reload(); // En güvenli yol tabloyu yenilemek
+        }
+    } catch (error) {
+        console.error('Durum değiştirme hatası:', error);
+    }
 }
