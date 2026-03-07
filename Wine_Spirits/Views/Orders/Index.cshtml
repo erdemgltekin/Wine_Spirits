@@ -42,45 +42,44 @@
         </div>
     </div>
 
-    @* --- Filtre Alanı (main.css: .ws-filter-container & .ws-filter-item uyumlu) --- *@
-    <div class="ws-filter-container shadow-sm border-0 bg-transparent p-0 gap-3 mb-4">
-        @* Arama *@
-        <div class="ws-filter-item flex-grow-1 shadow-sm border-0 py-3">
-            <i data-lucide="search"></i>
-            <input type="text" class="ws-filter-el" placeholder="Sipariş No veya Müşteri ara..." id="orderSearch">
+    @* --- Filtre Alanı --- *@
+    <div class="ws-filter-container shadow-sm mb-4">
+        @* Arama - En geniş alan *@
+        <div class="ws-filter-item flex-grow-1">
+            <i data-lucide="search" class="text-muted"></i>
+            <input type="text" id="orderSearch" class="ws-filter-el" placeholder="Sipariş No veya Müşteri ara...">
+        </div>
+
+        @* Tarih Filtresi - Sabit Genişlik *@
+        <div class="ws-filter-item">
+            <i data-lucide="calendar" class="text-muted"></i>
+            <input type="text" id="orderDateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly style="width: 140px;">
         </div>
 
         @* Durum Filtresi (Dropdown) *@
-        <div class="dropdown flex-grow-1">
-            <div class="ws-filter-item shadow-sm border-0 py-3 d-flex justify-content-between" data-bs-toggle="dropdown" role="button">
-                <div class="d-flex align-items-center">
-                    <i data-lucide="activity"></i>
-                    <span id="selectedStatus" class="ws-filter-el opacity-75">Tüm Durumlar</span>
-                </div>
-                <i data-lucide="chevron-down" class="ms-auto opacity-50"></i>
-            </div>
-            <ul class="dropdown-menu border-0 shadow-lg w-100">
-                <li><a class="dropdown-item active" href="#">Tüm Durumlar</a></li>
-                <li><a class="dropdown-item" href="#">Aktif</a></li>
-                <li><a class="dropdown-item" href="#">Tamamlandı</a></li>
+        <div class="dropdown">
+            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="activity"></i>
+                <span id="selectedStatusText">Tüm Durumlar</span>
+                <i data-lucide="chevron-down" class="ms-2 opacity-50 size-14"></i>
+            </button>
+            <ul class="dropdown-menu shadow border-0">
+                <li><a class="dropdown-item py-2 active" href="javascript:void(0)" onclick="filterOrders('', 'Tüm Durumlar')">Tüm Durumlar</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterOrders('Pending', 'Beklemede')">Beklemede</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterOrders('Completed', 'Tamamlandı')">Tamamlandı</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterOrders('Cancelled', 'İptal Edildi')">İptal Edildi</a></li>
             </ul>
-        </div>
-
-        @* Tarih *@
-        @* Tarih Filtresi *@
-        <div class="ws-filter-item flex-grow-1 shadow-sm border-0 py-3">
-            <i data-lucide="calendar"></i>
-            <input type="text" class="ws-filter-el" id="orderDateFilter" placeholder="Tarih Aralığı" readonly>
         </div>
 
         @* Sıralama *@
         <div class="dropdown">
-            <button class="ws-btn-filter-action shadow-sm border-0 py-3 px-4 h-100" type="button" data-bs-toggle="dropdown">
+            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
                 <i data-lucide="sliders-horizontal"></i> <span>Sırala</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg">
-                <li><a class="dropdown-item" href="#">Yeniden Eskiye</a></li>
-                <li><a class="dropdown-item" href="#">Tutar (Yüksek)</a></li>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="sortOrders('date-desc')"><i data-lucide="calendar" class="me-2 size-18 text-muted"></i> Yeniden Eskiye</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="sortOrders('amount-desc')"><i data-lucide="trending-up" class="me-2 size-18 text-muted"></i> Tutar (Yüksek)</a></li>
             </ul>
         </div>
     </div>
