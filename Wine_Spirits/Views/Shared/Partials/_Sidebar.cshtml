@@ -1,11 +1,12 @@
-﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http
 @using Wine_Spirits.Models
 @inject IHttpContextAccessor HttpContextAccessor
 
-<div class="sidebar-header">
-    <a asp-controller="Dashboard" asp-action="Index" class="sidebar-brand text-decoration-none">
-        <i data-lucide="wine" class="sidebar-brand-icon"></i>
-        <span>Wine & Spirits</span>
+@* X Kapama butonu ve Header alanı layout ile çakışmaması için sadeleştirildi *@
+<div class="sidebar-header d-md-none">
+    <a asp-controller="Dashboard" asp-action="Index" class="ws-brand">
+        <i data-lucide="wine" class="ws-brand-logo"></i>
+        <span class="ws-brand-text">Wine & Spirits</span>
     </a>
 </div>
 
@@ -13,85 +14,97 @@
     @* --- Ana Menü --- *@
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")"
        asp-controller="Dashboard" asp-action="Index">
-        <i data-lucide="home" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="home"></i>
+        </div>
         <span>Ana Sayfa</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Products" ? "active" : "")"
        asp-controller="Products" asp-action="Index">
-        <i data-lucide="package" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="package"></i>
+        </div>
         <span>Ürünler</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Warehouses" ? "active" : "")"
        asp-controller="Warehouses" asp-action="Index">
-        <i data-lucide="warehouse" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="warehouse"></i>
+        </div>
         <span>Depolar</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockMovement" ? "active" : "")"
        asp-controller="StockMovement" asp-action="Index">
-        <i data-lucide="trending-up" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="trending-up"></i>
+        </div>
         <span>Stok Hareketleri</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockReports" ? "active" : "")"
        asp-controller="StockReports" asp-action="Index">
-        <i data-lucide="file-text" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="file-text"></i>
+        </div>
         <span>Stok Raporu</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" ? "active" : "")"
        asp-controller="Orders" asp-action="Index">
-        <i data-lucide="shopping-cart" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="shopping-cart"></i>
+        </div>
         <span>Siparişler</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")"
        asp-controller="Customers" asp-action="Index">
-        <i data-lucide="user-check" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="user-check"></i>
+        </div>
         <span>Müşteriler</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Suppliers" ? "active" : "")"
        asp-controller="Suppliers" asp-action="Index">
-        <i data-lucide="truck" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="truck"></i>
+        </div>
         <span>Tedarikçiler</span>
     </a>
 
     <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
        asp-controller="Reports" asp-action="Index">
-        <i data-lucide="bar-chart-2" class="sidebar-nav-item-icon"></i>
+        <div class="sidebar-nav-item-icon">
+            <i data-lucide="bar-chart-2"></i>
+        </div>
         <span>Raporlar</span>
     </a>
 
-    <div class="sidebar-divider" style="height: 1px; background-color: var(--gray-200); margin: 1rem 1.5rem; opacity: 0.5;"></div>
+    <div class="sidebar-divider mt-auto"></div>
 
-    @* --- Yetki Bazlı Menü --- *@
+    @* --- Yetki / Ayar Menüsü --- *@
     @if (User.IsInRole("SuperAdmin"))
     {
-        @* Yönetim Paneli *@
         <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")"
            asp-controller="Management" asp-action="Users">
-            <i data-lucide="shield-check" class="sidebar-nav-item-icon text-primary"></i>
-            <span class="fw-bold">Yönetim ve Ayarlar</span>
-        </a>
-
-        @* Backoffice (Talep Yönetimi) - Yeni Eklenen Link *@
-        <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Backoffice" ? "active" : "")"
-           asp-controller="Management" asp-action="Backoffice">
-            <i data-lucide="clipboard-list" class="sidebar-nav-item-icon text-indigo"></i>
-            <span class="fw-bold">Veri Talepleri</span>
+            <div class="sidebar-nav-item-icon">
+                <i data-lucide="shield-check"></i>
+            </div>
+            <span>Yönetim ve Ayarlar</span>
         </a>
     }
     else
     {
         <a class="sidebar-nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Management" ? "active" : "")"
            asp-controller="Management" asp-action="Users">
-            <i data-lucide="user-cog" class="sidebar-nav-item-icon"></i>
+            <div class="sidebar-nav-item-icon">
+                <i data-lucide="user-cog"></i>
+            </div>
             <span>Hesap Ayarlarım</span>
         </a>
     }
 </nav>
-
-@* --- Alt Kullanıcı Bilgi Alanı Kaldırıldı --- *@

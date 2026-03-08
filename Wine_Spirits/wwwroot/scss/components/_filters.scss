@@ -1,0 +1,102 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-filter-container {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 14px;
+    border: 1.5px solid $gray-100;
+    margin-bottom: 24px;
+    @include transition;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+
+    @include tablet {
+        flex-wrap: wrap;
+    }
+}
+
+.ws-filter-item, .ws-btn-filter-action {
+    display: flex;
+    align-items: center;
+    background: #ffffff !important;
+    border: 1.5px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
+
+    @include tablet {
+        min-width: calc(50% - 6px);
+    }
+
+    @include mobile {
+        min-width: 100%;
+    }
+
+    &:hover, &.show {
+        transform: translateY(-2px) !important;
+        border-color: $primary !important;
+        color: $primary !important;
+        background-color: #fbfaff !important;
+        @include premium-shadow-hover;
+
+        i, svg {
+            color: $primary !important;
+            transform: scale(1.1) rotate(5deg);
+        }
+    }
+
+    i, svg {
+        color: $gray-400;
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        @include transition;
+    }
+
+    &:focus-within {
+        border-color: $primary !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 4px rgba($primary, 0.1) !important;
+    }
+}
+
+.ws-filter-el {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: $gray-700;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+
+    &.ws-select-control {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0 center;
+        padding-right: 20px !important;
+    }
+
+    &:focus {
+        border-color: $primary !important;
+        box-shadow: 0 0 0 4px rgba($primary, 0.1) !important;
+        outline: none;
+    }
+}
+
+.ws-btn-filter-action {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    gap: 8px;
+}

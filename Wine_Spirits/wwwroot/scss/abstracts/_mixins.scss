@@ -1,0 +1,31 @@
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+    transition: $property $duration $timing;
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin mobile {
+    @media (max-width: 576px) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (max-width: 991.98px) {
+        @content;
+    }
+}
+
+@mixin premium-shadow-hover {
+    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.1), 0 0 0 4px rgba(124, 58, 237, 0.05);
+}

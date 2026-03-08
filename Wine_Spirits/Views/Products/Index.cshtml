@@ -10,46 +10,38 @@
     <link rel="stylesheet" href="~/css/product/product.css" asp-append-version="true" />
 }
 
-<div class="ws-main-container p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="ws-main-container">
+    <div class="ws-page-header">
         <div>
-            <h2 class="fw-bold text-dark m-0">Ürün Envanteri</h2>
-            <p class="text-muted small mb-0">Premium envanter yönetimi ve stok takibi.</p>
+            <h2 class="ws-page-title">Ürün Envanteri</h2>
+            <p class="ws-page-subtitle">Premium envanter yönetimi ve stok takibi.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" id="btnCreateNew">
+        <button type="button" class="ws-btn-main" id="btnCreateNew">
             <i data-lucide="plus"></i> Yeni Ürün Ekle
         </button>
     </div>
     @* CARD YAPISI *@
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
-                <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
-            </div>
+    <div class="ws-stats-grid">
+        <div class="ws-stat-card-v2">
+            <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
+            <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
-                <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
-            </div>
+        <div class="ws-stat-card-v2">
+            <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
+            <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
-                <div><small class="text-muted d-block">Envanter Değeri</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
-            </div>
+        <div class="ws-stat-card-v2">
+            <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
+            <div><small class="text-muted d-block">Envanter Değeri</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
-                <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
-            </div>
+        <div class="ws-stat-card-v2">
+            <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
+            <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
         </div>
     </div>
     @* FİLTRE KONTEYNERI *@
-    <div class="ws-filter-container shadow-sm">
-        <div class="ws-filter-item flex-grow-1">
+    <div class="ws-filter-container">
+        <div class="ws-filter-item">
             <i data-lucide="search"></i>
             <input type="text" id="inventorySearch" class="ws-filter-el" placeholder="Ürün veya kod ara...">
         </div>
@@ -62,7 +54,7 @@
         <div class="dropdown">
             <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" id="categoryDropdownBtn">
                 <i data-lucide="tag"></i> <span id="selectedCategoryText">Kategori</span>
-                <i data-lucide="chevron-down" class="ms-2 opacity-50 size-14"></i>
+                <i data-lucide="chevron-down"></i>
             </button>
             <ul class="dropdown-menu shadow border-0" id="filterCategoryMenu">
                 <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>
@@ -72,7 +64,7 @@
         <div class="dropdown">
             <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
                 <i data-lucide="box"></i> <span id="selectedStockText">Stok Durumu</span>
-                <i data-lucide="chevron-down" class="ms-2 opacity-50 size-14"></i>
+                <i data-lucide="chevron-down"></i>
             </button>
             <ul class="dropdown-menu shadow border-0">
                 <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('', 'Stok Durumu')">Tüm Stoklar</a></li>
@@ -87,10 +79,10 @@
                 <i data-lucide="sliders-horizontal"></i> Sırala
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc" class="me-2 size-18"></i> İsim (A-Z)</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up" class="me-2 size-18"></i> En Yüksek Fiyat</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc"></i> İsim (A-Z)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up"></i> En Yüksek Fiyat</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package" class="me-2 size-18"></i> Stok (Azalan)</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package"></i> Stok (Azalan)</a></li>
             </ul>
         </div>
     </div>

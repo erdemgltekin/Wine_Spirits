@@ -1,0 +1,63 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-btn-main, .ws-btn-primary {
+    background-color: $primary !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: $radius-md;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    @include transition;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+        background-color: $primary-hover !important;     
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -6px rgba(124, 58, 237, 0.35) !important;
+    }
+}
+
+.ws-btn-secondary {
+    background-color: $gray-100 !important;
+    color: $gray-600 !important;
+    border: 1.5px solid $gray-200 !important;
+    border-radius: $radius-md;
+    padding: 10px 20px;
+    font-weight: 600;
+    @include transition;
+
+    &:hover {
+        background-color: $gray-200 !important;
+        color: $gray-900 !important;
+    }
+}
+
+.ws-action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid $gray-200;
+    background: #fff;
+    color: $gray-400;
+    @include flex-center;
+    @include transition;
+    padding: 0 !important;
+
+    &:hover {
+        border-color: $primary;
+        color: $primary;
+        background-color: rgba(124, 58, 237, 0.05);
+    }
+
+    i, svg {
+        width: 16px !important;
+        height: 16px !important;
+        stroke-width: 2.5;
+    }
+}

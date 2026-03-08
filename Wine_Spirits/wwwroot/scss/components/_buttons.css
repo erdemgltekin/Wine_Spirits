@@ -1,0 +1,58 @@
+﻿.ws-btn-main, .ws-btn-primary {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.ws-btn-main:hover, .ws-btn-primary:hover {
+  background-color: #6d28d9 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(124, 58, 237, 0.35) !important;
+}
+
+.ws-btn-secondary {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.ws-btn-secondary:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.ws-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0 !important;
+}
+.ws-action-btn:hover {
+  border-color: #7c3aed;
+  color: #7c3aed;
+  background-color: rgba(124, 58, 237, 0.05);
+}
+.ws-action-btn i, .ws-action-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 2.5;
+}

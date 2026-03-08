@@ -1,0 +1,24 @@
+/* ============================================================
+    WINE & SPIRITS ERP - UNIFIED GLOBAL SCSS
+   ============================================================ */
+
+// 1. Abstracts (Variables, Mixins)
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+
+// 2. Base (Reset, Typography)
+@import 'base/base';
+
+// 3. Layout (Topbar, Sidebar, Main Content)
+@import 'layout/layout';
+
+// 4. Components
+@import 'components/buttons';
+@import 'components/forms';
+@import 'components/cards';
+@import 'components/tables';
+@import 'components/modals';
+@import 'components/filters';
+@import 'components/dropdowns';
+@import 'components/sidebar';
+@import 'components/statcard';

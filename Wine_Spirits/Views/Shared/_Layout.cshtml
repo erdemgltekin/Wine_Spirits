@@ -18,60 +18,56 @@
 </head>
 <body class="ws-layout-body">
 
-    @* --- TOPBAR (Figma Tasarımı: Beyaz, Sade ve Hizalı) --- *@
-    <header class="ws-topbar shadow-sm">
-        <div class="d-flex align-items-center">
-            @* Minimal Hamburger Menu (Siyah kutu kaldırıldı, Figma stili gri tona çekildi) *@
-            <button class="sidebar-toggler-btn me-3" id="sidebarToggle" type="button">
+    @* --- TOPBAR --- *@
+    <header class="ws-topbar">
+        <div class="ws-topbar-left">
+            <button class="sidebar-toggler-btn" id="sidebarToggle" type="button">
                 <i data-lucide="menu"></i>
             </button>
 
-            @* Logo Alanı (Başlık zaten Wine & Spirits olduğu için sadece ikon veya marka vurgusu yeterli) *@
-            <div class="d-flex align-items-center">
-                <i data-lucide="wine" class="text-primary me-2" style="width: 24px; height: 24px;"></i>
-                <span class="fw-bold text-dark fs-5" style="letter-spacing: -0.5px;">Wine & Spirits</span>
-            </div>
+            <a href="/" class="ws-brand">
+                <i data-lucide="wine" class="ws-brand-logo"></i>
+                <span class="ws-brand-text">Wine & Spirits</span>
+            </a>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
+        <div class="ws-topbar-actions">
             @* Notifications *@
             <div class="dropdown">
                 @{
-                    int notificationCount = 0;
+                    int notificationCount = 0; // Test: Bildirim sayısı
                 }
-                <a href="#" class="position-relative cursor-pointer text-decoration-none" id="notificationDropdown" data-bs-toggle="dropdown">
-                    <i data-lucide="bell" class="text-muted" style="width: 20px;"></i>
+                <a href="#" class="ws-notification-trigger" id="notificationDropdown" data-bs-toggle="dropdown">
+                    <i data-lucide="bell" class="ws-nav-icon"></i>
                     @if (notificationCount > 0)
                     {
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white p-1" style="font-size: 0.5rem;">
+                        <span class="ws-notification-badge">
                             @notificationCount
                         </span>
                     }
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-3 mt-2" style="border-radius: 16px; min-width: 300px;">
-                    <li><h6 class="dropdown-header text-dark fw-bold px-0 pb-2 border-bottom">Bildirimler</h6></li>
-                    <li class="py-4 text-center text-muted small">Henüz yeni bildirim yok</li>
+                <ul class="dropdown-menu dropdown-menu-end ws-dropdown-notification">
+                    <li><h6 class="dropdown-header">Bildirimler</h6></li>
+                    <li class="ws-dropdown-empty">Henüz yeni bildirim yok</li>
                 </ul>
             </div>
 
             @* User Profile *@
-            <div class="dropdown ps-3 border-start">
-                <div class="d-flex align-items-center gap-2 cursor-pointer" id="userDropdown" data-bs-toggle="dropdown">
-                    <div class="text-end d-none d-sm-block line-height-sm">
-                        <span class="d-block fw-bold text-dark" style="font-size: 0.85rem;">Admin Kullanıcı</span>
-                        <span class="d-block text-muted" style="font-size: 0.75rem;">Yönetici</span>
+            <div class="dropdown ws-topbar-profile-wrapper">
+                <div class="ws-user-profile" id="userDropdown" data-bs-toggle="dropdown">
+                    <div class="ws-user-info">
+                        <span class="ws-user-name">Admin Kullanıcı</span>
+                        <span class="ws-user-role">Yönetici</span>
                     </div>
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 38px; height: 38px; font-size: 0.9rem;">
-                        A
-                    </div>
+                    <div class="ws-user-avatar">A</div>
                 </div>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="border-radius: 12px; min-width: 200px;">
-                    <li><a class="dropdown-item py-2" href="#"><i data-lucide="user" class="me-2" style="width:16px;"></i> Profilim</a></li>
-                    <li><a class="dropdown-item py-2" href="#"><i data-lucide="settings" class="me-2" style="width:16px;"></i> Ayarlar</a></li>
+                <ul class="dropdown-menu dropdown-menu-end ws-dropdown-profile">
+                    <li><a class="dropdown-item" href="#"><i data-lucide="user" class="ws-item-icon"></i> Profilim</a></li>
+                    <li><a class="dropdown-item" href="#"><i data-lucide="settings" class="ws-item-icon"></i> Ayarlar</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <a class="dropdown-item text-danger d-flex align-items-center gap-2 py-2" asp-controller="Auth" asp-action="Logout">
-                            <i data-lucide="log-out" style="width: 16px;"></i> Çıkış Yap
+                        <a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">
+                            <i data-lucide="log-out" class="ws-item-icon"></i> Çıkış Yap
                         </a>
                     </li>
                 </ul>
@@ -79,27 +75,25 @@
         </div>
     </header>
 
+   
     @* --- SIDEBAR --- *@
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header d-flex align-items-center justify-content-end p-3 d-md-none">
-            <button class="btn-close" id="sidebarClose"></button>
-        </div>
         <partial name="Partials/_Sidebar" />
     </aside>
 
     @* --- MAIN CONTENT --- *@
     <main class="main-content">
-        <div class="container-fluid p-4">
+        <div class="ws-content-container">
             @RenderBody()
         </div>
     </main>
 
-    @* --- SIDE PANEL OVERLAY & PANEL (Drawer) --- *@
+    @* --- SIDE PANEL OVERLAY & PANEL --- *@
     <div id="sidePanelOverlay"></div>
     <div id="sidePanel">
-        <div class="drawer-header d-flex align-items-center justify-content-between p-3 border-bottom">
-            <h5 id="sidePanelTitle" class="mb-0 fw-bold fs-6">Yükleniyor...</h5>
-            <button type="button" class="btn-close" id="closeSidePanel" style="font-size: 0.7rem;"></button>
+        <div class="ws-drawer-header">
+            <h5 id="sidePanelTitle" class="ws-drawer-title">Yükleniyor...</h5>
+            <button type="button" class="btn-close ws-drawer-close" id="closeSidePanel"></button>
         </div>
         <div id="sidePanelContent"></div>
     </div>
@@ -107,21 +101,19 @@
     @* --- GLOBAL MODAL --- *@
     <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" id="globalModalDialog">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-content ws-modal-custom">
                 <div id="productModalBody"></div>
             </div>
         </div>
     </div>
 
     @* --- TOAST BİLDİRİMLERİ --- *@
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
-        <div id="statusToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 12px;">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center">
-                    <i id="toastIcon" data-lucide="check-circle" class="me-2" style="width: 18px;"></i>
-                    <span id="toastMessage">İşlem başarıyla tamamlandı.</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="ws-toast-container">
+        <div id="statusToast" class="toast ws-status-toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <i id="toastIcon" data-lucide="check-circle" class="ws-toast-icon"></i>
+                <span id="toastMessage">İşlem başarıyla tamamlandı.</span>
+                <button type="button" class="btn-close ws-toast-close" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>

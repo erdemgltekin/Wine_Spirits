@@ -1,109 +1,84 @@
-/* ============================================================
-    WINE & SPIRITS - PRODUCT PAGE SPECIFIC STYLES
-   ============================================================ */
-
-.ws-product-container {
-    padding: 1.5rem;
+﻿.ws-main-container {
+  padding: 1.5rem;
 }
 
-/* --- STAT KARTLARI (Mor Glow Efekti) --- */
+.ws-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+@media (max-width: 991.98px) {
+  .ws-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.ws-page-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.ws-page-subtitle {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.ws-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 991.98px) {
+  .ws-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .ws-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ws-stat-card-v2 {
-    background: #ffffff !important;
-    border: 1.5px solid #f1f5f9 !important;
-    border-radius: 20px !important;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    position: relative;
+  border-radius: 20px !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ws-stat-card-v2:hover {
+  transform: translateY(-8px) !important;
+  border-color: #7c3aed !important;
+  box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.2), 0 10px 10px -5px rgba(124, 58, 237, 0.1) !important;
 }
 
-    .ws-stat-card-v2:hover {
-        transform: translateY(-8px) !important;
-        border-color: #7c3aed !important;
-        box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.2), 0 10px 10px -5px rgba(124, 58, 237, 0.1) !important;
-    }
-
-.ws-stat-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease;
-}
-
-.ws-stat-card-v2:hover .ws-stat-icon-box {
-    transform: scale(1.1);
-}
-
-.ws-stat-icon-box i, .ws-stat-icon-box svg {
-    width: 24px !important;
-    height: 24px !important;
-    stroke-width: 2.5;
-}
-
-/* Renk Paleti */
-.bg-indigo-50 {
-    background-color: #eef2ff !important;
-    color: #4f46e5 !important;
-}
-
-.bg-rose-50 {
-    background-color: #fff1f2 !important;
-    color: #e11d48 !important;
-}
-
-.bg-emerald-50 {
-    background-color: #ecfdf5 !important;
-    color: #10b981 !important;
-}
-
-.bg-amber-50 {
-    background-color: #fffbeb !important;
-    color: #d97706 !important;
-}
-
-/* --- PRODUCT SPECIFIC FILTER ADJUSTMENTS --- */
-.ws-flex-search {
-    flex: 2 !important;
-}
-/* Arama alanı daha geniş */
-
-/* --- TABLO VE GÖRSELLER --- */
 .ws-product-img-wrapper {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #f8fafc;
-    border: 1px solid #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ws-product-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Flatpickr Düzenleme */
 .flatpickr-calendar {
-    border-radius: 16px !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
 }
 
 .flatpickr-day.selected {
-    background: #7c3aed !important;
-    border-color: #7c3aed !important;
-}
-
-@media (max-width: 992px) {
-    .ws-filter-container {
-        flex-wrap: wrap;
-    }
-
-    .ws-filter-item {
-        min-width: calc(50% - 6px);
-    }
+  background: #7c3aed !important;
+  border-color: #7c3aed !important;
 }

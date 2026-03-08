@@ -1,0 +1,89 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-modal-custom {
+    border-radius: $radius-xl !important;
+    border: none !important;
+    box-shadow: $shadow-lg;
+    overflow: hidden;
+}
+
+.modal-backdrop.show {
+    opacity: 0.4 !important;
+    background-color: #000;
+}
+
+.swal2-container {
+    z-index: 10000 !important;
+}
+
+// Side Panel / Drawer
+#sidePanelOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(17, 24, 39, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1060;
+    opacity: 0;
+    visibility: hidden;
+    @include transition;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+#sidePanel {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 480px;
+    height: 100vh;
+    background: white;
+    z-index: 1070;
+    box-shadow: -10px 0 25px rgba(0, 0, 0, 0.1);
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+
+    &.active {
+        right: 0;
+    }
+
+    .drawer-header {
+        .ws-drawer-close {
+            font-size: 0.7rem;
+        }
+    }
+
+    @include tablet {
+        width: 100%;
+    }
+}
+
+// Toast Notifications
+.ws-toast-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 1rem;
+    z-index: 9999;
+}
+
+.ws-status-toast {
+    border-radius: 12px !important;
+    background-color: $gray-800 !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: $shadow-lg;
+
+    .ws-toast-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 0.5rem;
+    }
+}

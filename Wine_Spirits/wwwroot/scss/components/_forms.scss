@@ -1,0 +1,58 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $gray-500;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.ws-input-premium {
+    height: 46px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid $gray-200 !important;
+    background-color: $gray-50 !important;
+    font-size: 0.9rem !important;
+    padding: 0 16px !important;
+    @include transition;
+    width: 100%;
+
+    &:focus {
+        background-color: #fff !important;
+        border-color: $primary !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
+        outline: none !important;
+    }
+
+    &.ws-select-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px !important;
+    }
+}
+
+.ws-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.ws-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.ws-form-hint {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: $gray-500;
+}
+
+.ws-form-actions {
+    margin-top: 1rem;
+}

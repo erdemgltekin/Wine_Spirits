@@ -1,10 +1,10 @@
-﻿@model Wine_Spirits.Models.ViewModels.StatCardViewModel
+@model Wine_Spirits.Models.ViewModels.StatCardViewModel
 
 <div class="ws-stat-card-v2" ws-stat="@Model.StatKey">
     @if (!Model.HideIcon)
     {
         <div class="ws-stat-icon-box @Model.IconClass">
-            <i data-lucide="@Model.Icon" style="width: 24px; height: 24px;"></i>
+            <i data-lucide="@Model.Icon"></i>
         </div>
     }
     <div class="ws-stat-content">

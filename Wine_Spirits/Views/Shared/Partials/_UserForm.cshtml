@@ -1,32 +1,32 @@
-﻿@model Wine_Spirits.Models.AppUser
+@model Wine_Spirits.Models.AppUser
 
 <form id="createUserForm" asp-controller="Management" asp-action="CreateUser" method="post">
     @Html.AntiForgeryToken()
-    <div class="row g-3 p-3">
-        <div class="col-12">
-            <label class="form-label fw-bold">Ad Soyad</label>
-            <input asp-for="FullName" class="form-control" placeholder="Örn: Ahmet Yılmaz" required>
+    <div class="ws-form-grid">
+        <div class="ws-form-group">
+            <label class="ws-form-label">Ad Soyad</label>
+            <input asp-for="FullName" class="ws-input-premium" placeholder="Örn: Ahmet Yılmaz" required>
         </div>
-        <div class="col-12">
-            <label class="form-label fw-bold">Kullanıcı Adı</label>
-            <input asp-for="Username" class="form-control" placeholder="Örn: ahmety" required>
+        <div class="ws-form-group">
+            <label class="ws-form-label">Kullanıcı Adı</label>
+            <input asp-for="Username" class="ws-input-premium" placeholder="Örn: ahmety" required>
         </div>
-        <div class="col-12">
-            <label class="form-label fw-bold">Şifre</label>
-            <input type="password" name="plainPassword" class="form-control" required>
+        <div class="ws-form-group">
+            <label class="ws-form-label">Şifre</label>
+            <input type="password" name="plainPassword" class="ws-input-premium" required>
         </div>
-        <div class="col-12">
-            <label class="form-label fw-bold">Pozisyon</label>
-            <select asp-for="Position" class="form-select">
+        <div class="ws-form-group">
+            <label class="ws-form-label">Pozisyon</label>
+            <select asp-for="Position" class="ws-input-premium ws-select-control">
                 <option value="Personel">Personel</option>
                 <option value="Müdür Yardımcısı">Müdür Yardımcısı</option>
                 <option value="Müdür">Müdür</option>
                 <option value="Sistem Yöneticisi">Sistem Yöneticisi</option>
             </select>
-            <small class="text-muted small">Pozisyona göre sistem rolü otomatik atanır.</small>
+            <small class="ws-form-hint">Pozisyona göre sistem rolü otomatik atanır.</small>
         </div>
-        <div class="col-12 mt-4">
-            <button type="submit" class="btn btn-primary w-100 py-2">Kaydet ve Ekle</button>
+        <div class="ws-form-actions">
+            <button type="submit" class="ws-btn-main w-100">Kaydet ve Ekle</button>
         </div>
     </div>
 </form>

@@ -1,11 +1,11 @@
 @model dynamic
 
-<div class="ws-page-header d-flex justify-content-between align-items-center mb-4">
-    <div>
+<div class="ws-page-header">
+    <div class="ws-page-header-content">
         <h1 class="ws-page-title">@ViewData["Title"]</h1>
         @if (ViewData["Subtitle"] != null)
         {
-            <p class="ws-page-subtitle mb-0 text-muted">@ViewData["Subtitle"]</p>
+            <p class="ws-page-subtitle">@ViewData["Subtitle"]</p>
         }
     </div>
 

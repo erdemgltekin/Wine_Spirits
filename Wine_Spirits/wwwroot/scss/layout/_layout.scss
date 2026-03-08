@@ -1,0 +1,266 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-layout-body {
+    background-color: $gray-50;
+}
+
+.ws-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 12px;
+
+    .ws-brand-logo {
+        width: 24px;
+        height: 24px;
+        color: $primary;
+        flex-shrink: 0;
+    }
+
+    .ws-brand-text {
+        font-weight: 800;
+        color: $gray-900;
+        font-size: 1.25rem;
+        letter-spacing: -0.5px;
+    }
+}
+
+.ws-topbar {
+    background: #ffffff;
+    height: $topbar-height;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $gray-200;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1050;
+    @include transition;
+
+    .sidebar-toggler-btn {
+        background-color: $gray-50 !important;
+        border: none !important;
+        color: $gray-600 !important;
+        width: 42px !important;
+        height: 42px !important;
+        @include flex-center;
+        border-radius: $radius-md !important;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none !important;
+        padding: 0 !important;
+
+        &:hover {
+            background-color: $gray-100 !important;
+            color: $primary !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        &:active {
+            transform: scale(0.95);
+            background-color: $gray-200 !important;
+        }
+
+        i, svg {
+            font-size: 20px !important;
+            width: 20px !important;
+            height: 20px !important;
+            display: block;
+        }
+    }
+
+    .ws-topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+
+    .ws-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+
+.main-content {
+    margin-left: $sidebar-width;
+    padding-top: $topbar-height;
+    min-height: 100vh;
+    @include transition;
+
+    @include tablet {
+        margin-left: 0 !important;
+    }
+
+    &.expanded {
+        margin-left: 0;
+    }
+}
+
+// Notification & User Profile
+.ws-notification-trigger {
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+}
+
+.ws-nav-icon {
+    width: 20px;
+    height: 20px;
+    color: $gray-500;
+}
+
+.ws-notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: $danger;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    @include flex-center;
+    padding: 0 !important;
+    box-shadow: $shadow-sm;
+}
+
+.ws-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    
+    .ws-user-info {
+        text-align: right;
+        line-height: 1.2;
+        
+        .ws-user-name {
+            display: block;
+            font-weight: 700;
+            color: $gray-900;
+            font-size: 0.85rem;
+        }
+        
+        .ws-user-role {
+            display: block;
+            color: $gray-500;
+            font-size: 0.75rem;
+        }
+    }
+    
+    .ws-user-avatar {
+        width: 38px;
+        height: 38px;
+        background-color: $primary;
+        color: #ffffff;
+        border-radius: 50%;
+        @include flex-center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: $shadow-sm;
+    }
+}
+
+.ws-content-container {
+    padding: 2rem;
+    
+    @include mobile {
+        padding: 1rem;
+    }
+}
+
+/* --- Page Header Layout --- */
+.ws-page-header {
+    @include flex-between;
+    margin-bottom: 2rem;
+
+    @include tablet {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .ws-page-header-content {
+        .ws-page-title {
+            font-weight: 800;
+            color: $gray-900;
+            margin: 0;
+            font-size: 1.75rem;
+            letter-spacing: -0.5px;
+        }
+
+        .ws-page-subtitle {
+            margin-top: 4px;
+            color: $gray-500;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+    }
+
+    .ws-page-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+/* --- Mobile Sidebar Header --- */
+.ws-sidebar-mobile-header {
+    display: none;
+    padding: 1rem;
+    justify-content: flex-end;
+    border-bottom: 1px solid $gray-100;
+
+    @include tablet {
+        display: flex;
+    }
+}
+
+/* --- Drawer (Side Panel) --- */
+.ws-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $gray-200;
+
+    .ws-drawer-title {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1rem;
+        color: $gray-900;
+    }
+}
+
+/* --- Toast --- */
+.ws-status-toast {
+    .toast-body {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .ws-toast-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .ws-toast-close {
+        margin-left: auto;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+}
