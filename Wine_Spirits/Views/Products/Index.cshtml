@@ -10,88 +10,129 @@
     <link rel="stylesheet" href="~/css/product/product.css" asp-append-version="true" />
 }
 
-<div class="ws-main-container">
+<div class="ws-content-container">
+    @* Sayfa Başlığı *@
     <div class="ws-page-header">
-        <div>
+        <div class="ws-page-header-content">
             <h2 class="ws-page-title">Ürün Envanteri</h2>
             <p class="ws-page-subtitle">Premium envanter yönetimi ve stok takibi.</p>
         </div>
-        <button type="button" class="ws-btn-main" id="btnCreateNew">
-            <i data-lucide="plus"></i> Yeni Ürün Ekle
-        </button>
-    </div>
-    @* CARD YAPISI *@
-    <div class="ws-stats-grid">
-        <div class="ws-stat-card-v2">
-            <div class="ws-stat-icon-box bg-indigo-50"><i data-lucide="package"></i></div>
-            <div><small class="text-muted d-block">Toplam Ürün</small><span class="fw-bold h5">@stats.TotalProducts</span></div>
-        </div>
-        <div class="ws-stat-card-v2">
-            <div class="ws-stat-icon-box bg-rose-50"><i data-lucide="alert-triangle"></i></div>
-            <div><small class="text-muted d-block">Kritik Stok</small><span class="fw-bold h5">@stats.CriticalStockCount</span></div>
-        </div>
-        <div class="ws-stat-card-v2">
-            <div class="ws-stat-icon-box bg-emerald-50"><i data-lucide="banknote"></i></div>
-            <div><small class="text-muted d-block">Envanter Değeri</small><span class="fw-bold h5">@stats.TotalInventoryValue.ToString("C0")</span></div>
-        </div>
-        <div class="ws-stat-card-v2">
-            <div class="ws-stat-icon-box bg-amber-50"><i data-lucide="layers"></i></div>
-            <div><small class="text-muted d-block">Kategoriler</small><span class="fw-bold h5">@stats.CategoryCount</span></div>
-        </div>
-    </div>
-    @* FİLTRE KONTEYNERI *@
-    <div class="ws-filter-container">
-        <div class="ws-filter-item">
-            <i data-lucide="search"></i>
-            <input type="text" id="inventorySearch" class="ws-filter-el" placeholder="Ürün veya kod ara...">
-        </div>
-
-        <div class="ws-filter-item">
-            <i data-lucide="calendar"></i>
-            <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly>
-        </div>
-
-        <div class="dropdown">
-            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" id="categoryDropdownBtn">
-                <i data-lucide="tag"></i> <span id="selectedCategoryText">Kategori</span>
-                <i data-lucide="chevron-down"></i>
+        <div class="ws-page-actions">
+            <button type="button" class="ws-btn-main" id="btnCreateNew">
+                <i data-lucide="plus"></i> Yeni Ürün Ekle
             </button>
-            <ul class="dropdown-menu shadow border-0" id="filterCategoryMenu">
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>
-            </ul>
-        </div>
-
-        <div class="dropdown">
-            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="box"></i> <span id="selectedStockText">Stok Durumu</span>
-                <i data-lucide="chevron-down"></i>
-            </button>
-            <ul class="dropdown-menu shadow border-0">
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('', 'Stok Durumu')">Tüm Stoklar</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('in-stock', 'Stokta Var')">Stokta Var</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('critical', 'Kritik Stok')">Kritik Stok</a></li>
-            </ul>
-        </div>
-
-        <div class="dropdown">
-            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="sliders-horizontal"></i> Sırala
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc"></i> İsim (A-Z)</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up"></i> En Yüksek Fiyat</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package"></i> Stok (Azalan)</a></li>
-            </ul>
         </div>
     </div>
 
+    @* İstatistik Grid *@
+    <section class="ws-stats-grid">
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="package"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Ürün</span>
+                <span class="ws-stat-value">@stats.TotalProducts</span>
+            </div>
+        </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-rose">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Kritik Stok</span>
+                <span class="ws-stat-value">@stats.CriticalStockCount</span>
+            </div>
+        </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
+                <i data-lucide="banknote"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Envanter Değeri</span>
+                <span class="ws-stat-value">@stats.TotalInventoryValue.ToString("C0")</span>
+            </div>
+        </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-blue">
+                <i data-lucide="layers"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Kategoriler</span>
+                <span class="ws-stat-value">@stats.CategoryCount</span>
+            </div>
+        </div>
+    </section>
+
+    @* İki Gruplu Filtre Yapısı *@
+    <section class="ws-filter-section">
+        <div class="ws-filter-container">
+            @* Sol Grup: Arama ve Tarih *@
+            <div class="ws-filter-group-left">
+                <div class="ws-filter-item">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="inventorySearch" class="ws-filter-el" placeholder="Ürün veya kod ara...">
+                </div>
+
+                <div class="ws-filter-item">
+                    <i data-lucide="calendar"></i>
+                    <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly>
+                </div>
+            </div>
+
+            @* Sağ Grup: Dropdownlar ve Sıralama *@
+            <div class="ws-filter-group-right">
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown">
+                        <i data-lucide="tag"></i> 
+                        <span id="selectedCategoryText">Kategori</span>
+                        <i data-lucide="chevron-down" class="ws-filter-chevron"></i>
+                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium" id="filterCategoryMenu">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>
+                    </ul>
+                </div>
+                @* Stok Durumu *@
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown">
+                        <i data-lucide="box"></i> 
+                        <span id="selectedStockText">Stok Durumu</span>
+                        <i data-lucide="chevron-down" class="ws-filter-chevron"></i>
+                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('', 'Stok Durumu')">Tüm Stoklar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('in-stock', 'Stokta Var')">Stokta Var</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('critical', 'Kritik Stok')">Kritik Stok</a></li>
+                    </ul>
+                </div>
+                @* SIRALA *@
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown" role="button">
+                        <i data-lucide="sliders-horizontal"></i>
+                        <span id="selectedStockText">Sırala</span>
+                        <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
+                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium dropdown-menu-end">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc"></i> İsim (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up"></i> En Yüksek Fiyat</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package"></i> Stok (Azalan)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* Veri Tablosu *@
     <div class="ws-table-wrapper">
         <table class="ws-table-premium">
             <thead>
                 <tr>
-                    <th class="ps-4">KOD</th>
+                    <th>KOD</th>
                     <th>ÜRÜN ADI</th>
                     <th>KATEGORİ</th>
                     <th>TEDARİKÇİ</th>
@@ -102,16 +143,9 @@
                 </tr>
             </thead>
             <tbody id="productsTableBody">
+                @* JS Tarafından Doldurulur *@
             </tbody>
         </table>
-    </div>
-</div>
-
-<div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-    <div id="globalModalDialog" class="modal-dialog modal-dialog-centered ws-modal-md">
-        <div class="modal-content border-0 shadow-lg ws-modal-custom">
-            <div id="productModalBody"></div>
-        </div>
     </div>
 </div>
 
@@ -119,19 +153,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/product/product.js" asp-append-version="true"></script>
 
     <script>
         $(document).ready(function() {
             if (typeof ProductManager !== 'undefined' && ProductManager.init) {
                 ProductManager.init();
-            }
-            // Lucide ikonlarını başlat
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
             }
         });
     </script>

@@ -1,10 +1,9 @@
 /**
- * Product Management Module - Figma Premium Edition
+ * Product Management Module - Wine & Spirits ERP Premium Edition
  */
 const ProductManager = {
     allProducts: [],
     filteredProducts: [],
-    // Mevcut filtre durumlarını takip etmek için bir nesne
     currentFilters: {
         search: "",
         category: "",
@@ -35,7 +34,7 @@ const ProductManager = {
             .then(res => {
                 this.allProducts = res.products || [];
                 this.filteredProducts = [...this.allProducts];
-                this.populateCategories(); // Dropdown menüsünü doldurur
+                this.populateCategories();
                 this.renderTable(this.filteredProducts);
             })
             .catch(err => console.error("Veri yükleme hatası:", err));
@@ -47,6 +46,7 @@ const ProductManager = {
 
         if (products.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Ürün bulunamadı.</td></tr>';
+            if (typeof GlobalUI !== 'undefined') GlobalUI.refreshLucide();
             return;
         }
 
@@ -56,19 +56,19 @@ const ProductManager = {
 
             return `
             <tr>
-                <td class="ps-4"><span class="badge bg-light text-dark border">${p.productCode}</span></td>
-                <td><div class="fw-bold text-dark">${p.name}</div></td>
-                <td><span class="badge bg-indigo-50 text-indigo-700">${p.categoryName || '-'}</span></td>
-                <td><div class="text-muted small">${p.supplierName || '-'}</div></td>
-                <td class="fw-bold text-dark">${priceStr}</td>
-                <td><span class="fw-medium text-dark">${p.stockQuantity} Adet</span></td>
+                <td><strong>${p.productCode}</strong></td>
+                <td><b>${p.name}</b></td>
+                <td>${p.categoryName || '-'}</td>
+                <td><small>${p.supplierName || '-'}</small></td>
+                <td><strong>${priceStr}</strong></td>
+                <td>${p.stockQuantity} Adet</td>
                 <td>
                     <span class="status-pill ${isCritical ? 'status-danger' : 'status-success'}">
                         ${isCritical ? 'Kritik Stok' : 'Stokta Var'}
                     </span>
                 </td>
-                <td class="text-center-actions">
-                    <div class="d-flex justify-content-center gap-1">
+                <td class="text-end">
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; padding-right: 1.5rem;">
                         <button onclick="ProductManager.view('${p.id}')" class="ws-action-btn" title="Görüntüle"><i data-lucide="eye"></i></button>
                         <button onclick="ProductManager.edit('${p.id}')" class="ws-action-btn" title="Düzenle"><i data-lucide="edit-2"></i></button>
                         <button onclick="ProductManager.delete('${p.id}')" class="ws-action-btn text-danger" title="Sil"><i data-lucide="trash-2"></i></button>
@@ -77,22 +77,23 @@ const ProductManager = {
             </tr>`;
         }).join('');
 
+        // CRITICAL: Refresh Lucide icons after table render
         if (typeof GlobalUI !== 'undefined') {
             GlobalUI.refreshLucide();
         }
     },
 
-    // --- MODERN FİLTRELEME METODLARI ---
-
     filterCategory: function (val, text) {
         this.currentFilters.category = val;
-        document.getElementById('selectedCategoryText').innerText = text;
+        const textEl = document.getElementById('selectedCategoryText');
+        if (textEl) textEl.innerText = text;
         this.applyFilters();
     },
 
     filterStock: function (val, text) {
         this.currentFilters.stock = val;
-        document.getElementById('selectedStockText').innerText = text;
+        const textEl = document.getElementById('selectedStockText');
+        if (textEl) textEl.innerText = text;
         this.applyFilters();
     },
 
@@ -110,7 +111,6 @@ const ProductManager = {
         this.renderTable(this.filteredProducts);
     },
 
-    // Kategori listesini modern dropdown (ul-li) yapısına göre doldurur
     populateCategories: function () {
         const catMenu = document.getElementById('filterCategoryMenu');
         if (!catMenu || this.allProducts.length === 0) return;
@@ -132,7 +132,7 @@ const ProductManager = {
     sort: function (type) {
         switch (type) {
             case 'name-asc':
-                this.filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                this.filteredProducts.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
                 break;
             case 'price-desc':
                 this.filteredProducts.sort((a, b) => b.price - a.price);
@@ -149,18 +149,15 @@ const ProductManager = {
 
         document.getElementById('btnCreateNew')?.addEventListener('click', (e) => {
             e.preventDefault();
-            GlobalUI.openModal('/Products/Create');
+            if (typeof GlobalUI !== 'undefined') GlobalUI.openModal('/Products/Create');
         });
     },
 
-    view: function (id) { GlobalUI.openModal(`/Products/Details/${id}`); },
-    edit: function (id) { GlobalUI.openModal(`/Products/Edit/${id}`); },
+    view: function (id) { if (typeof GlobalUI !== 'undefined') GlobalUI.openModal(`/Products/Details/${id}`); },
+    edit: function (id) { if (typeof GlobalUI !== 'undefined') GlobalUI.openModal(`/Products/Edit/${id}`); },
     delete: function (id) {
         if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
-            // Silme işlemi AJAX ile yapılabilir, şimdilik logluyoruz
             console.log("Silinecek ID:", id);
         }
     }
 };
-
-document.addEventListener('DOMContentLoaded', () => ProductManager.init());

@@ -57,40 +57,55 @@
             <div class="ws-filter-group-left">
                 <div class="ws-filter-item">
                     <i data-lucide="search"></i>
-                    <input type="text" id="tableSearch" class="ws-filter-el" placeholder="Kod veya ürün adı ile ara...">
+                    <input type="text" id="inventorySearch" class="ws-filter-el" placeholder="Ürün veya kod ara...">
                 </div>
                 <div class="ws-filter-item">
                     <i data-lucide="calendar"></i>
-                    <input type="text" id="dashboardDatePicker" class="ws-filter-el" placeholder="Tarih Seçin" readonly>
+                    <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly>
                 </div>
             </div>
 
             <div class="ws-filter-group-right">
-                <div class="ws-filter-item ws-custom-dropdown">
-                    <div class="ws-filter-el">
-                        <i data-lucide="arrow-left-right"></i>
-                        <span>İşlem Tipi</span>
+
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown" role="button">
+                        <i data-lucide="tag"></i>
+                        <span id="selectedCategoryText">Kategori</span>
                         <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
                     </div>
-                    <div class="ws-dropdown-content">
-                        <div class="ws-dropdown-option" data-value="all">Tümü</div>
-                        <div class="ws-dropdown-option" data-value="giris">Stok Girişi</div>
-                        <div class="ws-dropdown-option" data-value="cikis">Stok Çıkışı</div>
-                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium" id="filterCategoryMenu">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>
+                    </ul>
                 </div>
 
-                <div class="ws-filter-item ws-custom-dropdown">
-                    <div class="ws-filter-el">
-                        <i data-lucide="check-circle-2"></i>
-                        <span>Durum</span>
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown" role="button">
+                        <i data-lucide="box"></i>
+                        <span id="selectedStockText">Stok Durumu</span>
                         <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
                     </div>
-                    <div class="ws-dropdown-content">
-                        <div class="ws-dropdown-option" data-value="all">Tümü</div>
-                        <div class="ws-dropdown-option" data-value="completed">Tamamlandı</div>
-                        <div class="ws-dropdown-option" data-value="pending">Beklemede</div>
-                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('', 'Stok Durumu')">Tüm Stoklar</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('in-stock', 'Stokta Var')">Stokta Var</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterStock('critical', 'Kritik Stok')">Kritik Stok</a></li>
+                    </ul>
                 </div>
+
+                <div class="ws-filter-item dropdown">
+                    <div class="ws-filter-el" data-bs-toggle="dropdown" role="button">
+                        <i data-lucide="sliders-horizontal"></i>
+                        <span id="selectedStockText">Sırala</span>
+                        <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
+                    </div>
+                    <ul class="dropdown-menu ws-dropdown-premium dropdown-menu-end">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('name-asc')"><i data-lucide="sort-asc"></i> İsim (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('price-desc')"><i data-lucide="trending-up"></i> En Yüksek Fiyat</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.sort('stock-desc')"><i data-lucide="package"></i> Stok (Azalan)</a></li>
+                    </ul>
+                </div>
+
             </div>
 
         </div>
