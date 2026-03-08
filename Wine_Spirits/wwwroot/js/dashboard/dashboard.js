@@ -1,5 +1,5 @@
 /**
- * DashboardManager - Premium Unified Version v2.0
+ * DashboardManager - Premium Unified Version v2.1
  * İstatistikler, Grafikler, Tablo Yönetimi ve Aksiyonları Tek Merkezden Yönetir.
  */
 const DashboardManager = {
@@ -14,8 +14,15 @@ const DashboardManager = {
      */
     init: function () {
         console.log("DashboardManager: Sistem ateşleniyor...");
+
+        // İlk veri çekme işlemi
         this.fetchData(this.currentRange);
+
+        // Event listener'ları bağla
         this.attachEvents();
+
+        // Not: initFilters (Flatpickr) GlobalUI.init() tarafından site.js içinde 
+        // zaten başlatıldığı için burada tekrar çağırıp çakışma yaratmıyoruz.
     },
 
     /**
@@ -26,7 +33,7 @@ const DashboardManager = {
         const _this = this;
 
         // Loading State: Tabloyu temizle ve spinner koy
-        const tbody = document.getElementById('ordersTableBody');
+        const tbody = document.getElementById('dashboardTableBody');
         if (tbody) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary spinner-border-sm"></div></td></tr>`;
         }
@@ -61,9 +68,8 @@ const DashboardManager = {
 
         // ws-stat attribute'una sahip her kartın değerini güncelle
         Object.keys(stats).forEach(key => {
-            const el = document.querySelector(`[ws-stat="${key}"] .h4`);
+            const el = document.querySelector(`[ws-stat="${key}"] .ws-stat-value`);
             if (el) {
-                // Değer değişirken ufak bir animasyon hissi (isteğe bağlı)
                 el.textContent = stats[key];
             }
         });
@@ -82,10 +88,10 @@ const DashboardManager = {
             this.charts.sales = new Chart(salesCtx, {
                 type: 'line',
                 data: {
-                    labels: ["Oca", "Şub", "Mar", "Nis", "May", "Haz"], // Backend'den gelen veriye göre map edilebilir
+                    labels: data.salesLabels || ["Oca", "Şub", "Mar", "Nis", "May", "Haz"],
                     datasets: [{
                         label: 'Ciro',
-                        data: [12000, 19000, 15000, 25000, 22000, 30000], // Örnek veri
+                        data: data.salesValues || [0, 0, 0, 0, 0, 0],
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.05)',
                         fill: true,
@@ -113,9 +119,9 @@ const DashboardManager = {
             this.charts.category = new Chart(catCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.categoryLabels,
+                    labels: data.categoryLabels || [],
                     datasets: [{
-                        data: data.categoryValues,
+                        data: data.categoryValues || [],
                         backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
                         hoverOffset: 10,
                         borderWidth: 0
@@ -134,10 +140,10 @@ const DashboardManager = {
     },
 
     /**
-     * Son Siparişler Tablosu
+     * Son Siparişler Tablosu (AJAX Sonrası Render)
      */
     renderOrdersTable: function (orders) {
-        const tbody = document.getElementById('ordersTableBody');
+        const tbody = document.getElementById('dashboardTableBody');
         if (!tbody) return;
 
         if (!orders || orders.length === 0) {
@@ -147,13 +153,13 @@ const DashboardManager = {
 
         tbody.innerHTML = orders.map(o => `
             <tr>
-                <td><span class="badge bg-light text-dark border fw-normal">#${o.id}</span></td>
-                <td><div class="fw-semibold">${o.customerName}</div></td>
-                <td><div class="small text-muted text-truncate" style="max-width: 150px;">${o.productName}</div></td>
+                <td class="ps-4"><span class="badge bg-light text-dark border fw-normal">#${o.id}</span></td>
+                <td><div class="fw-semibold">${o.customerName || 'Bilinmiyor'}</div></td>
+                <td><div class="small text-muted text-truncate" style="max-width: 150px;">${o.productName || '-'}</div></td>
                 <td><span class="fw-medium">${o.quantity}</span> <small class="text-muted">Adet</small></td>
-                <td><span class="status-pill status-success">Tamamlandı</span></td>
+                <td><span class="ws-badge ws-badge-success">Tamamlandı</span></td>
                 <td><span class="fw-bold text-dark">${new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(o.total)}</span></td>
-                <td class="text-end">
+                <td class="text-end pe-4">
                     <button class="ws-action-btn" onclick="GlobalUI.openModal('/Orders/Details/${o.id}', 'modal-lg')" title="Detay">
                         <i data-lucide="eye"></i>
                     </button>
@@ -161,7 +167,7 @@ const DashboardManager = {
             </tr>
         `).join('');
 
-        // Yeni eklenen eye (göz) ikonları için Lucide'i tetikle
+        // Yeni eklenen ikonlar (eye/göz) için Lucide'i tekrar tetikle
         if (typeof GlobalUI !== 'undefined') {
             GlobalUI.refreshLucide();
         }
@@ -173,12 +179,20 @@ const DashboardManager = {
     attachEvents: function () {
         const _this = this;
 
-        // Filtre butonları için aktiflik yönetimi
+        // Filtre butonları (Today, Month vb.) için aktiflik yönetimi
         document.querySelectorAll('[data-range]').forEach(btn => {
             btn.addEventListener('click', function (e) {
+                e.preventDefault();
                 const range = this.getAttribute('data-range');
                 _this.changeRange(range, this);
             });
+        });
+
+        // Dropdown seçeneklerine tıklayınca tabloyu filtreleme (Opsiyonel Entegrasyon)
+        $(document).on('click', '.ws-dropdown-option', function () {
+            const val = $(this).data('value');
+            console.log("Seçilen Filtre:", val);
+            // Burada istersen val değerine göre fetchData'yı tekrar tetikleyebilirsin.
         });
     },
 
@@ -188,12 +202,13 @@ const DashboardManager = {
     changeRange: function (range, element) {
         this.currentRange = range;
 
-        // UI Güncelleme (Buton renkleri)
+        // UI Güncelleme (Aktiflik Durumu)
         document.querySelectorAll('[data-range]').forEach(b => {
-            b.classList.remove('btn-primary');
-            b.classList.add('btn-outline-secondary');
+            b.classList.remove('active');
         });
-        element.classList.replace('btn-outline-secondary', 'btn-primary');
+        if (element) {
+            element.classList.add('active');
+        }
 
         // Veriyi tekrar çek
         this.fetchData(range);
@@ -206,7 +221,7 @@ const DashboardManager = {
         const el = document.getElementById('lastUpdated');
         if (el) {
             el.innerHTML = `<i data-lucide="clock" class="me-1" style="width:14px; height:14px;"></i> Son Güncelleme: ${time}`;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof GlobalUI !== 'undefined') GlobalUI.refreshLucide();
         }
     },
 
@@ -225,7 +240,7 @@ const DashboardManager = {
     }
 };
 
-// Sayfa hazır olduğunda başlat
+// Sayfa hazır olduğunda Dashboard'u ateşle
 document.addEventListener('DOMContentLoaded', () => {
     DashboardManager.init();
 });

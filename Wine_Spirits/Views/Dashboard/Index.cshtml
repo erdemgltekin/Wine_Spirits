@@ -1,3 +1,4 @@
+@using Wine_Spirits.Models.ViewModels
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Yönetim Paneli";
@@ -5,84 +6,133 @@
 }
 
 @section Styles {
-    
     <link rel="stylesheet" href="~/css/dashboard/dashboard.css" asp-append-version="true" />
 }
+<main class="ws-page-container">
+    @* --- HEADER --- *@
+    <header class="ws-dashboard-header">
+        <div class="ws-header-title-box">
+            <h2 class="ws-header-title">Genel Bakış</h2>
+            <p class="ws-header-subtitle">İşletmenizin Genel Takibi ve Performans Analizi</p>
+        </div>       
+    </header>
 
-    @* --- HEADER: Başlık ve Sağa Yaslı Butonlar --- *@
-    
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-dark m-0">Genel Bakış</h2>
-            <p class="text-muted small mb-0">İşletmenizin Genel Takibi</p>
-        </div>        
-    </div>
-    @* --- DÖNEM FİLTRELERİ --- *@
-    <div class="ws-filter-group mb-4">
-        <button class="btn btn-primary" data-range="all" onclick="DashboardManager.changeRange('all')">Tümü</button>
-        <button class="btn btn-outline-secondary" data-range="today" onclick="DashboardManager.changeRange('today')">Bugün</button>
-        <button class="btn btn-outline-secondary" data-range="month" onclick="DashboardManager.changeRange('month')">Bu Ay</button>
-    </div>
+    @* --- 1. İSTATİSTİK KARTLARI (Strict Grid) --- *@
+    <section class="ws-stats-section">
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalProducts", Icon = "layers", IconClass = "ws-icon-indigo", Label = "Toplam Ürün", Value = "..." }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalStock", Icon = "box", IconClass = "ws-icon-emerald", Label = "Toplam Stok", Value = "..." }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "monthlySales", Icon = "trending-up", IconClass = "ws-icon-blue", Label = "Dönem Cirosu", Value = "..." }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "totalCiro", Icon = "banknote", IconClass = "ws-icon-rose", Label = "Toplam Ciro", Value = "..." }' />
+    </section>
 
-    @* --- İSTATİSTİK KARTLARI (ws-stat-card Tag Helper yapınıza uygun) --- *@
-    <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-sm-6">
-            <div class="ws-stat-card p-4 shadow-sm" ws-stat="totalProducts">
-                <div class="ws-stat-icon-wrapper bg-indigo-50 text-indigo-600">
-                    <i data-lucide="layers"></i>
+    @* --- 2. GRAFİKLER (Flex) --- *@
+    <section class="ws-charts-section">
+        <article class="ws-chart-main">
+            <div class="ws-card">
+                <header class="ws-card-header">
+                    <h6 class="ws-card-title">Performans Analizi</h6>
+                    <button class="ws-action-icon-btn"><i data-lucide="more-horizontal"></i></button>
+                </header>
+                <div class="ws-chart-body">
+                    <canvas id="premiumSalesChart"></canvas>
                 </div>
-                <div class="text-muted small fw-medium">Toplam Ürün</div>
-                <div class="h4 fw-bold mb-0 mt-1">...</div>
             </div>
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <div class="ws-stat-card p-4 shadow-sm" ws-stat="totalStock">
-                <div class="ws-stat-icon-wrapper bg-emerald-50 text-emerald-600">
-                    <i data-lucide="box"></i>
+        </article>
+        <article class="ws-chart-side">
+            <div class="ws-card">
+                <header class="ws-card-header ws-center-header">
+                    <h6 class="ws-card-title">Kategori Dağılımı</h6>
+                </header>
+                <div class="ws-chart-body">
+                    <canvas id="categoryChart"></canvas>
                 </div>
-                <div class="text-muted small fw-medium">Toplam Stok</div>
-                <div class="h4 fw-bold mb-0 mt-1">...</div>
             </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="ws-stat-card p-4 shadow-sm" ws-stat="monthlySales">
-                <div class="ws-stat-icon-wrapper bg-blue-50 text-blue-600">
-                    <i data-lucide="trending-up"></i>
-                </div>
-                <div class="text-muted small fw-medium">Dönem Cirosu</div>
-                <div class="h4 fw-bold mb-0 mt-1">...</div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="ws-stat-card p-4 shadow-sm" ws-stat="totalCiro">
-                <div class="ws-stat-icon-wrapper bg-rose-50 text-rose-600">
-                    <i data-lucide="banknote"></i>
-                </div>
-                <div class="text-muted small fw-medium">Toplam Ciro</div>
-                <div class="h4 fw-bold mb-0 mt-1">...</div>
-            </div>
-        </div>
-    </div>
+        </article>
+    </section>
 
-    @* --- GRAFİKLER --- *@
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8">
-            <div class="ws-card p-4 shadow-sm h-100">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="fw-bold mb-0">Performans Analizi</h6>
-                    <i data-lucide="more-horizontal" class="text-muted cursor-pointer"></i>
+    @* --- 3. DASHBOARD TABLO FİLTRE KONTEYNERİ (GÖRSEL 6 STANDARTLARI) --- *@
+    <section class="ws-filter-section">
+        <div class="ws-filter-container">
+
+            <div class="ws-filter-group-left">
+                <div class="ws-filter-item">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="tableSearch" class="ws-filter-el" placeholder="Kod veya ürün adı ile ara...">
                 </div>
-                <div style="height: 320px;"><canvas id="premiumSalesChart"></canvas></div>
+                <div class="ws-filter-item">
+                    <i data-lucide="calendar"></i>
+                    <input type="text" id="dashboardDatePicker" class="ws-filter-el" placeholder="Tarih Seçin" readonly>
+                </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="ws-card p-4 shadow-sm h-100">
-                <h6 class="fw-bold mb-4 text-center">Kategori Dağılımı</h6>
-                <div style="height: 280px;"><canvas id="categoryChart"></canvas></div>
+
+            <div class="ws-filter-group-right">
+                <div class="ws-filter-item ws-custom-dropdown">
+                    <div class="ws-filter-el">
+                        <i data-lucide="arrow-left-right"></i>
+                        <span>İşlem Tipi</span>
+                        <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
+                    </div>
+                    <div class="ws-dropdown-content">
+                        <div class="ws-dropdown-option" data-value="all">Tümü</div>
+                        <div class="ws-dropdown-option" data-value="giris">Stok Girişi</div>
+                        <div class="ws-dropdown-option" data-value="cikis">Stok Çıkışı</div>
+                    </div>
+                </div>
+
+                <div class="ws-filter-item ws-custom-dropdown">
+                    <div class="ws-filter-el">
+                        <i data-lucide="check-circle-2"></i>
+                        <span>Durum</span>
+                        <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
+                    </div>
+                    <div class="ws-dropdown-content">
+                        <div class="ws-dropdown-option" data-value="all">Tümü</div>
+                        <div class="ws-dropdown-option" data-value="completed">Tamamlandı</div>
+                        <div class="ws-dropdown-option" data-value="pending">Beklemede</div>
+                    </div>
+                </div>
             </div>
+
         </div>
-    </div>
-</div>
+    </section>
+
+    @* --- 4. TABLO YAPISI (Görsel 6 Standartları) --- *@
+    <section class="ws-table-section">
+        <div class="ws-table-wrapper">
+            <table class="ws-table-premium">
+                <thead>
+                    <tr>
+                        <th class="ps-4">TARİH</th>
+                        <th>KOD</th>
+                        <th>ÜRÜN ADI</th>
+                        <th>İŞLEM TİPİ</th>
+                        <th>MİKTAR</th>
+                        <th class="text-end pe-4">DURUM</th>
+                    </tr>
+                </thead>
+                <tbody id="dashboardTableBody">
+                    @* Dinamik İçerik *@
+                    <tr>
+                        <td class="ps-4">08.03.2024</td>
+                        <td>#WS-1023</td>
+                        <td><strong>Chivas Regal 12Y</strong></td>
+                        <td>Stok Girişi</td>
+                        <td>24 Adet</td>
+                        <td class="text-end pe-4"><span class="ws-badge ws-badge-success">Tamamlandı</span></td>
+                    </tr>
+                    <tr>
+                        <td class="ps-4">08.03.2024</td>
+                        <td>#WS-1056</td>
+                        <td><strong>Absolut Vodka 70cl</strong></td>
+                        <td>Kritik Stok</td>
+                        <td>5 Adet</td>
+                        <td class="text-end pe-4"><span class="ws-badge ws-badge-danger">Kritik</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

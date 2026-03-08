@@ -1,117 +1,150 @@
-﻿/* --- DASHBOARD UNIFIED PREMIUM STYLES --- */
-
-/* Ana Kapsayıcı */
-.dashboard-v2-container {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 15px;
+﻿@charset "UTF-8";
+.ws-page-container {
+  padding: 2.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+@media (max-width: 991.98px) {
+  .ws-page-container {
+    padding: 1.5rem;
+  }
 }
 
-/* Header ve Aksiyon Butonları */
 .ws-dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 992px) {
+  .ws-dashboard-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem;
+  }
 }
 
-/* Stat Kartları - Premium Tasarım */
-.ws-stat-card {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    height: 100%;
-    position: relative;
+.ws-header-title {
+  font-weight: 800;
+  font-size: 1.85rem;
+  color: #0f172a;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.025em;
 }
 
-    /* Ürünler sayfasındaki o meşhur Mor Shadow ve Hover Etkisi */
-    .ws-stat-card:hover {
-        transform: translateY(-5px);
-        border-color: #6366f1;
-        box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.4) !important;
-    }
-
-.ws-stat-icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.25rem;
-    font-size: 1.25rem;
-    transition: transform 0.3s ease;
+.ws-header-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
-.ws-stat-card:hover .ws-stat-icon-wrapper {
-    transform: scale(1.1) rotate(-5deg);
+.ws-btn-refresh {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  padding: 0.75rem 1.4rem !important;
+  font-weight: 700 !important;
+}
+.ws-btn-refresh i, .ws-btn-refresh svg {
+  width: 16px;
+  height: 16px;
 }
 
-/* Grafik Kartları */
-.ws-card {
-    background: #ffffff;
-    border-radius: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.3s ease;
+/* ============================================================
+    2. İSTATİSTİK GRUBU (Fixed 4-Column Grid)
+   ============================================================ */
+.ws-stats-section {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 24px !important;
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 992px) {
+  .ws-stats-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 576px) {
+  .ws-stats-section {
+    grid-template-columns: 1fr !important;
+  }
 }
 
-    .ws-card:hover {
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
-    }
-
-/* Filtre Buton Grubu */
-.ws-filter-group {
-    background: #f8fafc;
-    padding: 6px;
-    border-radius: 12px;
-    display: inline-flex;
-    gap: 4px;
-    border: 1px solid #e2e8f0;
+/* Dashboard sections use global .ws-stat-card components */
+/* ============================================================
+    3. GRAFİK GRUBU (%66 / %33 Flex)
+   ============================================================ */
+.ws-charts-section {
+  display: flex !important;
+  gap: 24px !important;
+  margin-bottom: 2.5rem;
+}
+.ws-charts-section .ws-chart-main {
+  flex: 2 !important;
+  min-width: 0;
+}
+.ws-charts-section .ws-chart-side {
+  flex: 1 !important;
+  min-width: 0;
+}
+@media (max-width: 1200px) {
+  .ws-charts-section {
+    flex-direction: column !important;
+  }
 }
 
-    .ws-filter-group .btn {
-        border-radius: 8px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        padding: 6px 16px;
-        border: none;
-    }
-
-/* Yardımcı Sınıflar */
-.w-fit-content {
-    width: fit-content;
+.ws-chart-body {
+  height: 360px !important;
+  position: relative;
+  padding-top: 0.5rem;
 }
 
-.bg-indigo-50 {
-    background-color: #eef2ff !important;
+/* ============================================================
+    4. FİLTRE KONTEYNERİ (Fixed Flexbox)
+   ============================================================ */
+.ws-filter-container {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+@media (max-width: 1200px) {
+  .ws-filter-container {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.25rem;
+  }
 }
 
-.text-indigo-600 {
-    color: #4f46e5 !important;
+.ws-filter-group-left,
+.ws-filter-group-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .ws-filter-group-left,
+  .ws-filter-group-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
-.bg-emerald-50 {
-    background-color: #ecfdf5 !important;
+/* ============================================================
+    5. TABLO GRUBU
+   ============================================================ */
+.ws-table-section {
+  margin-bottom: 3rem;
 }
 
-.text-emerald-600 {
-    color: #059669 !important;
+.ws-action-icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-
-.bg-blue-50 {
-    background-color: #eff6ff !important;
-}
-
-.text-blue-600 {
-    color: #2563eb !important;
-}
-
-.bg-rose-50 {
-    background-color: #fff1f2 !important;
-}
-
-.text-rose-600 {
-    color: #e11d48 !important;
+.ws-action-icon-btn:hover {
+  color: #7c3aed;
+  transform: scale(1.1);
 }

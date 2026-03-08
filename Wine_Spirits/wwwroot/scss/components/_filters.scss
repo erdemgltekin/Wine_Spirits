@@ -1,53 +1,76 @@
+﻿@charset "UTF-8";
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
+/* ============================================================
+    WS PREMIUM FILTER SYSTEM - DROPDOWN INTEGRATED
+    Tasarım ve animasyonlar korundu, dropdown desteği eklendi.
+   ============================================================ */
+
 .ws-filter-container {
-    display: flex;
-    align-items: stretch;
-    gap: 12px;
+    display: flex !important;
+    overflow: visible !important;
+    position: relative;
+    z-index: 10;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
     background: #ffffff;
     padding: 10px;
-    border-radius: 14px;
-    border: 1.5px solid $gray-100;
+    border-radius: 16px;
+    border: 1.5px solid rgba(124, 58, 237, 0.15);
     margin-bottom: 24px;
-    @include transition;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    width: 100% !important;
+    box-sizing: border-box;
+
+    .ws-filter-group-left, .ws-filter-group-right {
+        display: contents !important;
+    }
 
     @include tablet {
-        flex-wrap: wrap;
+        flex-wrap: wrap !important;
     }
 }
 
-.ws-filter-item, .ws-btn-filter-action {
-    display: flex;
-    align-items: center;
+.ws-filter-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     background: #ffffff !important;
     border: 1.5px solid #e5e7eb !important;
     border-radius: 12px !important;
-    padding: 10px 16px !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    flex: 1;
+    padding: 0 18px !important;
+    height: 50px !important;
+    position: relative;
     cursor: pointer;
-    min-width: 0;
+    overflow: visible !important; 
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+    @include transition(all, 0.3s, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+    // site.js ile uyumlu olması için .show yerine .is-active kullanıyoruz
+    &.is-active {
+        border-color: #7c3aed !important;
+        background: #fcfaff !important;
+        z-index: 100; // Açık olan filtre en üstte görünsün
 
-    @include tablet {
-        min-width: calc(50% - 6px);
+        .ws-dropdown-icon { // dropdown.scss içindeki ikon sınıfın
+            transform: rotate(180deg);
+            color: #7c3aed !important;
+        }
     }
-
-    @include mobile {
-        min-width: 100%;
-    }
-
-    &:hover, &.show {
-        transform: translateY(-2px) !important;
-        border-color: $primary !important;
-        color: $primary !important;
-        background-color: #fbfaff !important;
-        @include premium-shadow-hover;
+    // Dropdown açıldığında (show sınıfı geldiğinde) aktif duruş
+    &.show {
+        border-color: #7c3aed !important;
+        background: #fcfaff !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15) !important;
 
         i, svg {
-            color: $primary !important;
-            transform: scale(1.1) rotate(5deg);
+            color: #7c3aed !important;
+            transform: scale(1.1) translateY(-2px);
+        }
+        // Dropdown açıldığında içindeki okun yönünü değiştirebilirsin
+        .ws-filter-chevron {
+            transform: rotate(180deg);
         }
     }
 
@@ -57,46 +80,82 @@
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        @include transition;
+        pointer-events: none;
+        @include transition(all, 0.4s, cubic-bezier(0.68, -0.55, 0.265, 1.55));
+    }
+
+    &:hover {
+        border-color: rgba(124, 58, 237, 0.45) !important;
+        background-color: #fcfaff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.12) !important;
+
+        i, svg {
+            color: #7c3aed !important;
+            transform: scale(1.2) rotate(8deg);
+        }
     }
 
     &:focus-within {
-        border-color: $primary !important;
+        border-color: #7c3aed !important;
         background: #ffffff !important;
-        box-shadow: 0 0 0 4px rgba($primary, 0.1) !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15), 0 12px 25px rgba(124, 58, 237, 0.1) !important;
+
+        i, svg {
+            color: #7c3aed !important;
+            transform: scale(1.1) translateY(-2px);
+            filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.3));
+        }
     }
 }
 
 .ws-filter-el {
     border: none !important;
     background: transparent !important;
-    box-shadow: none !important;
     padding: 0 !important;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: $gray-700;
-    width: 100%;
-    outline: none;
+    width: 100% !important;
+    height: 100% !important;
+    outline: none !important;
     cursor: pointer;
+    text-align: center !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    &.ws-select-control {
-        appearance: none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0 center;
-        padding-right: 20px !important;
+    &::placeholder {
+        color: $gray-400;
+        text-align: center;
     }
-
-    &:focus {
-        border-color: $primary !important;
-        box-shadow: 0 0 0 4px rgba($primary, 0.1) !important;
-        outline: none;
+    // Dropdown oku için özel stil
+    .ws-filter-chevron {
+        margin-left: auto;
+        margin-right: 0;
+        opacity: 0.5;
+        @include transition;
     }
 }
 
+/* Aksiyon Butonu */
 .ws-btn-filter-action {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    gap: 8px;
+    flex: 0 0 50px !important;
+    height: 50px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #e5e7eb !important;
+    background: #fff !important;
+    @include flex-center;
+    @include transition(all, 0.3s);
+
+    &:hover {
+        background: #7c3aed !important;
+        border-color: #7c3aed !important;
+        color: #fff !important;
+        transform: rotate(90deg);
+
+        i, svg {
+            color: #fff !important;
+        }
+    }
 }

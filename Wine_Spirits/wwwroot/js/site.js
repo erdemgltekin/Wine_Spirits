@@ -1,10 +1,9 @@
 ﻿/**
  * SarapToptan ERP - Global JavaScript Controller
- * SidePanel (Drawer), GlobalUI (Modal/Sidebar) ve Global Effects
  */
 
 /* ============================================================
-   1. SIDE PANEL (DRAWER) MANTIĞI
+    1. SIDE PANEL (DRAWER) MANTIGI
    ============================================================ */
 const SidePanel = {
     overlaySelector: '#sidePanelOverlay',
@@ -12,13 +11,12 @@ const SidePanel = {
     contentSelector: '#sidePanelContent',
     titleSelector: '#sidePanelTitle',
 
-    open: function (url, title = 'Yükleniyor...') {
-        console.log('SidePanel: Loading URL:', url);
+    open: function (url, title = 'Yukleniyor...') {
         $(this.titleSelector).text(title);
         $(this.contentSelector).html(`
             <div class="p-5 text-center">
                 <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-                <div class="mt-3 text-muted small fw-medium">Lütfen bekleyin...</div>
+                <div class="mt-3 text-muted small fw-medium">Lutfen bekleyin...</div>
             </div>
         `);
 
@@ -31,12 +29,11 @@ const SidePanel = {
             type: 'GET',
             success: (response) => {
                 $(this.contentSelector).html(response);
-                this.refreshLucide();
+                GlobalUI.refreshLucide(); // Global nesneyi kullanıyoruz
                 this.bindForm();
             },
             error: (err) => {
-                console.error('SidePanel: AJAX Load Error:', err);
-                this.showToast('İçerik yüklenirken bir hata oluştu.', 'alert-triangle');
+                this.showToast('Icerik yuklenirken bir hata olustu.', 'alert-triangle');
                 this.close();
             }
         });
@@ -46,10 +43,7 @@ const SidePanel = {
         $(this.overlaySelector).removeClass('active');
         $(this.panelSelector).removeClass('active');
         $('body').css('overflow', 'auto');
-
-        setTimeout(() => {
-            $(this.contentSelector).empty();
-        }, 400);
+        setTimeout(() => { $(this.contentSelector).empty(); }, 400);
     },
 
     bindForm: function () {
@@ -71,18 +65,17 @@ const SidePanel = {
                 data: data,
                 success: (response) => {
                     if (typeof response === 'object' && response.success) {
-                        this.showToast(response.message || 'İşlem başarıyla tamamlandı!');
+                        this.showToast(response.message || 'Islem basariyla tamamlandi!');
                         this.close();
                         this.refreshActiveTable();
                     } else {
                         $(this.contentSelector).html(response);
-                        this.refreshLucide();
+                        GlobalUI.refreshLucide();
                         this.bindForm();
                     }
                 },
                 error: (err) => {
-                    console.error('SidePanel: AJAX Post Error:', err);
-                    this.showToast('Kaydedilirken bir hata oluştu.', 'alert-circle');
+                    this.showToast('Kaydedilirken bir hata olustu.', 'alert-circle');
                     $btn.html(originalBtnHtml).prop('disabled', false);
                 }
             });
@@ -94,7 +87,7 @@ const SidePanel = {
         if (!$toast.length) return;
         $('#toastMessage').text(message);
         $('#toastIcon').attr('data-lucide', icon);
-        this.refreshLucide();
+        GlobalUI.refreshLucide();
         const toast = new bootstrap.Toast($toast[0]);
         toast.show();
     },
@@ -114,20 +107,16 @@ const SidePanel = {
                         refreshed = true;
                     }
                 });
-                if (refreshed) this.refreshLucide();
+                if (refreshed) GlobalUI.refreshLucide();
                 else window.location.reload();
             },
             error: () => window.location.reload()
         });
-    },
-
-    refreshLucide: function () {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 };
 
 /* ============================================================
-    2. GLOBAL UI MANTIĞI (Modal, Sidebar, Helpers)
+    2. GLOBAL UI MANTIGI
    ============================================================ */
 const GlobalUI = {
     bsModal: null,
@@ -136,29 +125,20 @@ const GlobalUI = {
         this.initSidebar();
         this.initNotifications();
         this.initTooltips();
-        this.initDropdowns(); // Yeni eklenen dropdown dinleyicisi
+        this.initDropdowns();
+        this.initDatePickers();
         this.refreshLucide();
-        console.log('GlobalUI: Initialized.');
     },
 
     initSidebar: function () {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.querySelector('.main-content');
         const toggleBtn = document.getElementById('sidebarToggle');
-        const sidebarClose = document.getElementById('sidebarClose');
-
         if (toggleBtn && sidebar && mainContent) {
             toggleBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('expanded');
                 this.refreshLucide();
-            });
-        }
-
-        if (sidebarClose && sidebar && mainContent) {
-            sidebarClose.addEventListener('click', () => {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
             });
         }
     },
@@ -177,12 +157,73 @@ const GlobalUI = {
         });
     },
 
-    // Modern Dropdown Etkileşimi
     initDropdowns: function () {
-        // Dropdown her açıldığında içindeki Lucide ikonlarını canlandır
-        $(document).on('shown.bs.dropdown', '.dropdown', () => {
-            this.refreshLucide();
+        const self = this;
+
+        // Tıklama Olayı (Event Delegation)
+        $(document).on('click', '.ws-custom-dropdown', function (e) {
+            // Eğer tıklanan yer bir seçenek değilse dropdown'ı aç/kapat
+            if (!$(e.target).closest('.ws-dropdown-option').length) {
+                // Not: e.preventDefault() burada bazen input tıklamalarını bozabilir, dikkatli kullanıyoruz
+                e.stopPropagation();
+
+                const $this = $(this);
+
+                // Diğerlerini kapat, seçileni tetikle
+                $('.ws-custom-dropdown').not($this).removeClass('is-active');
+                $this.toggleClass('is-active');
+
+                self.refreshLucide();
+            }
         });
+
+        // Seçenek Seçildiğinde
+        $(document).on('click', '.ws-dropdown-option', function (e) {
+            e.stopPropagation();
+
+            const $opt = $(this);
+            const $dropdown = $opt.closest('.ws-custom-dropdown');
+            const $label = $dropdown.find('.ws-filter-el span');
+
+            // Eğer HTML'de onclick varsa e.preventDefault() onu durdurabilir. 
+            // Hem onclick hem bu dinleyici varsa dikkat.
+            if ($label.length) {
+                $label.text($opt.text());
+            }
+
+            $dropdown.find('.ws-dropdown-option').removeClass('active');
+            $opt.addClass('active');
+            $dropdown.removeClass('is-active');
+
+            self.refreshLucide();
+        });
+
+        // Dışarı Tıklandığında Kapatma
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.ws-custom-dropdown').length) {
+                $('.ws-custom-dropdown').removeClass('is-active');
+                self.refreshLucide();
+            }
+        });
+    },
+
+    initDatePickers: function () {
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("#dashboardDatePicker", {
+                mode: "range",
+                dateFormat: "d.m.Y",
+                locale: "tr",
+                disableMobile: true,
+                monthSelectorType: "static",
+                animate: true,
+                onOpen: function (selectedDates, dateStr, instance) {
+                    $(instance.element).closest('.ws-filter-item').addClass('is-active');
+                },
+                onClose: function (selectedDates, dateStr, instance) {
+                    $(instance.element).closest('.ws-filter-item').removeClass('is-active');
+                }
+            });
+        }
     },
 
     openModal: function (url, modalSize = 'modal-md') {
@@ -191,16 +232,9 @@ const GlobalUI = {
         const modalDialog = document.getElementById('globalModalDialog');
 
         if (!modalEl || !modalBody) return;
+        if (modalDialog) modalDialog.className = 'modal-dialog modal-dialog-centered ' + modalSize;
 
-        if (modalDialog) {
-            modalDialog.className = 'modal-dialog modal-dialog-centered ' + modalSize;
-        }
-
-        modalBody.innerHTML = `
-            <div class="p-5 text-center">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="mt-2 text-muted small">Yükleniyor...</p>
-            </div>`;
+        modalBody.innerHTML = '<div class="p-5 text-center"><div class="spinner-border text-primary" role="status"></div></div>';
 
         this.bsModal = new bootstrap.Modal(modalEl);
         this.bsModal.show();
@@ -208,60 +242,41 @@ const GlobalUI = {
         $.get(url, (html) => {
             modalBody.innerHTML = html;
             this.refreshLucide();
-        }).fail(() => {
-            modalBody.innerHTML = '<div class="alert alert-danger m-3">Bir hata oluştu.</div>';
         });
     },
 
     refreshLucide: function () {
-        if (typeof lucide !== 'undefined') {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
             lucide.createIcons();
         }
     }
 };
 
 /* ============================================================
-    3. EVENT LISTENERLAR VE BAŞLATMA
+    3. EVENT LISTENERLAR VE BASLATMA
    ============================================================ */
 $(document).ready(function () {
-    // GlobalUI Başlat
     GlobalUI.init();
 
-    // SidePanel Universal Trigger [data-drawer="true"]
     $(document).on('click', '[data-drawer="true"]', function (e) {
         e.preventDefault();
         const url = $(this).attr('href') || $(this).data('url');
-        const title = $(this).attr('title') || $(this).data('title') || 'Bilgiler';
+        const title = $(this).attr('title') || $(this).data('title');
         if (url) SidePanel.open(url, title);
     });
 
-    // SidePanel Kapatma
     $(document).on('click', '#closeSidePanel, #sidePanelOverlay', function (e) {
         e.preventDefault();
         SidePanel.close();
     });
-
-    // SidePanel içine tıklayınca kapanmasın
-    $(document).on('click', '#sidePanel', function (e) {
-        e.stopPropagation();
-    });
 });
 
-/**
- * AJAX ile içerik değiştiğinde ikonları canlandır
- */
+// Ajax işlemleri sonrası ikonları otomatik yenile
 $(document).ajaxComplete(function () {
     GlobalUI.refreshLucide();
 });
 
-/* ============================================================
-    4. YARDIMCI FONKSİYONLAR (GLOBAL)
-   ============================================================ */
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('tr-TR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(date);
-}
+// Sayfa tamamen yüklendiğinde ikonları garantile
+window.addEventListener('load', () => {
+    GlobalUI.refreshLucide();
+});

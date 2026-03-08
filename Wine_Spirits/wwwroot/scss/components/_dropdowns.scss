@@ -1,89 +1,124 @@
+﻿@charset "UTF-8";
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
-.dropdown-menu {
-    border: none !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-    padding: 8px !important;
-    margin-top: 8px !important;
-    animation: ws-dropdown-fade 0.2s ease-out;
-    background-color: #ffffff !important;
+/* ============================================================
+    WS PREMIUM CUSTOM DROPDOWN SYSTEM (Revize Edildi)
+    - JS (is-active) kontrolü ile senkronize.
+    - Hover yerine Tıklama odaklı stabil yapı.
+   ============================================================ */
 
-    &.ws-dropdown-notification {
-        border-radius: 16px !important;
-        min-width: 300px;
-    }
-
-    &.ws-dropdown-profile {
-        min-width: 200px;
-    }
-
-    .ws-dropdown-empty {
-        padding: 2rem 1rem;
-        text-align: center;
-        color: $gray-400;
-        font-size: 0.825rem;
+.ws-custom-dropdown {
+    position: relative; // Menünün butona göre konumlanması için şart.
+    cursor: pointer;
+    // JS tarafından eklenen aktiflik sınıfı
+    &.is-active {
+        .ws-dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        // Ok ikonunu çevir
+        .ws-dropdown-icon {
+            transform: rotate(180deg);
+            color: #7c3aed;
+            opacity: 1;
+        }
+        // Butonun kendisine hafif bir vurgu (opsiyonel)
+        .ws-filter-el {
+            border-color: #7c3aed;
+            background-color: #f5f3ff;
+        }
     }
 }
 
-.ws-topbar-profile-wrapper {
-    padding-left: 1rem;
-    border-left: 1px solid $gray-200;
+.ws-dropdown-content {
+    display: none; // Başlangıçta gizli
+    position: absolute;
+    top: 100%; // Tam sınırdan başlatıyoruz
+    left: 0;
+    width: 100%;
+    min-width: 200px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.2);
+    padding: 8px;
+    z-index: 1100; // Sayfa öğelerinin üstünde kalması için.
+    opacity: 0;
+    transform: translateY(10px);
+    @include transition(all, 0.2s, ease-out);
+    pointer-events: none;
+    margin-top: 8px; // Görsel boşluk
+    // Dropdown ile buton arasında "köprü" oluşturur (fare geçerken kapanmasın diye)
+    &::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 0;
+        width: 100%;
+        height: 10px;
+        background: transparent;
+    }
 }
 
-.dropdown-item {
-    border-radius: 8px !important;
-    padding: 10px 15px !important;
-    color: #4b5563 !important;
-    font-size: 14px !important;
+.ws-dropdown-option {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
     font-weight: 500;
-    @include transition;
+    color: #4b5563;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    @include transition;
+    white-space: nowrap;
 
     &:hover {
-        background-color: #f3f0ff !important;
-        color: #6c5ce7 !important;
-        transform: translateX(5px);
+        background-color: #f5f3ff;
+        color: #7c3aed;
+        transform: translateX(4px);
+
+        i, svg {
+            color: #7c3aed;
+        }
+    }
+    // Seçili öğe stili
+    &.active {
+        background-color: #7c3aed;
+        color: #ffffff;
+
+        i, svg {
+            color: #ffffff;
+        }
     }
 
-    &.active, &:active {
-        background-color: #f3f0ff !important;
-        color: #6c5ce7 !important;
-        font-weight: 600 !important;
-    }
-
-    i, svg, .ws-item-icon {
-        width: 16px;
-        height: 16px;
+    i, svg {
+        width: 15px;
+        height: 15px;
         margin-right: 10px;
+        color: #94a3b8;
         @include transition;
-        flex-shrink: 0;
     }
 }
 
-.dropdown-header {
-    font-weight: 700 !important;
-    font-size: 11px !important;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: $gray-400 !important;
-    padding: 10px 15px !important;
+.ws-dropdown-icon {
+    width: 14px;
+    height: 14px;
+    margin-left: auto;
+    opacity: 0.4;
+    @include transition;
+    pointer-events: none; // Tıklamayı engellemesin
 }
 
-.dropdown-divider {
-    border-top: 1px solid $gray-100 !important;
-    margin: 6px 0 !important;
-    opacity: 1 !important;
-}
-
+/* Animasyon: JS tetiklendiğinde pürüzsüz giriş */
 @keyframes ws-dropdown-fade {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

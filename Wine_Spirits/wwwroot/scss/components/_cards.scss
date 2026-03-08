@@ -1,60 +1,131 @@
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
-.ws-stat-card-v2 {
+/* ============================================================
+    1. GLOBAL PREMIUM CARD COMPONENT
+    Normal: Belirgin iskelet yapısı
+    Hover: Mor Glow & Derinlik
+   ============================================================ */
+
+.ws-card {
     background: #ffffff;
-    border-radius: 16px; 
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border: 1px solid #f0f0f5; 
-    @include transition;
-    cursor: pointer;
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    // 1. Normal Duruş (Sayfada belirgin olması için hafif border ve soft gölge)
+    border: 1.5px solid rgba($gray-200, 0.6) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    // Yumuşak geçiş animasyonu
+    @include transition(all, 0.4s, cubic-bezier(0.165, 0.84, 0.44, 1));
 
     &:hover {
-        transform: translateY(-5px);
-        border-color: #6366f1; 
-        box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2), 0 8px 10px -6px rgba(99, 102, 241, 0.2) !important;
-
-        .ws-stat-icon-box {
-            transform: scale(1.1);
-        }
+        transform: translateY(-8px);
+        // 2. Hover Durumu (Tasarladığımız Koyu Mor Border)
+        border-color: rgba(124, 58, 237, 0.45) !important;
+        // Taşan Mor Parıltılı Gölge (Glow)
+        box-shadow: 0 15px 40px rgba(124, 58, 237, 0.18), 0 5px 15px rgba(124, 58, 237, 0.08);
+    }
+    // Kart içindeki hafif gradyan yansıması
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.02), transparent);
+        border-radius: 16px;
+        opacity: 0.5;
     }
 }
 
-.ws-stat-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+.ws-card-header {
+    @include flex-between;
+    margin-bottom: 1.5rem;
+}
+
+.ws-card-title {
+    font-size: 1.125rem;
+    font-weight: 750;
+    color: $gray-800;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+/* ============================================================
+    2. İSTATİSTİK KARTI (İkon Solda, Yazı Sağda)
+   ============================================================ */
+
+.ws-stat-card {
+    @extend .ws-card;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    padding: 1.5rem 1.75rem !important;
+}
+
+.ws-stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
     @include flex-center;
     flex-shrink: 0;
-    @include transition(transform);
+    @include transition;
+    // Normal duruşta ikon kutuları
+    &.ws-icon-indigo {
+        background: rgba(124, 58, 237, 0.1);
+        color: #7c3aed;
+    }
+
+    &.ws-icon-emerald {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    &.ws-icon-blue {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+
+    &.ws-icon-rose {
+        background: rgba(225, 29, 72, 0.1);
+        color: #e11d48;
+    }
 
     i, svg {
-        width: 24px !important;
-        height: 24px !important;
-        stroke-width: 2.5px; 
+        width: 26px;
+        height: 26px;
+        stroke-width: 2.2px;
     }
 }
 
-// Icon Box Colors
-.bg-indigo-50 {
-    background: #eef2ff !important;
-    color: #6366f1 !important;
+// Hover sırasında ikonların küçük bir tepki vermesi
+.ws-stat-card:hover .ws-stat-icon-wrapper {
+    transform: scale(1.08) rotate(-3deg);
 }
 
-.bg-rose-50 {
-    background: #fff1f2 !important;
-    color: #e11d48 !important;
+.ws-stat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.bg-emerald-50 {
-    background: #ecfdf5 !important;
-    color: #10b981 !important;
+.ws-stat-label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: $gray-500;
+    margin-bottom: 0.2rem;
 }
 
-.bg-amber-50 {
-    background: #fffbeb !important;
-    color: #f59e0b !important;
+.ws-stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $gray-900;
+    letter-spacing: -0.04em;
+    line-height: 1;
 }

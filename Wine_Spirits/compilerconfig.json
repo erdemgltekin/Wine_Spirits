@@ -6,5 +6,9 @@
   {
     "outputFile": "wwwroot/css/product/product.css",
     "inputFile": "wwwroot/scss/product/product.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/dashboard/dashboard.css",
+    "inputFile": "wwwroot/scss/dashboard/dashboard.scss"
   }
 ]

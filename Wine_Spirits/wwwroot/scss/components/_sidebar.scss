@@ -1,12 +1,14 @@
 @import '../abstracts/variables';
 @import '../abstracts/mixins';
 
-// 'aside.sidebar' seçicisi Layout'taki ana kapsayıcıyı hedefler
+// Değişkenler (Eğer variables içinde yoksa referans olması için)
+$sidebar-collapsed-width: 80px;
+
 aside.sidebar {
     position: fixed !important;
     top: $topbar-height !important;
     left: 0 !important;
-    width: $sidebar-width !important;
+    width: $sidebar-width !important; // Varsayılan genişlik
     height: calc(100vh - #{$topbar-height}) !important;
     background-color: #ffffff !important;
     border-right: 1px solid $gray-200 !important;
@@ -14,79 +16,84 @@ aside.sidebar {
     display: flex !important;
     flex-direction: column !important;
     padding: 1rem 0.75rem !important;
+    overflow-x: hidden !important; // Taşmaları engelle
     overflow-y: auto;
-    // --- KRİTİK: X BUTONU VE MOBİL HEADER'I CSS İLE BOĞMA ---
-    // Layout'tan silinse bile tarayıcıda kalma ihtimaline karşı tamamen yok ediyoruz.
-    .ws-sidebar-mobile-header,
-    .sidebar-header,
-    .btn-close,
-    #sidebarClose {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    @include transition(all, 0.3s, ease-in-out); // Pürüzsüz geçiş
+    // --- KRİTİK: COLLAPSED (KAPALI) DURUMU ---
+    &.collapsed {
+        width: $sidebar-collapsed-width !important;
+        // Metinleri gizle
+        .sidebar-nav-item span {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            display: none !important;
+        }
+        // İkonları ortala
+        .sidebar-nav-item {
+            justify-content: center !important;
+            padding: 12px 0 !important;
+
+            .sidebar-nav-item-icon {
+                margin: 0 !important;
+            }
+        }
     }
-    // Navigasyon Listesi
+    // Gereksiz header öğelerini gizle
+    .ws-sidebar-mobile-header, .sidebar-header, .btn-close, #sidebarClose {
+        display: none !important;
+    }
+
     .sidebar-nav {
         display: flex !important;
-        flex-direction: column !important; // Menüleri alt alta diz
+        flex-direction: column !important;
         gap: 6px !important;
         flex: 1;
         width: 100% !important;
-        // Her bir menü satırı
+
         .sidebar-nav-item {
-            display: flex !important; // İkon ve metni YAN YANA getirir
-            flex-direction: row !important; // Dikey dizilimi yataya zorlar
-            align-items: center !important; // Dikeyde tam ortalar
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
             justify-content: flex-start !important;
             padding: 12px 16px !important;
             border-radius: 12px !important;
             text-decoration: none !important;
             color: $gray-600 !important;
-            gap: 12px !important; // İkon ile metin arası boşluk
+            gap: 12px !important;
+            white-space: nowrap !important;
             @include transition(all, 0.2s);
-            // İkon Kapsayıcısı
+
             .sidebar-nav-item-icon {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 width: 20px !important;
                 height: 20px !important;
-                flex-shrink: 0 !important; // İkonun sıkışmasını engeller
+                flex-shrink: 0 !important;
                 color: $gray-400;
 
                 i, svg {
                     width: 18px !important;
                     height: 18px !important;
-                    display: block !important;
                 }
             }
-            // Metin Alanı
+
             span {
                 font-size: 0.9rem !important;
                 font-weight: 500 !important;
-                white-space: nowrap !important;
-                color: inherit !important;
-                line-height: 1 !important;
+                @include transition(opacity, 0.2s);
             }
-            // Hover Efekti (Lavanta dokunuşu)
+
             &:hover {
                 background-color: rgba(124, 58, 237, 0.05) !important;
                 color: $primary !important;
                 transform: translateX(4px);
-
-                .sidebar-nav-item-icon {
-                    color: $primary !important;
-                }
             }
-            // Aktif Sayfa Efekti
+
             &.active {
                 background-color: $primary-light !important;
                 color: $primary !important;
-                font-weight: 600 !important;
 
                 .sidebar-nav-item-icon {
                     color: $primary !important;
@@ -98,11 +105,16 @@ aside.sidebar {
             }
         }
     }
-    // Ayırıcı Çizgi
-    .sidebar-divider {
-        height: 1px !important;
-        background-color: $gray-100 !important;
-        margin: 1rem 0.5rem !important;
-        flex-shrink: 0;
+}
+
+// --- ANA İÇERİK DENGESİ (Layout SCSS veya Global SCSS içine ekle) ---
+.main-content {
+    margin-left: $sidebar-width !important;
+    width: calc(100% - #{$sidebar-width}) !important;
+    @include transition(all, 0.3s, ease-in-out);
+
+    &.expanded {
+        margin-left: $sidebar-collapsed-width !important;
+        width: calc(100% - #{$sidebar-collapsed-width}) !important;
     }
 }
