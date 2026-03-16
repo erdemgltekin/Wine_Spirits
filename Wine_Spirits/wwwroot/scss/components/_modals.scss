@@ -1,10 +1,32 @@
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
+/* ============================================================
+   WS MODAL SYSTEM — Single Source of Truth
+   Compiled into main.css via main.scss → components/modals
+   ============================================================ */
+
+// ─── Bootstrap Modal Container Overrides ───────────────────
 .ws-modal-custom {
     border-radius: $radius-xl !important;
     border: none !important;
     box-shadow: $shadow-lg;
+    overflow: hidden;
+}
+
+/* Compact, elegant modal dialog */
+.modal-dialog {
+    max-width: 520px;
+    margin: 1.75rem auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-content {
+    border: none;
+    border-radius: 20px;
     overflow: hidden;
 }
 
@@ -17,7 +39,200 @@
     z-index: 10000 !important;
 }
 
-// Side Panel / Drawer
+// ─── Premium Modal Header ───────────────────────────────────
+.ws-modal-header {
+    padding: 1.75rem 2rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-bottom: 1px solid $gray-200;
+    background: $gray-50;
+    border: none; // remove default Bootstrap border
+    border-bottom: 1px solid $gray-200;
+}
+
+.ws-modal-title {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: $gray-800;
+    margin: 0;
+    font-size: 1.125rem;
+    text-align: center;
+}
+
+// ─── Red Minimalist Close Button ───────────────────────────
+.btn-close {
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    color: #dc3545;
+    opacity: 0.65;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    i, svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2.5;
+    }
+
+    &:hover {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.15);
+    }
+}
+
+// ─── Error / Validation Banner ──────────────────────────────
+.ws-error-panel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 2rem;
+    padding: 0.875rem 1.25rem;
+    background: rgba(220, 53, 69, 0.07);
+    border: 1px solid rgba(220, 53, 69, 0.25);
+    border-radius: 12px;
+    color: #dc3545;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    i, svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+}
+
+.ws-error-panel--hidden {
+    display: none;
+}
+
+// ─── Centered Footer Actions ────────────────────────────────
+.ws-form-actions {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem 2rem;
+    justify-content: center;
+    align-items: center;
+    background: $gray-50;
+    border-top: 1px solid $gray-200;
+
+    // Button sizing inside the footer
+    .ws-btn-main {
+        min-width: 140px;
+        height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        background: $primary;
+        color: white;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 1.5rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        i, svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            background: $primary-hover;
+            transform: translateY(-1px);
+        }
+    }
+
+    .ws-btn-secondary {
+        min-width: 120px;
+        height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        background: transparent;
+        color: $gray-600;
+        border: 1px solid $gray-300;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.25rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:hover {
+            background: $gray-100;
+            color: $gray-800;
+        }
+    }
+}
+
+// ─── Info Alert Strip ───────────────────────────────────────
+.ws-info-alert {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    background: rgba($primary, 0.06);
+    border: 1px solid rgba($primary, 0.18);
+    border-radius: 12px;
+    color: $primary;
+    font-size: 0.8125rem;
+    font-weight: 500;
+
+    i, svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+}
+
+// ─── Single-column Body Override ───────────────────────────
+.ws-modal-body--single {
+    grid-template-columns: 1fr;
+
+    .ws-form-group:first-child {
+        grid-column: span 1;
+    }
+}
+
+// ─── Standalone Full-Page Form Card ────────────────────────
+// Used for Countries / Units / Categories create pages
+.ws-standalone-form-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    min-height: calc(100vh - 70px);
+}
+
+.ws-standalone-form-card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid $gray-200;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+
+    .ws-form-actions {
+        .ws-btn-main,
+        .ws-btn-secondary {
+            flex: 1;
+        }
+    }
+}
+
+// ─── Side Panel / Drawer ────────────────────────────────────
 #sidePanelOverlay {
     position: fixed;
     top: 0;
@@ -65,7 +280,7 @@
     }
 }
 
-// Toast Notifications
+// ─── Toast Notifications ────────────────────────────────────
 .ws-toast-container {
     position: fixed;
     bottom: 0;
@@ -85,5 +300,36 @@
         width: 18px;
         height: 18px;
         margin-right: 0.5rem;
+    }
+}
+
+// ─── Responsive ─────────────────────────────────────────────
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 95vw;
+        margin: 1rem auto;
+    }
+
+    .ws-modal-body {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .ws-form-group {
+        grid-column: span 1 !important;
+    }
+
+    .ws-form-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding: 1rem;
+
+        .ws-btn-main,
+        .ws-btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
     }
 }

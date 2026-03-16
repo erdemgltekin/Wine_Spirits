@@ -15,15 +15,33 @@ namespace Wine_Spirits.Controllers
         public IActionResult Index() => View();
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            PopulateSelectLists();
+            try
+            {
+                await PopulateSelectListsAsync();
 
-            // AJAX çağrısı ise sadece Formu (Partial), normal çağrı ise Create.cshtml'i (View) dön
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("_ProductFormPartial", new Product());
+                // AJAX çağrısı ise sadece Formu (Partial), normal çağrı ise Create.cshtml'i (View) dön
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    return PartialView("_CreateProductPartial", new Product());
 
-            return View(new Product());
+                return View(new Product());
+            }
+            catch (Exception ex)
+            {
+                // Log the exact error for debugging
+                Console.WriteLine($"Create GET Error: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                
+                // Return error response for AJAX calls
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    Response.StatusCode = 500;
+                    return Content($"Internal Server Error: {ex.Message}", "text/plain");
+                }
+                
+                return View("Error");
+            }
         }
 
         [HttpGet]
@@ -107,14 +125,81 @@ namespace Wine_Spirits.Controllers
             return Json(new { products = data });
         }
 
+        private async Task PopulateSelectListsAsync(Product p = null)
+        {
+            try
+            {
+                // Fetch all dropdown data in parallel with AsNoTracking for performance
+                var countriesTask = _context.Countries?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Country>());
+                var categoriesTask = _context.ProductCategories?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<ProductCategory>());
+                var definitionsTask = _context.ProductDefinitions?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<ProductDefinition>());
+                var suppliersTask = _context.Suppliers?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Supplier>());
+                var unitsTask = _context.Units?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Unit>());
+                var warehousesTask = _context.WareHouses?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<WareHouse>());
+
+                // Wait for all tasks to complete in parallel
+                await Task.WhenAll(countriesTask, categoriesTask, definitionsTask, suppliersTask, unitsTask, warehousesTask);
+
+                // Get results
+                var countries = await countriesTask;
+                var categories = await categoriesTask;
+                var definitions = await definitionsTask;
+                var suppliers = await suppliersTask;
+                var units = await unitsTask;
+                var warehouses = await warehousesTask;
+
+                ViewBag.CountryId = new SelectList(countries, "Id", "Name", p?.CountryId);
+                ViewBag.ProductCategoryId = new SelectList(categories, "Id", "Name", p?.ProductCategoryId);
+                ViewBag.ProductDefinitionId = new SelectList(definitions, "Id", "Name", p?.ProductDefinitionId);
+                ViewBag.SupplierId = new SelectList(suppliers, "Id", "Name", p?.SupplierId);
+                ViewBag.UnitId = new SelectList(units, "Id", "Name", p?.UnitId);
+                ViewBag.WarehouseId = new SelectList(warehouses, "Id", "Name", p?.WarehouseId);
+            }
+            catch (Exception ex)
+            {
+                // Veritabanı hatasında log tut ve boş listeler gönder
+                Console.WriteLine($"PopulateSelectListsAsync Error: {ex.Message}");
+                
+                ViewBag.CountryId = new SelectList(Enumerable.Empty<Country>(), "Id", "Name");
+                ViewBag.ProductCategoryId = new SelectList(Enumerable.Empty<ProductCategory>(), "Id", "Name");
+                ViewBag.ProductDefinitionId = new SelectList(Enumerable.Empty<ProductDefinition>(), "Id", "Name");
+                ViewBag.SupplierId = new SelectList(Enumerable.Empty<Supplier>(), "Id", "Name");
+                ViewBag.UnitId = new SelectList(Enumerable.Empty<Unit>(), "Id", "Name");
+                ViewBag.WarehouseId = new SelectList(Enumerable.Empty<WareHouse>(), "Id", "Name");
+            }
+        }
+
         private void PopulateSelectLists(Product p = null)
         {
-            ViewBag.CountryId = new SelectList(_context.Countries.OrderBy(x => x.Name), "Id", "Name", p?.CountryId);
-            ViewBag.ProductCategoryId = new SelectList(_context.ProductCategories.OrderBy(x => x.Name), "Id", "Name", p?.ProductCategoryId);
-            ViewBag.ProductDefinitionId = new SelectList(_context.ProductDefinitions.OrderBy(x => x.Name), "Id", "Name", p?.ProductDefinitionId);
-            ViewBag.SupplierId = new SelectList(_context.Suppliers.OrderBy(x => x.Name), "Id", "Name", p?.SupplierId);
-            ViewBag.UnitId = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", p?.UnitId);
-            ViewBag.WarehouseId = new SelectList(_context.WareHouses.OrderBy(x => x.Name), "Id", "Name", p?.WarehouseId);
+            try
+            {
+                // Veritabanı bağlantısını kontrol Et - Keep for backward compatibility
+                var countries = _context.Countries?.OrderBy(x => x.Name)?.ToList() ?? new List<Country>();
+                var categories = _context.ProductCategories?.OrderBy(x => x.Name)?.ToList() ?? new List<ProductCategory>();
+                var definitions = _context.ProductDefinitions?.OrderBy(x => x.Name)?.ToList() ?? new List<ProductDefinition>();
+                var suppliers = _context.Suppliers?.OrderBy(x => x.Name)?.ToList() ?? new List<Supplier>();
+                var units = _context.Units?.OrderBy(x => x.Name)?.ToList() ?? new List<Unit>();
+                var warehouses = _context.WareHouses?.OrderBy(x => x.Name)?.ToList() ?? new List<WareHouse>();
+
+                ViewBag.CountryId = new SelectList(countries, "Id", "Name", p?.CountryId);
+                ViewBag.ProductCategoryId = new SelectList(categories, "Id", "Name", p?.ProductCategoryId);
+                ViewBag.ProductDefinitionId = new SelectList(definitions, "Id", "Name", p?.ProductDefinitionId);
+                ViewBag.SupplierId = new SelectList(suppliers, "Id", "Name", p?.SupplierId);
+                ViewBag.UnitId = new SelectList(units, "Id", "Name", p?.UnitId);
+                ViewBag.WarehouseId = new SelectList(warehouses, "Id", "Name", p?.WarehouseId);
+            }
+            catch (Exception ex)
+            {
+                // Veritabanı hatasında log tut ve boş listeler gönder
+                Console.WriteLine($"PopulateSelectLists Error: {ex.Message}");
+                
+                ViewBag.CountryId = new SelectList(Enumerable.Empty<Country>(), "Id", "Name");
+                ViewBag.ProductCategoryId = new SelectList(Enumerable.Empty<ProductCategory>(), "Id", "Name");
+                ViewBag.ProductDefinitionId = new SelectList(Enumerable.Empty<ProductDefinition>(), "Id", "Name");
+                ViewBag.SupplierId = new SelectList(Enumerable.Empty<Supplier>(), "Id", "Name");
+                ViewBag.UnitId = new SelectList(Enumerable.Empty<Unit>(), "Id", "Name");
+                ViewBag.WarehouseId = new SelectList(Enumerable.Empty<WareHouse>(), "Id", "Name");
+            }
         }
     }
 }

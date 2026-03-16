@@ -1,90 +1,98 @@
 @model Wine_Spirits.Models.Customer
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div class="p-2">
-    <form asp-action="Create">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
-
-        <div class="row g-3">
-            <!-- Customer Name -->
-            <div class="col-md-6">
-                <label asp-for="Name" class="form-label fw-bold text-dark small">Ad</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="user" class="text-muted" style="width: 16px;"></i>
-                    </span>
-                    <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="Müşteri adı" required />
-                </div>
-                <span asp-validation-for="Name" class="text-danger small"></span>
-            </div>
-
-            <!-- Lastname -->
-            <div class="col-md-6">
-                <label asp-for="Lastname" class="form-label fw-bold text-dark small">Soyad</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="user-plus" class="text-muted" style="width: 16px;"></i>
-                    </span>
-                    <input asp-for="Lastname" class="form-control border-start-0 ps-0" placeholder="Müşteri soyadı" required />
-                </div>
-                <span asp-validation-for="Lastname" class="text-danger small"></span>
-            </div>
-
-            <!-- Email -->
-            <div class="col-md-6">
-                <label asp-for="Email" class="form-label fw-bold text-dark small">E-Posta</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="mail" class="text-muted" style="width: 16px;"></i>
-                    </span>
-                    <input asp-for="Email" type="email" class="form-control border-start-0 ps-0" placeholder="kurum@mail.com" />
-                </div>
-                <span asp-validation-for="Email" class="text-danger small"></span>
-            </div>
-
-            <!-- Phone -->
-            <div class="col-md-6">
-                <label asp-for="Phone" class="form-label fw-bold text-dark small">Telefon</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="phone" class="text-muted" style="width: 16px;"></i>
-                    </span>
-                    <input asp-for="Phone" class="form-control border-start-0 ps-0" placeholder="05XX XXX XX XX" required />
-                </div>
-                <span asp-validation-for="Phone" class="text-danger small"></span>
-            </div>
-
-            <!-- Address (Adress in Model) -->
-            <div class="col-12">
-                <label asp-for="Adress" class="form-label fw-bold text-dark small">Adres Detayları</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i data-lucide="map-pin" class="text-muted" style="width: 16px;"></i>
-                    </span>
-                    <textarea asp-for="Adress" class="form-control border-start-0 ps-0" rows="2" placeholder="Açık adres bilgilerini buraya giriniz..." required></textarea>
-                </div>
-                <span asp-validation-for="Adress" class="text-danger small"></span>
-            </div>
-
-            <!-- Tax Info -->
-            <div class="col-md-6">
-                <label asp-for="TaxOffice" class="form-label fw-bold text-dark small">Vergi Dairesi</label>
-                <input asp-for="TaxOffice" class="form-control bg-light py-1" placeholder="Vergi Dairesi" />
-            </div>
-            <div class="col-md-6">
-                <label asp-for="TaxNumber" class="form-label fw-bold text-dark small">Vergi No</label>
-                <input asp-for="TaxNumber" type="number" class="form-control bg-light py-1" placeholder="000000" />
-            </div>
-        </div>
-
-        <div class="drawer-footer">
-            <button type="submit" class="btn btn-indigo flex-grow-1 py-2 fw-bold shadow-sm">
-                <i data-lucide="save" class="me-2" style="width: 18px;"></i>
-                Müşteriyi Kaydet
-            </button>
-            <button type="button" class="btn btn-light px-4 py-2 border text-muted" id="closeSidePanel">
-                Vazgeç
-            </button>
-        </div>
-    </form>
+@* ─── MODAL HEADER ─── *@
+<div class="ws-modal-header">
+    <h5 class="ws-modal-title">Yeni Müşteri Ekle</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+        <i data-lucide="x"></i>
+    </button>
 </div>
+
+@* ─── FORM ─── *@
+<form asp-action="Create" id="createCustomerForm" method="post" autocomplete="off">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="ws-error-panel ws-error-panel--hidden"></div>
+
+    <div class="ws-modal-body">
+
+        @* Row 1 — Ad: full-width via :first-child SCSS rule *@
+        <div class="ws-form-group">
+            <label asp-for="Name" class="ws-form-label">Ad *</label>
+            <input asp-for="Name"
+                   class="ws-input-premium"
+                   placeholder="Müşteri adı"
+                   required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        @* Row 2: Sol — Soyad *@
+        <div class="ws-form-group">
+            <label asp-for="Lastname" class="ws-form-label">Soyad *</label>
+            <input asp-for="Lastname"
+                   class="ws-input-premium"
+                   placeholder="Müşteri soyadı"
+                   required />
+            <span asp-validation-for="Lastname" class="text-danger"></span>
+        </div>
+
+        @* Row 2: Sağ — E-Posta *@
+        <div class="ws-form-group">
+            <label asp-for="Email" class="ws-form-label">E-Posta</label>
+            <input asp-for="Email"
+                   type="email"
+                   class="ws-input-premium"
+                   placeholder="kurum@mail.com" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        @* Row 3: Sol — Telefon *@
+        <div class="ws-form-group">
+            <label asp-for="Phone" class="ws-form-label">Telefon *</label>
+            <input asp-for="Phone"
+                   class="ws-input-premium"
+                   placeholder="05XX XXX XX XX"
+                   required />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        @* Row 3: Sağ — Vergi Dairesi *@
+        <div class="ws-form-group">
+            <label asp-for="TaxOffice" class="ws-form-label">Vergi Dairesi</label>
+            <input asp-for="TaxOffice"
+                   class="ws-input-premium"
+                   placeholder="Vergi Dairesi" />
+        </div>
+
+        @* Row 4: Sol — Vergi No *@
+        <div class="ws-form-group">
+            <label asp-for="TaxNumber" class="ws-form-label">Vergi No</label>
+            <input asp-for="TaxNumber"
+                   type="number"
+                   class="ws-input-premium"
+                   placeholder="000000" />
+        </div>
+
+        @* Row 4: Sağ — blank (Adres will span below) *@
+        <div class="ws-form-group ws-form-group--full">
+            <label asp-for="Adress" class="ws-form-label">Adres Detayları *</label>
+            <textarea asp-for="Adress"
+                      class="ws-input-premium ws-textarea"
+                      rows="2"
+                      placeholder="Açık adres bilgilerini buraya giriniz..."
+                      required></textarea>
+            <span asp-validation-for="Adress" class="text-danger"></span>
+        </div>
+
+    </div>@* /.ws-modal-body *@
+
+    @* ─── FOOTER ACTIONS ─── *@
+    <div class="ws-form-actions">
+        <button type="button" class="ws-btn-secondary" id="closeSidePanel">Vazgeç</button>
+        <button type="submit" class="ws-btn-main">
+            <i data-lucide="check"></i>
+            Müşteriyi Kaydet
+        </button>
+    </div>
+
+</form>

@@ -21,8 +21,36 @@ const DashboardManager = {
         // Event listener'ları bağla
         this.attachEvents();
 
+        // DatePicker'ı başlat (Products page ile aynı mantık)
+        this.initDatePicker();
+
         // Not: initFilters (Flatpickr) GlobalUI.init() tarafından site.js içinde 
         // zaten başlatıldığı için burada tekrar çağırıp çakışma yaratmıyoruz.
+    },
+
+    /**
+     * DatePicker Başlatma (Products page ile senkron)
+     */
+    initDatePicker: function () {
+        const dateInput = document.getElementById('dateFilter');
+        if (dateInput && typeof flatpickr !== 'undefined') {
+            flatpickr(dateInput, {
+                locale: "tr",
+                mode: "range",
+                dateFormat: "d.m.Y",
+                onChange: (selectedDates, dateStr) => {
+                    console.log("Dashboard tarih aralığı değişti:", dateStr);
+                    // İstersen burada fetchData'yı tetikleyebilirsin
+                    // this.fetchData(this.currentRange);
+                },
+                onOpen: function (selectedDates, dateStr, instance) {
+                    $(instance.element).closest('.ws-filter-item').addClass('is-active');
+                },
+                onClose: function (selectedDates, dateStr, instance) {
+                    $(instance.element).closest('.ws-filter-item').removeClass('is-active');
+                }
+            });
+        }
     },
 
     /**

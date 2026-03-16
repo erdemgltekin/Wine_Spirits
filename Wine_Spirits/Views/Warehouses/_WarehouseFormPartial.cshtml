@@ -1,20 +1,25 @@
-﻿@model Wine_Spirits.Models.WareHouse
+@model Wine_Spirits.Models.WareHouse
 
 @{
     bool isEdit = Model != null && Model.Id != Guid.Empty;
     string actionName = isEdit ? "Edit" : "Create";
-    string title = isEdit ? "Depo Bilgilerini Düzenle" : "Yeni Depo Ekle";
+    string title      = isEdit ? "Depo Bilgilerini Düzenle" : "Yeni Depo Ekle";
     string buttonText = isEdit ? "Güncelle" : "Depoyu Kaydet";
 }
 
-<div class="modal-header border-0 pb-0 px-4 pt-4">
-    <h5 class="modal-title fw-bold text-dark">@title</h5>
-    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+@* ─── MODAL HEADER ─── *@
+<div class="ws-modal-header">
+    <h5 class="ws-modal-title">@title</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+        <i data-lucide="x"></i>
+    </button>
 </div>
 
+@* ─── FORM ─── *@
 <form asp-action="@actionName" method="post" id="warehouseForm">
-    <div class="modal-body py-4 px-4">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-2 small"></div>
+    @Html.AntiForgeryToken()
+
+    <div class="ws-modal-body">
 
         @if (isEdit)
         {
@@ -22,48 +27,49 @@
             <input type="hidden" asp-for="CreatedDate" />
         }
 
-        <div class="mb-4">
-            <label asp-for="Name" class="form-label fw-semibold text-secondary small">Depo Tanımı / Adı *</label>
-            <div class="input-group ws-input-group shadow-sm">
-                <span class="input-group-text bg-light border-end-0 text-muted">
-                    <i data-lucide="building" class="size-18"></i>
-                </span>
-                <input asp-for="Name" class="form-control bg-light border-start-0 ps-0" placeholder="Örn: Merkez Lojistik Deposu" required>
-            </div>
-            <span asp-validation-for="Name" class="text-danger small"></span>
+        @* Validation summary *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        @* Row 1 — Depo Adı: full-width via SCSS :first-child rule *@
+        <div class="ws-form-group">
+            <label class="ws-form-label">Depo Tanımı / Adı *</label>
+            <input asp-for="Name"
+                   class="ws-input-premium"
+                   placeholder="Örn: Merkez Lojistik Deposu"
+                   required />
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        <div class="mb-4">
-            <label asp-for="Location" class="form-label fw-semibold text-secondary small">Depo Konumu / Adres *</label>
-            <div class="input-group ws-input-group shadow-sm align-items-start">
-                <span class="input-group-text bg-light border-end-0 pt-2 text-muted">
-                    <i data-lucide="map-pin" class="size-18"></i>
-                </span>
-                <textarea asp-for="Location" class="form-control bg-light border-start-0 ps-0" rows="3" placeholder="Şehir, İlçe ve açık adres bilgisi..." required></textarea>
-            </div>
-            <span asp-validation-for="Location" class="text-danger small"></span>
+        @* Row 2 — Konum / Adres: full-width (only 2 fields, both span 2) *@
+        <div class="ws-form-group">
+            <label class="ws-form-label">Depo Konumu / Adres *</label>
+            <textarea asp-for="Location"
+                      class="ws-input-premium ws-textarea"
+                      rows="3"
+                      placeholder="Şehir, İlçe ve açık adres bilgisi..."
+                      required></textarea>
+            <span asp-validation-for="Location" class="text-danger"></span>
         </div>
 
-        <div class="alert alert-info border-0 ws-info-alert d-flex align-items-center gap-3 mb-0 py-3">
-            <div class="ws-alert-icon-circle shadow-sm">
-                <i data-lucide="info" class="text-primary size-18"></i>
-            </div>
-            <p class="small mb-0 text-dark-emphasis">
-                @(isEdit ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir." : "Yeni oluşturulan depolar varsayılan olarak aktif durumdadır.")
-            </p>
+        @* Info alert — full width *@
+        <div class="ws-info-alert">
+            <i data-lucide="info"></i>
+            <span>
+                @(isEdit
+                    ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir."
+                    : "Yeni oluşturulan depolar varsayılan olarak aktif durumdadır.")
+            </span>
         </div>
+
+    </div>@* /.ws-modal-body *@
+
+    @* ─── FOOTER ACTIONS ─── *@
+    <div class="ws-form-actions">
+        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+        <button type="submit" class="ws-btn-main">
+            <i data-lucide="@(isEdit ? "save" : "check")"></i>
+            @buttonText
+        </button>
     </div>
 
-    <div class="modal-footer border-0 pt-0 pb-4 px-4 justify-content-center gap-3">
-        <button type="button" class="btn btn-light fw-semibold ws-btn-cancel" data-bs-dismiss="modal">
-            Vazgeç
-        </button>
-        <button type="submit" class="btn btn-primary fw-semibold ws-btn-main shadow-sm d-flex align-items-center justify-content-center gap-2">
-            <i data-lucide="@(isEdit ? "save" : "check")" class="size-18"></i> @buttonText
-        </button>
-    </div>
 </form>
-
-<script>
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-</script>

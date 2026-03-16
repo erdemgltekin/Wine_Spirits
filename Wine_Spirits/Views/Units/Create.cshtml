@@ -5,41 +5,40 @@
     Layout = "_Layout";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <!-- [Card Design]: Formu merkeze odaklı, temiz bir kart içinde sunuyoruz. -->
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                    <h5 class="card-title text-center mb-0">Yeni Birim Oluştur</h5>
-                </div>
-                <div class="card-body p-4">
-                    <form asp-action="Create">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                        
-                        <!-- [Modern Input]: Floating Labels kullanarak modern bir form görünümü elde ediyoruz. -->
-                        <div class="form-floating mb-4">
-                            <input asp-for="Name" class="form-control" id="unitNameInput" placeholder="Birim Adı" />
-                            <label for="unitNameInput">Birim Adı (Örn: Adet, Koli)</label>
-                            <span asp-validation-for="Name" class="text-danger small"></span>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary py-2">
-                                <i data-lucide="save" class="me-1" style="width: 18px; vertical-align: text-bottom;"></i>
-                                Kaydet
-                            </button>
-                            <a asp-action="Index" class="btn btn-link text-decoration-none text-muted">
-                                Vazgeç ve Listeye Dön
-                            </a>
-                        </div>
-                    </form>
+<div class="ws-standalone-form-wrap">
+    <div class="ws-standalone-form-card">
+
+        <div class="ws-modal-header">
+            <h5 class="ws-modal-title">Yeni Birim Oluştur</h5>
+        </div>
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="ws-error-panel" style="margin: 1.5rem 2rem 0;"></div>
+
+            <div class="ws-modal-body ws-modal-body--single">
+                <div class="ws-form-group">
+                    <label asp-for="Name" class="ws-form-label">Birim Adı</label>
+                    <input asp-for="Name"
+                           id="unitNameInput"
+                           class="ws-input-premium"
+                           placeholder="Örn: Adet, Koli, Şişe" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
-        </div>
+
+            <div class="ws-form-actions">
+                <a asp-action="Index" class="ws-btn-secondary">Vazgeç</a>
+                <button type="submit" class="ws-btn-main">
+                    <i data-lucide="save"></i>
+                    Kaydet
+                </button>
+            </div>
+        </form>
+
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

@@ -14,6 +14,7 @@ const ProductManager = {
         this.loadProducts();
         this.attachEvents();
         this.initDatePicker();
+        this.initModalEvents();
     },
 
     initDatePicker: function () {
@@ -24,6 +25,31 @@ const ProductManager = {
                 mode: "range",
                 dateFormat: "d.m.Y",
                 onChange: () => this.applyFilters()
+            });
+        }
+    },
+
+    initModalEvents: function () {
+        // Modal açıldığında component'ları başlat
+        const modal = document.getElementById('productModal');
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', function () {
+                // Modal içindeki Lucide ikonları yenile
+                if (typeof GlobalUI !== 'undefined' && GlobalUI.refreshLucide) {
+                    GlobalUI.refreshLucide();
+                }
+                
+                // Select2 gibi component'ları başlat
+                if (typeof $ !== 'undefined' && $.fn.select2) {
+                    $('.select2-enable').select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: 'Seçiniz...',
+                        dropdownParent: $(modal) // CRITICAL: Fixes dropdown rendering behind modal
+                    });
+                }
+                
+                console.log('Modal form initialized');
             });
         }
     },

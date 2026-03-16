@@ -332,6 +332,10 @@ ul {
   stroke-width: 2.5;
 }
 
+/* ============================================================
+   WS FORMS SYSTEM — Single Source of Truth
+   Compiled into main.css via main.scss → components/forms
+   ============================================================ */
 .ws-form-label {
   font-size: 0.85rem;
   font-weight: 600;
@@ -349,6 +353,8 @@ ul {
   padding: 0 16px !important;
   transition: all 0.3s ease;
   width: 100%;
+  color: #1e293b;
+  font-family: inherit;
 }
 .ws-input-premium:focus {
   background-color: #fff !important;
@@ -356,24 +362,74 @@ ul {
   box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
   outline: none !important;
 }
-.ws-input-premium.ws-select-control {
+.ws-input-premium:is(select) {
   appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 42px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px 16px !important;
+}
+.ws-input-premium:is(select):focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+.ws-input-premium option {
+  background-color: #fff;
+  color: #334155;
+  font-size: 0.875rem;
+  padding: 8px 12px;
+}
+.ws-input-premium option:hover, .ws-input-premium option:focus, .ws-input-premium option:checked {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+}
+.ws-input-premium option:disabled {
+  color: #94a3b8;
+}
+
+.ws-textarea {
+  height: auto !important;
+  padding: 12px 16px !important;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.ws-select-control {
+  appearance: none;
+  -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
-  padding-right: 40px !important;
-}
-
-.ws-form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  background-size: 16px 16px;
+  padding-right: 42px !important;
+  cursor: pointer;
 }
 
 .ws-form-group {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.ws-form-group--full {
+  grid-column: span 2;
+}
+
+.ws-modal-body {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  padding: 1.75rem 2rem;
+  min-height: auto;
+}
+.ws-modal-body .ws-form-group:first-child {
+  grid-column: span 2;
+}
+.ws-modal-body .ws-form-group:not(:first-child) {
+  grid-column: span 1;
 }
 
 .ws-form-hint {
@@ -382,10 +438,105 @@ ul {
   color: #64748b;
 }
 
-.ws-form-actions {
-  margin-top: 1rem;
+.select2-container .select2-selection--single {
+  height: 46px !important;
+  border-radius: 14px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background-color: #f8fafc !important;
+  font-size: 0.9rem !important;
+  padding: 0 16px !important;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+.select2-container .select2-selection--single:focus, .select2-container .select2-selection--single:focus-within {
+  background-color: #fff !important;
+  border-color: #7c3aed !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding-left: 0;
+  padding-right: 32px;
+  color: #1e293b;
+  line-height: normal;
+}
+.select2-container .select2-selection--single .select2-selection__arrow {
+  height: 44px;
+  right: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+.select2-container .select2-selection--single .select2-selection__arrow b {
+  display: none !important;
 }
 
+.select2-container--open .select2-selection--single {
+  border-color: #7c3aed !important;
+  background-color: #fff !important;
+}
+.select2-container--open .select2-selection--single .select2-selection__arrow {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+
+.select2-dropdown {
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  background-color: #fff !important;
+  padding: 8px !important;
+  z-index: 1060 !important;
+}
+
+.select2-results__options {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+.select2-results__options::-webkit-scrollbar {
+  width: 6px;
+}
+.select2-results__options::-webkit-scrollbar-track {
+  background: transparent;
+}
+.select2-results__options::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.select2-results__option {
+  font-size: 0.9rem !important;
+  padding: 10px 16px !important;
+  color: #334155 !important;
+  border-radius: 8px !important;
+  margin-bottom: 2px;
+  background-color: transparent !important;
+  transition: all 0.3s ease;
+}
+.select2-results__option--highlighted[aria-selected], .select2-results__option:hover {
+  background-color: #f5f3ff !important;
+  color: #7c3aed !important;
+}
+.select2-results__option[aria-selected=true] {
+  background-color: #f5f3ff !important;
+  color: #7c3aed !important;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .ws-modal-body {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+    min-height: auto;
+  }
+  .ws-form-group {
+    gap: 6px;
+  }
+  .ws-form-group--full {
+    grid-column: span 1;
+  }
+}
 /* ============================================================
     1. GLOBAL PREMIUM CARD COMPONENT
     Normal: Belirgin iskelet yapısı
@@ -568,10 +719,29 @@ ul {
   opacity: 0.7;
 }
 
+/* ============================================================
+   WS MODAL SYSTEM — Single Source of Truth
+   Compiled into main.css via main.scss → components/modals
+   ============================================================ */
 .ws-modal-custom {
   border-radius: 28px !important;
   border: none !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Compact, elegant modal dialog */
+.modal-dialog {
+  max-width: 520px;
+  margin: 1.75rem auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-content {
+  border: none;
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -582,6 +752,177 @@ ul {
 
 .swal2-container {
   z-index: 10000 !important;
+}
+
+.ws-modal-header {
+  padding: 1.75rem 2rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ws-modal-title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #1e293b;
+  margin: 0;
+  font-size: 1.125rem;
+  text-align: center;
+}
+
+.btn-close {
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  color: #dc3545;
+  opacity: 0.65;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.btn-close i, .btn-close svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+.btn-close:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.ws-error-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 2rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba(220, 53, 69, 0.07);
+  border: 1px solid rgba(220, 53, 69, 0.25);
+  border-radius: 12px;
+  color: #dc3545;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.ws-error-panel i, .ws-error-panel svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ws-error-panel--hidden {
+  display: none;
+}
+
+.ws-form-actions {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem 2rem;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+.ws-form-actions .ws-btn-main {
+  min-width: 140px;
+  height: 48px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 1.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.ws-form-actions .ws-btn-main i, .ws-form-actions .ws-btn-main svg {
+  width: 16px;
+  height: 16px;
+}
+.ws-form-actions .ws-btn-main:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+}
+.ws-form-actions .ws-btn-secondary {
+  min-width: 120px;
+  height: 48px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: transparent;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.ws-form-actions .ws-btn-secondary:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.ws-info-alert {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 12px;
+  color: #7c3aed;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.ws-info-alert i, .ws-info-alert svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ws-modal-body--single {
+  grid-template-columns: 1fr;
+}
+.ws-modal-body--single .ws-form-group:first-child {
+  grid-column: span 1;
+}
+
+.ws-standalone-form-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  min-height: calc(100vh - 70px);
+}
+
+.ws-standalone-form-card {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.ws-standalone-form-card .ws-form-actions .ws-btn-main,
+.ws-standalone-form-card .ws-form-actions .ws-btn-secondary {
+  flex: 1;
 }
 
 #sidePanelOverlay {
@@ -640,7 +981,7 @@ ul {
   background-color: #1e293b !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 .ws-status-toast .ws-toast-icon {
   width: 18px;
@@ -648,6 +989,31 @@ ul {
   margin-right: 0.5rem;
 }
 
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 95vw;
+    margin: 1rem auto;
+  }
+  .ws-modal-body {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+  .ws-form-group {
+    grid-column: span 1 !important;
+  }
+  .ws-form-actions {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    padding: 1rem;
+  }
+  .ws-form-actions .ws-btn-main,
+  .ws-form-actions .ws-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
 /* ============================================================
     WS PREMIUM FILTER SYSTEM - DROPDOWN INTEGRATED
     Tasarım ve animasyonlar korundu, dropdown desteği eklendi.
@@ -791,6 +1157,92 @@ ul {
 }
 .ws-btn-filter-action:hover i, .ws-btn-filter-action:hover svg {
   color: #fff !important;
+}
+
+/* ============================================================
+    WS PREMIUM BOOTSTRAP DROPDOWN SYSTEM
+    - Bootstrap dropdown mantığı ile tam uyumlu
+    - Premium UI görünümü ve animasyonlar
+   ============================================================ */
+.ws-dropdown-premium {
+  border: 1px solid #f1f5f9 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  padding: 0.5rem !important;
+  background: #ffffff !important;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  pointer-events: none;
+}
+.ws-dropdown-premium.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: all !important;
+}
+.ws-dropdown-premium .dropdown-item {
+  border-radius: 8px !important;
+  padding: 0.625rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  transition: all 0.2s ease !important;
+  margin: 0.125rem 0 !important;
+}
+.ws-dropdown-premium .dropdown-item:hover {
+  background: rgba(124, 58, 237, 0.05) !important;
+  color: #7c3aed !important;
+  transform: translateX(2px) !important;
+}
+.ws-dropdown-premium .dropdown-item i, .ws-dropdown-premium .dropdown-item svg {
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 0.5rem !important;
+  color: #94a3b8 !important;
+  transition: color 0.2s ease !important;
+}
+.ws-dropdown-premium .dropdown-item:hover i, .ws-dropdown-premium .dropdown-item:hover svg {
+  color: #7c3aed !important;
+}
+.ws-dropdown-premium .dropdown-item.active {
+  background: rgba(124, 58, 237, 0.1) !important;
+  color: #7c3aed !important;
+  font-weight: 600 !important;
+}
+.ws-dropdown-premium .dropdown-divider {
+  border-top: 1px solid #f8fafc !important;
+  margin: 0.5rem 0 !important;
+  opacity: 0.6 !important;
+}
+.ws-dropdown-premium .dropdown-header {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.5rem 0.875rem !important;
+}
+
+.ws-filter-container .ws-dropdown-premium {
+  margin-top: 0.5rem !important;
+}
+.ws-filter-container .ws-dropdown-premium::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ws-filter-container .ws-dropdown-premium.show::before {
+  opacity: 1;
 }
 
 /* ============================================================

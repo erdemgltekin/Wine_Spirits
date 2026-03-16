@@ -8,9 +8,44 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// 2. Veritabanı Bağlantısı
+// 2. Veritabanı Bağlantısı - Test ile birlikte
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<WineSpiritsContext>(options => options.UseSqlServer(connectionString));
+Console.WriteLine($"Attempting to connect to database with: {connectionString}");
+
+try
+{
+    builder.Services.AddDbContext<WineSpiritsContext>(options => 
+        options.UseSqlServer(connectionString, sqlOptions => sqlOptions
+            .EnableRetryOnFailure(
+                maxRetryCount: 2,
+                maxRetryDelay: TimeSpan.FromSeconds(3),
+                errorNumbersToAdd: null
+            )
+            .CommandTimeout(10)
+        ));
+    
+    // Test connection immediately - sync version for Program.cs
+    var options = new DbContextOptionsBuilder<WineSpiritsContext>()
+        .UseSqlServer(connectionString)
+        .Options;
+    
+    using var testContext = new WineSpiritsContext(options);
+    
+    Console.WriteLine("Testing database connection...");
+    var canConnect = testContext.Database.CanConnect();
+    Console.WriteLine($"Database connection successful: {canConnect}");
+    
+    if (canConnect)
+    {
+        Console.WriteLine("Database exists and is accessible");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Database connection failed: {ex.Message}");
+    Console.WriteLine($"Full error: {ex}");
+    throw new InvalidOperationException("Database connection failed. Please check your SQL Server instance and connection string.", ex);
+}
 
 // 3. AUTHENTICATION (KİMLİK DOĞRULAMA) AYARI - KRİTİK ADIM
 // Role-based yetkilendirme için bu blok şarttır.

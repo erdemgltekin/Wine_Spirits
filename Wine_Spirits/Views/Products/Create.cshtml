@@ -1,114 +1,145 @@
 @model Wine_Spirits.Models.Product
 @{
-    // AJAX ile mi normal mi çağrıldığını kontrol eder
+    @* AJAX ile mi normal mi çağrıldığını kontrol eder *@
     Layout = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest" ? null : "_Layout";
 }
 
-<div class="product-create-container p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-        <div>
-            <h4 class="mb-1 fw-bold text-dark">
-                <i data-lucide="package-plus" class="me-2 text-primary"></i>Yeni Ürün Tanımla
-            </h4>
-            <p class="text-muted small mb-0">Envantere yeni bir ürün eklemek için aşağıdaki bilgileri doldurun.</p>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-    </div>
-
-    <div id="formErrorPanel" class="alert alert-danger d-none mb-3 shadow-sm border-start border-4 border-danger">
-        <div class="d-flex align-items-center">
-            <i data-lucide="alert-circle" class="me-2"></i>
-            <div id="errorText">Lütfen formdaki eksiklikleri kontrol edin.</div>
-        </div>
-    </div>
-
-    <form asp-action="Create" id="createProductForm" method="post" autocomplete="off">
-        @Html.AntiForgeryToken()
-
-        <div class="row g-4">
-            <div class="col-12">
-                <div class="form-group">
-                    <label asp-for="ProductDefinitionId" class="form-label fw-bold">Ürün Adı / Tanımı</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i data-lucide="tag" style="width:16px;"></i></span>
-                        <select asp-for="ProductDefinitionId" class="form-select border-start-0" asp-items="ViewBag.ProductDefinitionId" required>
-                            <option value="">-- Ürün Tanımı Seçin --</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="ProductCategoryId" class="form-label fw-bold">Kategori</label>
-                <select asp-for="ProductCategoryId" class="form-select bg-light" asp-items="ViewBag.ProductCategoryId" required>
-                    <option value="">-- Kategori --</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="UnitId" class="form-label fw-bold">Ölçü Birimi</label>
-                <select asp-for="UnitId" class="form-select bg-light" asp-items="ViewBag.UnitId" required>
-                    <option value="">-- Birim (Şişe, Adet vb.) --</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="SupplierId" class="form-label fw-bold">Tedarikçi</label>
-                <select asp-for="SupplierId" class="form-select border-primary-subtle" asp-items="ViewBag.SupplierId" required>
-                    <option value="">-- Tedarikçi Seçin --</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="CountryId" class="form-label fw-bold">Menşei Ülke</label>
-                <select asp-for="CountryId" class="form-select" asp-items="ViewBag.CountryId" required>
-                    <option value="">-- Ülke --</option>
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card bg-light border-0 p-2 text-center">
-                    <label asp-for="StockQuantity" class="form-label small fw-bold text-muted">Mevcut Stok</label>
-                    <input asp-for="StockQuantity" type="number" class="form-control form-control-lg text-center fw-bold" value="0" min="0" />
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card bg-light border-0 p-2 text-center">
-                    <label asp-for="Price" class="form-label small fw-bold text-muted">Birim Fiyat (₺)</label>
-                    <input asp-for="Price" type="number" step="0.01" class="form-control form-control-lg text-center text-success fw-bold" placeholder="0.00" required />
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card bg-light border-0 p-2 text-center">
-                    <label asp-for="Year" class="form-label small fw-bold text-muted">Üretim Yılı / Rezerve</label>
-                    <input asp-for="Year" type="number" class="form-control form-control-lg text-center" value="@DateTime.Now.Year" />
-                </div>
-            </div>
-
-            <div class="col-12 mt-2">
-                <div class="d-flex align-items-center p-3 bg-primary-subtle rounded-3">
-                    <i data-lucide="warehouse" class="text-primary me-3"></i>
-                    <div class="flex-grow-1">
-                        <label class="form-label mb-0 small fw-bold">Hedef Depo</label>
-                        <select asp-for="WarehouseId" class="form-select form-select-sm border-0 bg-transparent p-0 fw-bold" asp-items="ViewBag.WarehouseId">
-                            <option value="">Varsayılan Depo (Otomatik)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-5 pt-3 border-top d-flex justify-content-end gap-3">
-            <button type="button" class="btn btn-link text-decoration-none text-muted fw-medium" data-bs-dismiss="modal">
-                Vazgeç
-            </button>
-            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow">
-                <i data-lucide="check" class="me-2" style="width:18px;"></i>Ürünü Envantere Ekle
-            </button>
-        </div>
-    </form>
+@* ─── MODAL HEADER ─── *@
+<div class="ws-modal-header">
+    <h5 class="ws-modal-title">Yeni Ürün Ekle</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+        <i data-lucide="x"></i>
+    </button>
 </div>
+
+@* ─── ERROR BANNER ─── *@
+<div id="formErrorPanel" class="ws-error-panel ws-error-panel--hidden">
+    <i data-lucide="alert-circle"></i>
+    <div id="errorText">Lütfen formdaki eksiklikleri kontrol edin.</div>
+</div>
+
+@* ─── FORM ─── *@
+<form asp-action="Create" id="createProductForm" method="post" autocomplete="off">
+    @Html.AntiForgeryToken()
+
+    <div class="ws-modal-body">
+
+        @* Row 1 — Ürün Tanımı: full-width via SCSS .ws-form-group:first-child { grid-column: span 2 } *@
+        <div class="ws-form-group">
+            <label asp-for="ProductDefinitionId" class="ws-form-label">Ürün Adı / Tanımı</label>
+            <select asp-for="ProductDefinitionId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.ProductDefinitionId"
+                    required>
+                <option value="">-- Ürün Tanımı Seçin --</option>
+            </select>
+            <span asp-validation-for="ProductDefinitionId" class="text-danger"></span>
+        </div>
+
+        @* Row 2: Sol — Kategori *@
+        <div class="ws-form-group">
+            <label asp-for="ProductCategoryId" class="ws-form-label">Kategori</label>
+            <select asp-for="ProductCategoryId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.ProductCategoryId"
+                    required>
+                <option value="">-- Kategori --</option>
+            </select>
+            <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
+        </div>
+
+        @* Row 2: Sağ — Ölçü Birimi *@
+        <div class="ws-form-group">
+            <label asp-for="UnitId" class="ws-form-label">Ölçü Birimi</label>
+            <select asp-for="UnitId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.UnitId"
+                    required>
+                <option value="">-- Birim (Şişe, Adet vb.) --</option>
+            </select>
+            <span asp-validation-for="UnitId" class="text-danger"></span>
+        </div>
+
+        @* Row 3: Sol — Tedarikçi *@
+        <div class="ws-form-group">
+            <label asp-for="SupplierId" class="ws-form-label">Tedarikçi</label>
+            <select asp-for="SupplierId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.SupplierId"
+                    required>
+                <option value="">-- Tedarikçi Seçin --</option>
+            </select>
+            <span asp-validation-for="SupplierId" class="text-danger"></span>
+        </div>
+
+        @* Row 3: Sağ — Menşei Ülke *@
+        <div class="ws-form-group">
+            <label asp-for="CountryId" class="ws-form-label">Menşei Ülke</label>
+            <select asp-for="CountryId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.CountryId"
+                    required>
+                <option value="">-- Ülke --</option>
+            </select>
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+        </div>
+
+        @* Row 4: Sol — Mevcut Stok *@
+        <div class="ws-form-group">
+            <label asp-for="StockQuantity" class="ws-form-label">Mevcut Stok</label>
+            <input asp-for="StockQuantity"
+                   type="number"
+                   class="ws-input-premium"
+                   value="0"
+                   min="0" />
+            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+        </div>
+
+        @* Row 4: Sağ — Birim Fiyat *@
+        <div class="ws-form-group">
+            <label asp-for="Price" class="ws-form-label">Birim Fiyat (₺)</label>
+            <input asp-for="Price"
+                   type="number"
+                   step="0.01"
+                   class="ws-input-premium"
+                   placeholder="0.00"
+                   required />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        @* Row 5: Sol — Üretim Yılı *@
+        <div class="ws-form-group">
+            <label asp-for="Year" class="ws-form-label">Üretim Yılı / Rezerve</label>
+            <input asp-for="Year"
+                   type="number"
+                   class="ws-input-premium"
+                   value="@DateTime.Now.Year" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+
+        @* Row 5: Sağ — Hedef Depo *@
+        <div class="ws-form-group">
+            <label class="ws-form-label">Hedef Depo</label>
+            <select asp-for="WarehouseId"
+                    class="ws-input-premium"
+                    asp-items="ViewBag.WarehouseId">
+                <option value="">Varsayılan Depo (Otomatik)</option>
+            </select>
+        </div>
+
+    </div>@* /.ws-modal-body *@
+
+    @* ─── FOOTER ACTIONS ─── *@
+    <div class="ws-form-actions">
+        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">
+            Vazgeç
+        </button>
+        <button type="submit" class="ws-btn-main">
+            <i data-lucide="check"></i>
+            Ürünü Envantere Ekle
+        </button>
+    </div>
+
+</form>
 
 @* Script silindi, site.js üzerinden global olarak yönetiliyor *@

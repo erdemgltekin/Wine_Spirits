@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SarapToptan ERP - Global JavaScript Controller
  */
 
@@ -209,13 +209,16 @@ const GlobalUI = {
 
     initDatePickers: function () {
         if (typeof flatpickr !== 'undefined') {
-            flatpickr("#dashboardDatePicker", {
+            flatpickr("#dateFilter", {
                 mode: "range",
                 dateFormat: "d.m.Y",
                 locale: "tr",
                 disableMobile: true,
                 monthSelectorType: "static",
                 animate: true,
+                onChange: (selectedDates, dateStr) => {
+                    console.log("Tarih aralığı değişti:", dateStr);
+                },
                 onOpen: function (selectedDates, dateStr, instance) {
                     $(instance.element).closest('.ws-filter-item').addClass('is-active');
                 },
@@ -241,13 +244,93 @@ const GlobalUI = {
 
         $.get(url, (html) => {
             modalBody.innerHTML = html;
+            
+            // Modal içindeki script'leri güvenli şekilde çalıştır
+            setTimeout(() => {
+                const scripts = $(modalBody).find('script');
+                if (scripts.length > 0) {
+                    scripts.each(function() {
+                        const scriptContent = $(this).text();
+                        if (scriptContent) {
+                            try {
+                                eval(scriptContent);
+                            } catch (e) {
+                                console.error('Modal script execution error:', e);
+                            }
+                        }
+                    });
+                }
+            }, 100);
+            
+            // Lucide ikonlarını yenile ve Select2 başlat
             this.refreshLucide();
+            this.initSelect2();
+        }).fail((jqXHR, textStatus, errorThrown) => {
+            console.error('Modal AJAX Error:', {
+                status: jqXHR.status,
+                statusText: jqXHR.statusText,
+                responseText: jqXHR.responseText,
+                error: errorThrown
+            });
+            
+            let errorMessage = 'İçerik yüklenemedi.';
+            let errorIcon = 'alert-circle';
+            
+            // Hata mesajını detaylandır
+            if (jqXHR.status === 500) {
+                errorMessage = 'Sunucu hatası: Lütfen sistem yöneticisiyle iletişime geçin.';
+                errorIcon = 'server';
+            } else if (jqXHR.status === 404) {
+                errorMessage = 'Sayfa bulunamadı: İstenen içerik mevcut değil.';
+                errorIcon = 'file-x';
+            } else if (jqXHR.status === 403) {
+                errorMessage = 'Yetki hatası: Bu işlem için yetkiniz yok.';
+                errorIcon = 'shield-x';
+            }
+            
+            modalBody.innerHTML = `<div class="p-5 text-center">
+                <div class="text-danger mb-3">
+                    <i data-lucide="${errorIcon}" style="width: 32px; height: 32px; margin-bottom: 1rem;"></i>
+                    <div class="mt-2 fw-bold">${errorMessage}</div>
+                    ${jqXHR.status === 500 ? '<div class="mt-2 text-muted small">Hata Kodu: 500 - Internal Server Error</div>' : ''}
+                </div>
+                <button class="btn btn-secondary mt-3" onclick="GlobalUI.closeModal()">Kapat</button>
+            </div>`;
+            
+            // İkonları yenile
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
         });
-    },
 
+        // Lucide ikonlarını yenile
+        this.refreshLucide();
+    },
+    
+    closeModal: function () {
+        if (this.bsModal) {
+            this.bsModal.hide();
+        }
+    },
+    
     refreshLucide: function () {
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
             lucide.createIcons();
+        }
+    },
+    
+    initSelect2: function () {
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('.select2-enable').each(function() {
+                // Find nearest modal ancestor as dropdown parent, or use body
+                const $modalParent = $(this).closest('.modal');
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Seçiniz...',
+                    dropdownParent: $modalParent.length ? $modalParent : $(document.body)
+                });
+            });
         }
     }
 };

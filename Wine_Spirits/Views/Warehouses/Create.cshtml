@@ -1,24 +1,10 @@
 @model Wine_Spirits.Models.WareHouse
 @{
-    Layout = "_Layout";
+    Layout = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest" ? null : "_Layout";
     ViewData["Title"] = "Yeni Depo Ekle";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
-                <div class="card-header bg-white border-0 pt-4 px-4">
-                    <h5 class="fw-bold text-dark m-0">Yeni Depo Ekle</h5>
-                    <p class="text-muted small mb-0">Lütfen depo detaylarını eksiksiz giriniz.</p>
-                </div>
-
-                <partial name="_WarehouseFormPartial" model="Model" />
-
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_WarehouseFormPartial" model="Model" />
 
 @section Scripts {
     @{
