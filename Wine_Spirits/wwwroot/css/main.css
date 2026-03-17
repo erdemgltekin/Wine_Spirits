@@ -345,21 +345,24 @@ ul {
 }
 
 .ws-input-premium {
-  height: 46px !important;
+  height: 52px !important;
+  min-height: 52px !important;
   border-radius: 14px !important;
   border: 1.5px solid #e2e8f0 !important;
   background-color: #f8fafc !important;
   font-size: 0.9rem !important;
-  padding: 0 16px !important;
+  padding: 0 20px !important;
   transition: all 0.3s ease;
   width: 100%;
   color: #1e293b;
   font-family: inherit;
+  display: flex !important;
+  align-items: center !important;
 }
 .ws-input-premium:focus {
   background-color: #fff !important;
   border-color: #7c3aed !important;
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 .ws-input-premium:is(select) {
@@ -425,11 +428,35 @@ ul {
   padding: 1.75rem 2rem;
   min-height: auto;
 }
+.ws-modal-body .ws-filter-item {
+  height: 52px !important;
+  flex: 1 1 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.ws-modal-body .ws-filter-item i, .ws-modal-body .ws-filter-item svg {
+  margin-top: 0 !important;
+  transform: none !important;
+  position: relative !important;
+  margin-left: 16px !important;
+  margin-right: -4px !important;
+}
 .ws-modal-body .ws-form-group:first-child {
   grid-column: span 2;
 }
 .ws-modal-body .ws-form-group:not(:first-child) {
   grid-column: span 1;
+}
+.ws-modal-body .ws-form-group:not(:first-child).ws-form-group--full {
+  grid-column: span 2 !important;
+}
+.ws-modal-body .ws-filter-item:has(.ws-textarea) {
+  height: auto !important;
+  align-items: flex-start !important;
+  padding: 4px 0 !important;
+}
+.ws-modal-body .ws-filter-item:has(.ws-textarea) i, .ws-modal-body .ws-filter-item:has(.ws-textarea) svg {
+  margin-top: 14px !important;
 }
 
 .ws-form-hint {
@@ -438,89 +465,52 @@ ul {
   color: #64748b;
 }
 
-.select2-container .select2-selection--single {
-  height: 46px !important;
-  border-radius: 14px !important;
-  border: 1.5px solid #e2e8f0 !important;
+.select2-container--default .select2-selection--single {
+  height: 52px !important;
+  min-height: 52px !important;
   background-color: #f8fafc !important;
-  font-size: 0.9rem !important;
-  padding: 0 16px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  padding: 0 20px !important;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
 }
-.select2-container .select2-selection--single:focus, .select2-container .select2-selection--single:focus-within {
-  background-color: #fff !important;
-  border-color: #7c3aed !important;
-  box-shadow: none !important;
-  outline: none !important;
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 52px !important;
+  color: #1e293b !important;
+  font-size: 0.9rem !important;
+  padding-left: 0 !important;
 }
-.select2-container .select2-selection--single .select2-selection__rendered {
-  padding-left: 0;
-  padding-right: 32px;
-  color: #1e293b;
-  line-height: normal;
-}
-.select2-container .select2-selection--single .select2-selection__arrow {
-  height: 44px;
-  right: 14px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 52px !important;
+  right: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
   background-position: center !important;
 }
-.select2-container .select2-selection--single .select2-selection__arrow b {
-  display: none !important;
-}
-
-.select2-container--open .select2-selection--single {
+.select2-container--default .select2-selection--single:focus, .select2-container--default .select2-selection--single.select2-container--focus {
   border-color: #7c3aed !important;
   background-color: #fff !important;
+  box-shadow: 0 0 4px rgba(124, 58, 237, 0.08) !important;
 }
-.select2-container--open .select2-selection--single .select2-selection__arrow {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: #7c3aed !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
-.select2-dropdown {
+.ws-filter-item .select2-container--default .select2-selection--single {
   border: none !important;
-  border-radius: 14px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-  background-color: #fff !important;
-  padding: 8px !important;
-  z-index: 1060 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  height: 100% !important;
 }
-
-.select2-results__options {
-  max-height: 250px !important;
-  overflow-y: auto !important;
-}
-.select2-results__options::-webkit-scrollbar {
-  width: 6px;
-}
-.select2-results__options::-webkit-scrollbar-track {
-  background: transparent;
-}
-.select2-results__options::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
-}
-
-.select2-results__option {
-  font-size: 0.9rem !important;
-  padding: 10px 16px !important;
-  color: #334155 !important;
-  border-radius: 8px !important;
-  margin-bottom: 2px;
-  background-color: transparent !important;
-  transition: all 0.3s ease;
-}
-.select2-results__option--highlighted[aria-selected], .select2-results__option:hover {
-  background-color: #f5f3ff !important;
-  color: #7c3aed !important;
-}
-.select2-results__option[aria-selected=true] {
-  background-color: #f5f3ff !important;
-  color: #7c3aed !important;
-  font-weight: 600;
+.ws-filter-item .select2-container--default .select2-selection--single .select2-selection__rendered {
+  font-weight: 600 !important;
+  text-align: center !important;
 }
 
 @media (max-width: 768px) {
@@ -537,6 +527,59 @@ ul {
     grid-column: span 1;
   }
 }
+/* Select2 Premium Dropdown - Final Polishing */
+html body .select2-container--default {
+  /* Üstteki boş border alanını (varsayılan arama kutusu) temizle */
+  /* Scrollbar'ı premium yapalım ki o da tasarımı bozmasın */
+}
+html body .select2-container--default .select2-dropdown {
+  border: 1.5px solid rgba(124, 58, 237, 0.2) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 15px 35px rgba(124, 58, 237, 0.15) !important;
+  background-color: #ffffff !important;
+  margin-top: 8px !important;
+  z-index: 999999 !important;
+  /* İçerideki öğelerin köşelerden taşmasını engelle */
+  overflow: hidden !important;
+}
+html body .select2-container--default .select2-search--dropdown {
+  padding: 0 !important;
+}
+html body .select2-container--default .select2-search--dropdown .select2-search__field {
+  display: none !important;
+}
+html body .select2-container--default .select2-results {
+  padding: 4px 0 !important;
+  /* Listenin kendi köşelerini de yuvarla ki dış çerçeveye uyum sağlasın */
+  border-radius: 16px !important;
+}
+html body .select2-container--default .select2-results__option {
+  padding: 12px 18px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #4b5563 !important;
+  transition: all 0.2s ease !important;
+  /* Hover / Focus Durumu (Lavender Effect) */
+  /* Aktif Seçili Öğe */
+}
+html body .select2-container--default .select2-results__option.select2-results__option--highlighted[aria-selected], html body .select2-container--default .select2-results__option:hover {
+  background-color: #f5f3ff !important;
+  color: #7c3aed !important;
+  /* Kenardan hafif bir vurgu çizgisi */
+  border-left: 3px solid #7c3aed !important;
+}
+html body .select2-container--default .select2-results__option[aria-selected=true] {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+html body .select2-container--default .select2-results__options::-webkit-scrollbar {
+  width: 5px;
+}
+html body .select2-container--default .select2-results__options::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
 /* ============================================================
     1. GLOBAL PREMIUM CARD COMPONENT
     Normal: Belirgin iskelet yapısı
@@ -717,6 +760,13 @@ ul {
 }
 .ws-table-premium .ws-action-btn {
   opacity: 0.7;
+}
+
+.ws-table-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 /* ============================================================

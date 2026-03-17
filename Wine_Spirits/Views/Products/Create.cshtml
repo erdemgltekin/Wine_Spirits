@@ -27,104 +27,131 @@
         @* Row 1 — Ürün Tanımı: full-width via SCSS .ws-form-group:first-child { grid-column: span 2 } *@
         <div class="ws-form-group">
             <label asp-for="ProductDefinitionId" class="ws-form-label">Ürün Adı / Tanımı</label>
-            <select asp-for="ProductDefinitionId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.ProductDefinitionId"
-                    required>
-                <option value="">-- Ürün Tanımı Seçin --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="package"></i>
+                <select asp-for="ProductDefinitionId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.ProductDefinitionId"
+                        required>
+                    <option value="">-- Ürün Tanımı Seçin --</option>
+                </select>
+            </div>
             <span asp-validation-for="ProductDefinitionId" class="text-danger"></span>
         </div>
 
         @* Row 2: Sol — Kategori *@
         <div class="ws-form-group">
             <label asp-for="ProductCategoryId" class="ws-form-label">Kategori</label>
-            <select asp-for="ProductCategoryId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.ProductCategoryId"
-                    required>
-                <option value="">-- Kategori --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="tag"></i>
+                <select asp-for="ProductCategoryId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.ProductCategoryId"
+                        required>
+                    <option value="">-- Kategori --</option>
+                </select>
+            </div>
             <span asp-validation-for="ProductCategoryId" class="text-danger"></span>
         </div>
 
         @* Row 2: Sağ — Ölçü Birimi *@
         <div class="ws-form-group">
             <label asp-for="UnitId" class="ws-form-label">Ölçü Birimi</label>
-            <select asp-for="UnitId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.UnitId"
-                    required>
-                <option value="">-- Birim (Şişe, Adet vb.) --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="box"></i>
+                <select asp-for="UnitId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.UnitId"
+                        required>
+                    <option value="">-- Birim (Şişe, Adet vb.) --</option>
+                </select>
+            </div>
             <span asp-validation-for="UnitId" class="text-danger"></span>
         </div>
 
         @* Row 3: Sol — Tedarikçi *@
         <div class="ws-form-group">
             <label asp-for="SupplierId" class="ws-form-label">Tedarikçi</label>
-            <select asp-for="SupplierId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.SupplierId"
-                    required>
-                <option value="">-- Tedarikçi Seçin --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="truck"></i>
+                <select asp-for="SupplierId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.SupplierId"
+                        required>
+                    <option value="">-- Tedarikçi Seçin --</option>
+                </select>
+            </div>
             <span asp-validation-for="SupplierId" class="text-danger"></span>
         </div>
 
         @* Row 3: Sağ — Menşei Ülke *@
         <div class="ws-form-group">
             <label asp-for="CountryId" class="ws-form-label">Menşei Ülke</label>
-            <select asp-for="CountryId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.CountryId"
-                    required>
-                <option value="">-- Ülke --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="globe"></i>
+                <select asp-for="CountryId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.CountryId"
+                        required>
+                    <option value="">-- Ülke --</option>
+                </select>
+            </div>
             <span asp-validation-for="CountryId" class="text-danger"></span>
         </div>
 
         @* Row 4: Sol — Mevcut Stok *@
         <div class="ws-form-group">
             <label asp-for="StockQuantity" class="ws-form-label">Mevcut Stok</label>
-            <input asp-for="StockQuantity"
-                   type="number"
-                   class="ws-input-premium"
-                   value="0"
-                   min="0" />
+            <div class="ws-filter-item">
+                <i data-lucide="database"></i>
+                <input asp-for="StockQuantity"
+                       type="number"
+                       class="ws-filter-el"
+                       value="0"
+                       min="0" />
+            </div>
             <span asp-validation-for="StockQuantity" class="text-danger"></span>
         </div>
 
         @* Row 4: Sağ — Birim Fiyat *@
         <div class="ws-form-group">
             <label asp-for="Price" class="ws-form-label">Birim Fiyat (₺)</label>
-            <input asp-for="Price"
-                   type="number"
-                   step="0.01"
-                   class="ws-input-premium"
-                   placeholder="0.00"
-                   required />
+            <div class="ws-filter-item">
+                <i data-lucide="banknote"></i>
+                <input asp-for="Price"
+                       type="number"
+                       step="0.01"
+                       class="ws-filter-el"
+                       placeholder="0.00"
+                       required />
+            </div>
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
 
         @* Row 5: Sol — Üretim Yılı *@
         <div class="ws-form-group">
             <label asp-for="Year" class="ws-form-label">Üretim Yılı / Rezerve</label>
-            <input asp-for="Year"
-                   type="number"
-                   class="ws-input-premium"
-                   value="@DateTime.Now.Year" />
+            <div class="ws-filter-item">
+                <i data-lucide="calendar"></i>
+                <input asp-for="Year"
+                       type="number"
+                       class="ws-filter-el"
+                       value="@DateTime.Now.Year" />
+            </div>
             <span asp-validation-for="Year" class="text-danger"></span>
         </div>
 
         @* Row 5: Sağ — Hedef Depo *@
         <div class="ws-form-group">
             <label class="ws-form-label">Hedef Depo</label>
-            <select asp-for="WarehouseId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.WarehouseId">
-                <option value="">Varsayılan Depo (Otomatik)</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="warehouse"></i>
+                <select asp-for="WarehouseId"
+                        class="ws-filter-el select2-enable"
+                        asp-items="ViewBag.WarehouseId">
+                    <option value="">Varsayılan Depo (Otomatik)</option>
+                </select>
+            </div>
         </div>
 
     </div>@* /.ws-modal-body *@

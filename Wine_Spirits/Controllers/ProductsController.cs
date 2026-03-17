@@ -129,24 +129,14 @@ namespace Wine_Spirits.Controllers
         {
             try
             {
-                // Fetch all dropdown data in parallel with AsNoTracking for performance
-                var countriesTask = _context.Countries?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Country>());
-                var categoriesTask = _context.ProductCategories?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<ProductCategory>());
-                var definitionsTask = _context.ProductDefinitions?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<ProductDefinition>());
-                var suppliersTask = _context.Suppliers?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Supplier>());
-                var unitsTask = _context.Units?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<Unit>());
-                var warehousesTask = _context.WareHouses?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? Task.FromResult(new List<WareHouse>());
-
-                // Wait for all tasks to complete in parallel
-                await Task.WhenAll(countriesTask, categoriesTask, definitionsTask, suppliersTask, unitsTask, warehousesTask);
-
-                // Get results
-                var countries = await countriesTask;
-                var categories = await categoriesTask;
-                var definitions = await definitionsTask;
-                var suppliers = await suppliersTask;
-                var units = await unitsTask;
-                var warehouses = await warehousesTask;
+                // Fetch dropdown data sequentially to avoid connection pool exhaustion
+                // Use single DbContext instance with AsNoTracking for read-only operations
+                var countries = await _context.Countries?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<Country>();
+                var categories = await _context.ProductCategories?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<ProductCategory>();
+                var definitions = await _context.ProductDefinitions?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<ProductDefinition>();
+                var suppliers = await _context.Suppliers?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<Supplier>();
+                var units = await _context.Units?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<Unit>();
+                var warehouses = await _context.WareHouses?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<WareHouse>();
 
                 ViewBag.CountryId = new SelectList(countries, "Id", "Name", p?.CountryId);
                 ViewBag.ProductCategoryId = new SelectList(categories, "Id", "Name", p?.ProductCategoryId);

@@ -17,7 +17,7 @@
             <h2 class="fw-bold text-dark m-0">Depo Yönetimi</h2>
             <p class="text-muted small mb-0">Depo lokasyonlarını ve kapasite durumlarını yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" onclick="WarehouseManager.openCreateModal()">
+        <button type="button" class="ws-btn-main shadow-sm" onclick="GlobalUI.openModal('/Warehouses/Create')">
             <i data-lucide="plus"></i> Yeni Depo Ekle
         </button>
     </div>
@@ -99,7 +99,7 @@
                             </div>
                         </div>
                         <div class="d-flex gap-1">
-                            <button type="button" onclick="WarehouseManager.openEditModal('@item.Id')" class="ws-action-btn" title="Düzenle">
+                            <button type="button" onclick="GlobalUI.openModal('/Warehouses/Edit/@item.Id')" class="ws-action-btn" title="Düzenle">
                                 <i data-lucide="edit-3"></i>
                             </button>
                             <button type="button" onclick="WarehouseManager.deleteWarehouse('@item.Id')" class="ws-action-btn" title="Sil">
@@ -138,14 +138,6 @@
                 </div>
             </div>
         }
-    </div>
-</div>
-
-<div class="modal fade" id="globalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content ws-modal-container">
-            <div id="globalModalContent"></div>
-        </div>
     </div>
 </div>
 

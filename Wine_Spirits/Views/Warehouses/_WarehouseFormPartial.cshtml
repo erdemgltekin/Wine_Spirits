@@ -2,8 +2,7 @@
 
 @{
     bool isEdit = Model != null && Model.Id != Guid.Empty;
-    string actionName = isEdit ? "Edit" : "Create";
-    string title      = isEdit ? "Depo Bilgilerini Düzenle" : "Yeni Depo Ekle";
+    string title = isEdit ? "Depo Bilgilerini Düzenle" : "Yeni Depo Ekle";
     string buttonText = isEdit ? "Güncelle" : "Depoyu Kaydet";
 }
 
@@ -16,52 +15,46 @@
 </div>
 
 @* ─── FORM ─── *@
-<form asp-action="@actionName" method="post" id="warehouseForm">
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="warehouseForm">
     @Html.AntiForgeryToken()
+    
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedDate" />
+    }
 
     <div class="ws-modal-body">
-
-        @if (isEdit)
-        {
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CreatedDate" />
-        }
-
-        @* Validation summary *@
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        @* Row 1 — Depo Adı: full-width via SCSS :first-child rule *@
-        <div class="ws-form-group">
+        @* Row 1 — Depo Adı *@
+        <div class="ws-form-group ws-form-group--full">
             <label class="ws-form-label">Depo Tanımı / Adı *</label>
-            <input asp-for="Name"
-                   class="ws-input-premium"
-                   placeholder="Örn: Merkez Lojistik Deposu"
-                   required />
+            <div class="ws-filter-item">
+                <i data-lucide="building-2"></i>
+                <input asp-for="Name" class="ws-filter-el ws-input-premium" placeholder="Örn: Merkez Lojistik Deposu" required />
+            </div>
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        @* Row 2 — Konum / Adres: full-width (only 2 fields, both span 2) *@
-        <div class="ws-form-group">
+        @* Row 2 — Konum / Adres *@
+        <div class="ws-form-group ws-form-group--full">
             <label class="ws-form-label">Depo Konumu / Adres *</label>
-            <textarea asp-for="Location"
-                      class="ws-input-premium ws-textarea"
-                      rows="3"
-                      placeholder="Şehir, İlçe ve açık adres bilgisi..."
-                      required></textarea>
+            <div class="ws-filter-item">
+                <i data-lucide="map-pin"></i>
+                <textarea asp-for="Location" class="ws-filter-el ws-input-premium ws-textarea" rows="4" placeholder="Şehir, İlçe ve açık adres bilgisi..." required></textarea>
+            </div>
             <span asp-validation-for="Location" class="text-danger"></span>
         </div>
 
-        @* Info alert — full width *@
+        @* Info Alert Strip *@
         <div class="ws-info-alert">
             <i data-lucide="info"></i>
             <span>
-                @(isEdit
-                    ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir."
+                @(isEdit 
+                    ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir." 
                     : "Yeni oluşturulan depolar varsayılan olarak aktif durumdadır.")
             </span>
         </div>
-
-    </div>@* /.ws-modal-body *@
+    </div>
 
     @* ─── FOOTER ACTIONS ─── *@
     <div class="ws-form-actions">
@@ -71,5 +64,4 @@
             @buttonText
         </button>
     </div>
-
 </form>

@@ -209,23 +209,31 @@ const GlobalUI = {
 
     initDatePickers: function () {
         if (typeof flatpickr !== 'undefined') {
-            flatpickr("#dateFilter", {
-                mode: "range",
-                dateFormat: "d.m.Y",
-                locale: "tr",
-                disableMobile: true,
-                monthSelectorType: "static",
-                animate: true,
-                onChange: (selectedDates, dateStr) => {
-                    console.log("Tarih aralığı değişti:", dateStr);
-                },
-                onOpen: function (selectedDates, dateStr, instance) {
-                    $(instance.element).closest('.ws-filter-item').addClass('is-active');
-                },
-                onClose: function (selectedDates, dateStr, instance) {
-                    $(instance.element).closest('.ws-filter-item').removeClass('is-active');
-                }
+            const self = this;
+            $(".ws-datepicker").each(function() {
+                const $this = $(this);
+                flatpickr(this, {
+                    mode: $this.data('mode') || "single",
+                    dateFormat: "d.m.Y",
+                    locale: "tr",
+                    disableMobile: true,
+                    onChange: (selectedDates, dateStr) => {
+                        $this.trigger('change', [selectedDates, dateStr]);
+                    }
+                });
             });
+
+            // Legacy support for #dateFilter specifically
+            if (document.getElementById('dateFilter')) {
+                flatpickr("#dateFilter", {
+                    mode: "range",
+                    dateFormat: "d.m.Y",
+                    locale: "tr",
+                    onChange: function() {
+                        $(document).trigger('filter:changed');
+                    }
+                });
+            }
         }
     },
 
@@ -262,9 +270,10 @@ const GlobalUI = {
                 }
             }, 100);
             
-            // Lucide ikonlarını yenile ve Select2 başlat
+            // Lucide ikonlarını yenile, Select2 başlat ve formu bağla
             this.refreshLucide();
             this.initSelect2();
+            this.bindModalForm();
         }).fail((jqXHR, textStatus, errorThrown) => {
             console.error('Modal AJAX Error:', {
                 status: jqXHR.status,
@@ -322,16 +331,61 @@ const GlobalUI = {
     initSelect2: function () {
         if (typeof $ !== 'undefined' && $.fn.select2) {
             $('.select2-enable').each(function() {
-                // Find nearest modal ancestor as dropdown parent, or use body
-                const $modalParent = $(this).closest('.modal');
-                $(this).select2({
-                    theme: 'bootstrap-5',
+                const $el = $(this);
+                if ($el.hasClass('select2-hidden-accessible')) return; 
+                
+                const $modalParent = $el.closest('.modal');
+                $el.select2({
+                    theme: 'default',
                     width: '100%',
                     placeholder: 'Seçiniz...',
                     dropdownParent: $modalParent.length ? $modalParent : $(document.body)
                 });
             });
         }
+    },
+
+    bindModalForm: function () {
+        const modalBody = document.getElementById('productModalBody');
+        const $form = $(modalBody).find('form');
+        if ($form.length === 0) return;
+
+        $form.on('submit', (e) => {
+            e.preventDefault();
+            const url = $form.attr('action');
+            const data = new FormData($form[0]);
+            const $btn = $form.find('button[type="submit"]');
+            const originalBtnHtml = $btn.html();
+
+            $btn.html('<span class="spinner-border spinner-border-sm me-2"></span> İşleniyor...').prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: (response) => {
+                    if (typeof response === 'object' && response.success) {
+                        SidePanel.showToast(response.message || 'İşlem başarıyla tamamlandı!');
+                        this.closeModal();
+                        setTimeout(() => window.location.reload(), 800);
+                    } else if (response.toString().includes('ws-modal-body')) {
+                        // Eğer validation hatası dönerse modalı güncelle
+                        modalBody.innerHTML = response;
+                        this.refreshLucide();
+                        this.initSelect2();
+                        this.bindModalForm();
+                    } else {
+                        window.location.reload();
+                    }
+                },
+                error: (err) => {
+                    SidePanel.showToast('Kaydedilirken bir hata oluştu.', 'alert-circle');
+                    $btn.html(originalBtnHtml).prop('disabled', false);
+                }
+            });
+        });
     }
 };
 

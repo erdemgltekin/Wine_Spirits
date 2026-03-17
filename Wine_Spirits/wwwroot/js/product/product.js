@@ -1,57 +1,14 @@
 /**
- * Product Management Module - Wine & Spirits ERP Premium Edition
+ * Product Management Module - Pure Logic & Data
  */
 const ProductManager = {
     allProducts: [],
     filteredProducts: [],
-    currentFilters: {
-        search: "",
-        category: "",
-        stock: ""
-    },
+    currentFilters: { search: "", category: "", stock: "" },
 
     init: function () {
         this.loadProducts();
         this.attachEvents();
-        this.initDatePicker();
-        this.initModalEvents();
-    },
-
-    initDatePicker: function () {
-        const dateInput = document.getElementById('dateFilter');
-        if (dateInput && typeof flatpickr !== 'undefined') {
-            flatpickr(dateInput, {
-                locale: "tr",
-                mode: "range",
-                dateFormat: "d.m.Y",
-                onChange: () => this.applyFilters()
-            });
-        }
-    },
-
-    initModalEvents: function () {
-        // Modal açıldığında component'ları başlat
-        const modal = document.getElementById('productModal');
-        if (modal) {
-            modal.addEventListener('shown.bs.modal', function () {
-                // Modal içindeki Lucide ikonları yenile
-                if (typeof GlobalUI !== 'undefined' && GlobalUI.refreshLucide) {
-                    GlobalUI.refreshLucide();
-                }
-                
-                // Select2 gibi component'ları başlat
-                if (typeof $ !== 'undefined' && $.fn.select2) {
-                    $('.select2-enable').select2({
-                        theme: 'bootstrap-5',
-                        width: '100%',
-                        placeholder: 'Seçiniz...',
-                        dropdownParent: $(modal) // CRITICAL: Fixes dropdown rendering behind modal
-                    });
-                }
-                
-                console.log('Modal form initialized');
-            });
-        }
     },
 
     loadProducts: function () {
@@ -60,10 +17,8 @@ const ProductManager = {
             .then(res => {
                 this.allProducts = res.products || [];
                 this.filteredProducts = [...this.allProducts];
-                this.populateCategories();
                 this.renderTable(this.filteredProducts);
-            })
-            .catch(err => console.error("Veri yükleme hatası:", err));
+            });
     },
 
     renderTable: function (products) {
@@ -72,14 +27,13 @@ const ProductManager = {
 
         if (products.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">Ürün bulunamadı.</td></tr>';
-            if (typeof GlobalUI !== 'undefined') GlobalUI.refreshLucide();
+            GlobalUI?.refreshLucide();
             return;
         }
 
         tableBody.innerHTML = products.map(p => {
             const priceStr = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p.price || 0);
             const isCritical = p.stockQuantity <= 10;
-
             return `
             <tr>
                 <td><strong>${p.productCode}</strong></td>
@@ -88,38 +42,31 @@ const ProductManager = {
                 <td><small>${p.supplierName || '-'}</small></td>
                 <td><strong>${priceStr}</strong></td>
                 <td>${p.stockQuantity} Adet</td>
-                <td>
-                    <span class="status-pill ${isCritical ? 'status-danger' : 'status-success'}">
-                        ${isCritical ? 'Kritik Stok' : 'Stokta Var'}
-                    </span>
-                </td>
+                <td><span class="status-pill ${isCritical ? 'status-danger' : 'status-success'}">${isCritical ? 'Kritik Stok' : 'Stokta Var'}</span></td>
                 <td class="text-end">
-                    <div style="display: flex; justify-content: flex-end; gap: 8px; padding-right: 1.5rem;">
-                        <button onclick="ProductManager.view('${p.id}')" class="ws-action-btn" title="Görüntüle"><i data-lucide="eye"></i></button>
-                        <button onclick="ProductManager.edit('${p.id}')" class="ws-action-btn" title="Düzenle"><i data-lucide="edit-2"></i></button>
-                        <button onclick="ProductManager.delete('${p.id}')" class="ws-action-btn text-danger" title="Sil"><i data-lucide="trash-2"></i></button>
+                    <div class="ws-table-actions">
+                        <button onclick="ProductManager.view('${p.id}')" class="ws-action-btn"><i data-lucide="eye"></i></button>
+                        <button onclick="ProductManager.edit('${p.id}')" class="ws-action-btn"><i data-lucide="edit-2"></i></button>
+                        <button onclick="ProductManager.delete('${p.id}')" class="ws-action-btn text-danger"><i data-lucide="trash-2"></i></button>
                     </div>
                 </td>
             </tr>`;
         }).join('');
 
-        // CRITICAL: Refresh Lucide icons after table render
-        if (typeof GlobalUI !== 'undefined') {
-            GlobalUI.refreshLucide();
-        }
+        GlobalUI?.refreshLucide();
     },
 
     filterCategory: function (val, text) {
         this.currentFilters.category = val;
-        const textEl = document.getElementById('selectedCategoryText');
-        if (textEl) textEl.innerText = text;
+        const el = document.getElementById('selectedCategoryText');
+        if (el) el.innerText = text;
         this.applyFilters();
     },
 
     filterStock: function (val, text) {
         this.currentFilters.stock = val;
-        const textEl = document.getElementById('selectedStockText');
-        if (textEl) textEl.innerText = text;
+        const el = document.getElementById('selectedStockText');
+        if (el) el.innerText = text;
         this.applyFilters();
     },
 
@@ -140,50 +87,28 @@ const ProductManager = {
     populateCategories: function () {
         const catMenu = document.getElementById('filterCategoryMenu');
         if (!catMenu || this.allProducts.length === 0) return;
-
         const cats = [...new Set(this.allProducts.map(p => p.categoryName))].filter(Boolean).sort();
-
         let html = `<li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('', 'Tüm Kategoriler')">Tüm Kategoriler</a></li>`;
-        html += cats.map(c => `
-            <li>
-                <a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('${c}', '${c}')">
-                    ${c}
-                </a>
-            </li>
-        `).join('');
-
+        html += cats.map(c => `<li><a class="dropdown-item" href="javascript:void(0)" onclick="ProductManager.filterCategory('${c}', '${c}')">${c}</a></li>`).join('');
         catMenu.innerHTML = html;
     },
 
     sort: function (type) {
-        switch (type) {
-            case 'name-asc':
-                this.filteredProducts.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-                break;
-            case 'price-desc':
-                this.filteredProducts.sort((a, b) => b.price - a.price);
-                break;
-            case 'stock-desc':
-                this.filteredProducts.sort((a, b) => b.stockQuantity - a.stockQuantity);
-                break;
-        }
+        if (type === 'name-asc') this.filteredProducts.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+        else if (type === 'price-desc') this.filteredProducts.sort((a, b) => b.price - a.price);
+        else if (type === 'stock-desc') this.filteredProducts.sort((a, b) => b.stockQuantity - a.stockQuantity);
         this.renderTable(this.filteredProducts);
     },
 
     attachEvents: function () {
         document.getElementById('inventorySearch')?.addEventListener('input', () => this.applyFilters());
-
         document.getElementById('btnCreateNew')?.addEventListener('click', (e) => {
             e.preventDefault();
-            if (typeof GlobalUI !== 'undefined') GlobalUI.openModal('/Products/Create');
+            GlobalUI?.openModal('/Products/Create');
         });
     },
 
-    view: function (id) { if (typeof GlobalUI !== 'undefined') GlobalUI.openModal(`/Products/Details/${id}`); },
-    edit: function (id) { if (typeof GlobalUI !== 'undefined') GlobalUI.openModal(`/Products/Edit/${id}`); },
-    delete: function (id) {
-        if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
-            console.log("Silinecek ID:", id);
-        }
-    }
+    view: function (id) { GlobalUI?.openModal(`/Products/Details/${id}`); },
+    edit: function (id) { GlobalUI?.openModal(`/Products/Edit/${id}`); },
+    delete: function (id) { if (confirm('Bu ürünü silmek istediğine emin misin?')) console.log("Delete:", id); }
 };

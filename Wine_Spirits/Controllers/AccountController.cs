@@ -108,8 +108,27 @@ public partial class AccountController : Controller
 
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        HttpContext.Session.Clear();
-        return RedirectToAction("Login");
+        try
+        {
+            // Clear authentication cookies
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Clear all session data
+            HttpContext.Session.Clear();
+            
+            // Clear all cookies for this domain
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+            
+            return RedirectToAction("Login");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logout error: {ex.Message}");
+            // Even if logout fails, redirect to login
+            return RedirectToAction("Login");
+        }
     }
 }

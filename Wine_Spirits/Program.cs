@@ -21,7 +21,7 @@ try
                 maxRetryDelay: TimeSpan.FromSeconds(3),
                 errorNumbersToAdd: null
             )
-            .CommandTimeout(10)
+            .CommandTimeout(30)
         ));
     
     // Test connection immediately - sync version for Program.cs
