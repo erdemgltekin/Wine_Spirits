@@ -1,0 +1,93 @@
+@model Wine_Spirits.Models.StockMovement
+
+@{
+    bool isEdit = Model != null && Model.Id != Guid.Empty;
+    string title = isEdit ? "Stok Hareketini Düzenle" : "Yeni Stok Hareketi";
+    string buttonText = isEdit ? "Güncelle" : "Hareketi Kaydet";
+}
+
+@* ─── MODAL HEADER ─── *@
+<div class="ws-modal-header">
+    <h5 class="ws-modal-title">@title</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+        <i data-lucide="x"></i>
+    </button>
+</div>
+
+@* ─── FORM ─── *@
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="stockMovementForm">
+    @Html.AntiForgeryToken()
+    
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedDate" />
+    }
+
+    <div class="ws-modal-body">
+        @* Row 1 — Ürün Seçimi *@
+        <div class="ws-form-group ws-form-group--full">
+            <label class="ws-form-label">Ürün Seçimi *</label>
+            <div class="ws-filter-item">
+                <i data-lucide="package"></i>
+                <select asp-for="ProductId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.ProductId">
+                    <option value="">Ürün seçiniz...</option>
+                </select>
+            </div>
+            <span asp-validation-for="ProductId" class="text-danger"></span>
+        </div>
+
+        @* Row 2 — Depo Seçimi (Requested as standalone, though not in model directly) *@
+        <div class="ws-form-group ws-form-group--full">
+            <label class="ws-form-label">Depo Seçimi</label>
+            <div class="ws-filter-item">
+                <i data-lucide="warehouse"></i>
+                <select name="WarehouseId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.WarehouseId">
+                    <option value="">Depo seçiniz...</option>
+                </select>
+            </div>
+        </div>
+
+        @* Row 3 — Miktar & Hareket Tipi *@
+        <div class="ws-form-group">
+            <label class="ws-form-label">Miktar *</label>
+            <div class="ws-filter-item">
+                <i data-lucide="hash"></i>
+                <input asp-for="Quantity" class="ws-filter-el ws-input-premium" type="number" placeholder="0" required />
+            </div>
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="ws-form-group">
+            <label class="ws-form-label">Hareket Tipi *</label>
+            <div class="ws-filter-item">
+                <i data-lucide="shuffle"></i>
+                <select asp-for="MovementType" class="ws-filter-el ws-input-premium select2-enable">
+                    <option value="Giriş">Stok Girişi (+)</option>
+                    <option value="Çıkış">Stok Çıkışı (-)</option>
+                    <option value="Transfer">Depo Transferi</option>
+                </select>
+            </div>
+            <span asp-validation-for="MovementType" class="text-danger"></span>
+        </div>
+
+        @* Row 4 — Açıklama *@
+        <div class="ws-form-group ws-form-group--full">
+            <label class="ws-form-label">Açıklama</label>
+            <div class="ws-filter-item">
+                <i data-lucide="file-text"></i>
+                <textarea asp-for="Description" class="ws-filter-el ws-input-premium ws-textarea" rows="4" placeholder="Hareket ile ilgili notlar..."></textarea>
+            </div>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+
+    @* ─── FOOTER ACTIONS ─── *@
+    <div class="ws-form-actions">
+        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+        <button type="submit" class="ws-btn-main">
+            <i data-lucide="@(isEdit ? "save" : "check")"></i>
+            @buttonText
+        </button>
+    </div>
+</form>

@@ -65,9 +65,9 @@ public class DashboardApiController : ControllerBase
         }
 
         // Stok Trendi: Son 10 Gün
-        var tenDaysAgo = DateTime.Now.AddDays(-9);
+        var tenDaysAgo = DateTime.Now.AddDays(-9).Date;
         var movements = await _context.StockMovements
-            .Where(sm => sm.Date >= tenDaysAgo.Date)
+            .Where(sm => sm.Date.HasValue && sm.Date.Value >= tenDaysAgo)
             .ToListAsync();
 
         var stockTrendLabels = new List<string>();
@@ -77,8 +77,8 @@ public class DashboardApiController : ControllerBase
         {
             var date = DateTime.Now.AddDays(-i).Date;
             stockTrendLabels.Add(date.ToString("dd MMM", trCulture));
-            var dayMovements = movements.Where(m => m.Date.Date == date);
-            var netChange = dayMovements.Sum(m => m.MovementType == "Giriş" ? m.Quantity : -m.Quantity);
+            var dayMovements = movements.Where(m => m.Date.HasValue && m.Date.Value.Date == date);
+            var netChange = dayMovements.Sum(m => (m.MovementType == "Giriş" ? 1 : -1) * (m.Quantity ?? 0));
             stockTrendValues.Add(netChange);
         }
 

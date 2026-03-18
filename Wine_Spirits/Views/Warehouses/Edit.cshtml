@@ -5,33 +5,21 @@
     ViewData["Title"] = "Depo Bilgilerini Düzenle";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0" style="border-radius: 24px; overflow: hidden;">
-                <div class="card-header bg-white border-0 pt-4 px-4">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="ws-stat-icon-box bg-indigo-50 text-primary" style="width: 40px; height: 40px;">
-                            <i data-lucide="edit-3" style="width: 20px;"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark m-0">Depo Düzenle</h5>
-                            <p class="text-muted small mb-0">@Model.Name - Kayıt Güncelleme</p>
-                        </div>
-                    </div>
-                </div>
+<div class="ws-standalone-form-wrap">
+    <div class="ws-standalone-form-card">
+        @* 
+           _WarehouseFormPartial contains:
+           - ws-modal-header
+           - ws-modal-body
+           - ws-form-actions
+           This ensures perfect visual consistency between modals and full pages.
+        *@
+        <partial name="_WarehouseFormPartial" model="Model" />
 
-                <hr class="mx-4 my-2 opacity-50">
-
-                <partial name="_WarehouseFormPartial" model="Model" />
-
-            </div>
-
-            <div class="text-center mt-3">
-                <a asp-action="Index" class="text-muted small text-decoration-none">
-                    <i data-lucide="chevron-left" class="size-14"></i> Listeye Geri Dön
-                </a>
-            </div>
+        <div class="text-center pb-4">
+            <a asp-action="Index" class="text-muted small text-decoration-none">
+                <i data-lucide="chevron-left" class="size-14"></i> Listeye Geri Dön
+            </a>
         </div>
     </div>
 </div>
@@ -40,10 +28,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        // Sayfa yüklendiğinde ikonları çalıştır
-        document.addEventListener("DOMContentLoaded", function() {
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        });
-    </script>
 }

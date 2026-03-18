@@ -12,6 +12,7 @@ const SidePanel = {
     titleSelector: '#sidePanelTitle',
 
     open: function (url, title = 'Yukleniyor...') {
+        $('.modal-backdrop').remove();
         $(this.titleSelector).text(title);
         $(this.contentSelector).html(`
             <div class="p-5 text-center">
@@ -238,6 +239,7 @@ const GlobalUI = {
     },
 
     openModal: function (url, modalSize = 'modal-md') {
+        $('.modal-backdrop').remove();
         const modalEl = document.getElementById('productModal');
         const modalBody = document.getElementById('productModalBody');
         const modalDialog = document.getElementById('globalModalDialog');

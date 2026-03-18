@@ -16,7 +16,7 @@
             <h2 class="fw-bold mb-1" style="color: var(--gray-900); letter-spacing: -0.02em;">Stok Hareketleri</h2>
             <p class="text-muted mb-0 small">Tüm depo giriş, çıkış ve transfer süreçlerini buradan yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-primary" data-bs-toggle="modal" data-bs-target="#newMovementModal">
+        <button type="button" class="ws-btn-main shadow-sm" onclick="GlobalUI.openModal('/StockMovement/Create')">
             <i data-lucide="plus-circle"></i>
             <span>Yeni Hareket Ekle</span>
         </button>
@@ -148,77 +148,40 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="ps-4 text-primary fw-bold">#SH-8291</td>
-                    <td>
-                        <div class="fw-bold text-dark">Chardonnay Reserve 2022</div>
-                        
-                    </td>
-                    <td>Ana Depo</td>
-                    <td><span class="status-pill" style="background: #f1f5f9; color: #475569;"><i data-lucide="play-circle" class="ws-icon-14"></i> Açılış</span></td>
-                    <td><span class="fw-bold text-dark">500</span></td>
-                    <td>01.02.2026</td>
-                    <td><span class="status-pill status-success">Tamamlandı</span></td>
-                    <td class="text-end pe-4">
-                        <div class="d-flex justify-content-end gap-2">
-                            <button class="ws-action-btn" title="Detay"><i data-lucide="eye"></i></button>
-                            <button class="ws-action-btn" title="Yazdır"><i data-lucide="printer"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="ps-4 text-primary fw-bold">#SH-@item.Id.ToString().Substring(0, 4).ToUpper()</td>
+                        <td>
+                            <div class="fw-bold text-dark">@(item.Product?.ProductDefinition?.Name ?? "Belirsiz Ürün")</div>
+                        </td>
+                        <td>Ana Depo</td> @* Depo bilgisi modelde yok, statik veya ilişkili çekilmeli *@
+                        <td>
+                            @{
+                                string statusClass = item.MovementType == "Giriş" ? "status-success" : (item.MovementType == "Çıkış" ? "status-danger" : "status-warning");
+                                string icon = item.MovementType == "Giriş" ? "trending-up" : (item.MovementType == "Çıkış" ? "trending-down" : "shuffle");
+                            }
+                            <span class="status-pill @statusClass">
+                                <i data-lucide="@icon" class="ws-icon-14"></i> @item.MovementType
+                            </span>
+                        </td>
+                        <td><span class="fw-bold text-dark">@item.Quantity</span></td>
+                        <td>@item.CreatedDate?.ToString("dd.MM.yyyy")</td>
+                        <td><span class="status-pill status-success">Tamamlandı</span></td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" onclick="GlobalUI.openModal('/StockMovement/Edit/@item.Id')" class="ws-action-btn" title="Düzenle">
+                                    <i data-lucide="edit-3"></i>
+                                </button>
+                                <button type="button" onclick="StockMovementManager.deleteMovement('@item.Id')" class="ws-action-btn" title="Sil">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
-    </div>
-</div>
-
-<div class="modal fade" id="newMovementModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content ws-modal-custom p-2">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold text-dark mb-0">Yeni Stok Hareketi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pt-4">
-                <form id="formNewMovement">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="ws-form-label">Ürün Seçimi</label>
-                            <select class="ws-input-premium form-select" required>
-                                <option value="" selected disabled>Ürün ara...</option>
-                                <option>Merlot Special Selection</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="ws-form-label">Depo</label>
-                            <select class="ws-input-premium form-select" required>
-                                <option>Ana Depo</option>
-                                <option>Şube Depo A</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="ws-form-label">Hareket Tipi</label>
-                            <select class="ws-input-premium form-select" required>
-                                <option>Giriş</option>
-                                <option>Çıkış</option>
-                                <option>Transfer</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="ws-form-label">Miktar</label>
-                            <input type="number" class="ws-input-premium" placeholder="0" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="ws-form-label">Açıklama</label>
-                            <textarea class="ws-input-premium py-2" rows="3" placeholder="Hareket notlarını buraya yazın..." style="height: auto;"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer border-0 pt-3 pb-4">
-                <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-                <button type="submit" form="formNewMovement" class="ws-btn-primary">Hareketi Kaydet</button>
-            </div>
-        </div>
     </div>
 </div>
 

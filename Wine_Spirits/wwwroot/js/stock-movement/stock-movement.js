@@ -29,37 +29,26 @@ const StockMovementManager = {
     },
 
     attachEvents: function () {
-        // --- Yeni Hareket Modalı Açma ---
-        const btnNewMovement = document.getElementById('btnNewMovement');
-        if (btnNewMovement) {
-            btnNewMovement.addEventListener('click', () => {
-                const modalElement = document.getElementById('newMovementModal');
-                if (modalElement) {
-                    new bootstrap.Modal(modalElement).show();
-                }
-            });
-        }
+        // Modal and form submission are now handled by GlobalUI.openModal
+        console.log("StockMovementManager: UI events attached.");
+    },
 
-        // --- Form Gönderimi ---
-        const formMovement = document.getElementById('formNewMovement');
-        if (formMovement) {
-            formMovement.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const modalElement = document.getElementById('newMovementModal');
-                const instance = bootstrap.Modal.getInstance(modalElement);
-                if (instance) instance.hide();
-            });
-        }
-
-        // --- Sıralama Seçenekleri ---
-        const sortItems = document.querySelectorAll('[data-sort]');
-        sortItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                sortItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                console.log('Sıralama:', item.getAttribute('data-sort'));
-            });
+    deleteMovement: function (id) {
+        Swal.fire({
+            title: 'Hareketi silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#7c3aed',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/StockMovement/Delete/' + id, function (res) {
+                    window.location.reload();
+                });
+            }
         });
     }
 };

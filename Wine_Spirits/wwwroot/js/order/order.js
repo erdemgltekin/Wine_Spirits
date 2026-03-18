@@ -2,29 +2,27 @@
  * Order Manager - Sipariş Yönetimi JS
  */
 const OrderManager = {
-    itemIndex: 0,
+    itemIndex: 1, // İlk satır zaten var (index 0)
 
-    // Ürün Satırı Şablonu
+    // Ürün Satırı Şablonu - _OrderCreatePartial.cshtml uyumlu
     itemTemplate: (index) => `
-        <div class="ws-order-item-row d-flex gap-2 mb-2 align-items-end animate-in" data-index="${index}">
-            <div class="flex-grow-1">
-                <select class="form-select ws-order-product-select small">
-                    <option value="" selected disabled>Ürün seçin</option>
-                    <option value="1" data-price="450">Chardonnay 2022</option>
-                    <option value="2" data-price="850">Red Wine Reserve</option>
+        <div class="ws-order-item-row" data-item-index="${index}">
+            <div class="ws-filter-item">
+                <i data-lucide="package"></i>
+                <select name="OrderItems[${index}].ProductId" class="ws-filter-el select2-enable product-select" data-index="${index}">
+                    <option value="">Ürün seçiniz...</option>
                 </select>
             </div>
-            <div style="width: 100px;">
-                <input type="number" class="form-control ws-order-qty-input small" value="1" min="1">
+            <div class="ws-filter-item">
+                <i data-lucide="hash"></i>
+                <input type="number" name="OrderItems[${index}].Quantity" class="ws-filter-el quantity-input ws-input-premium" data-index="${index}" min="1" value="1" placeholder="0">
             </div>
-            <div style="width: 140px;">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-white">₺</span>
-                    <input type="number" class="form-control ws-order-price-input" value="0">
-                </div>
+            <div class="ws-filter-item">
+                <i data-lucide="banknote"></i>
+                <input type="number" name="OrderItems[${index}].UnitPrice" class="ws-filter-el price-input ws-input-premium" data-index="${index}" step="0.01" min="0" placeholder="0.00">
             </div>
-            <button type="button" class="btn btn-outline-danger btn-sm ws-order-item-delete" style="padding: 0.4rem 0.6rem;">
-                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+            <button type="button" class="ws-btn-icon ws-btn-icon-danger remove-item-btn" data-index="${index}">
+                <i data-lucide="trash-2"></i>
             </button>
         </div>
     `,
@@ -34,7 +32,16 @@ const OrderManager = {
         this.initializeDatepicker();
         this.attachEvents();
         this.refreshStatusStyles();
-        this.addItemRow(); // İlk satırı otomatik ekle
+        this.initializeOrderCreate(); // Sipariş oluşturma mantığını başlat
+    },
+
+    initializeOrderCreate: function() {
+        // Sadece sipariş modalında çalış
+        if (document.getElementById('orderItemsContainer')) {
+            this.loadProductsForSelect(0);
+            this.calculateTotal();
+            this.attachRowEventListeners(0);
+        }
     },
 
     initializeIcons: () => { if (typeof lucide !== 'undefined') lucide.createIcons(); },
@@ -63,17 +70,111 @@ const OrderManager = {
 
         const html = this.itemTemplate(this.itemIndex++);
         container.insertAdjacentHTML('beforeend', html);
+        
+        // Select2'yi yeniden başlat
+        this.initializeSelect2ForRow(this.itemIndex - 1);
+        
+        // Ürün listesini yükle
+        this.loadProductsForSelect(this.itemIndex - 1);
+        
+        // Event listener'ları ekle
+        this.attachRowEventListeners(this.itemIndex - 1);
+        
+        // Lucide icon'larını yenile
         this.initializeIcons();
     },
 
-    recalculateTotal: function () {
+    // Satır event listener'ları
+    attachRowEventListeners: function(index) {
+        // Miktar değişimi
+        const quantityInput = document.querySelector(`.quantity-input[data-index="${index}"]`);
+        if (quantityInput) {
+            quantityInput.addEventListener('input', () => this.calculateTotal());
+        }
+        
+        // Fiyat değişimi
+        const priceInput = document.querySelector(`.price-input[data-index="${index}"]`);
+        if (priceInput) {
+            priceInput.addEventListener('input', () => this.calculateTotal());
+        }
+        
+        // Sil butonu
+        const removeBtn = document.querySelector(`.remove-item-btn[data-index="${index}"]`);
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => this.removeOrderItemRow(index));
+        }
+    },
+
+    // Satır sil
+    removeOrderItemRow: function(index) {
+        const row = document.querySelector(`.ws-order-item-row[data-item-index="${index}"]`);
+        if (row) {
+            row.remove();
+            this.calculateTotal();
+            this.initializeIcons();
+        }
+    },
+
+    // Select2'yi satır için başlat
+    initializeSelect2ForRow: function(index) {
+        if (!window.jQuery || !window.jQuery.fn.select2) return;
+        
+        const $select = window.jQuery(`.product-select[data-index="${index}"]`);
+        if ($select.length) {
+            const $modal = $select.closest('.modal');
+            $select.select2({
+                theme: 'default',
+                width: '100%',
+                placeholder: 'Ürün seçiniz...',
+                dropdownParent: $modal.length ? $modal : window.jQuery(document.body)
+            });
+        }
+    },
+
+    // Ürün listesini yükle
+    loadProductsForSelect: function(index) {
+        fetch('/api/products/list')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.querySelector(`.product-select[data-index="${index}"]`);
+                if (select && data.products) {
+                    select.innerHTML = '<option value="">Ürün seçiniz...</option>';
+                    data.products.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.id;
+                        option.textContent = product.name;
+                        option.dataset.price = product.price;
+                        select.appendChild(option);
+                    });
+                    
+                    // Select2'yi yenile
+                    if (window.jQuery && window.jQuery.fn.select2) {
+                        window.jQuery(select).trigger('change');
+                    }
+                }
+            })
+            .catch(error => console.error('Products load error:', error));
+    },
+
+    // Toplam tutarı hesapla
+    calculateTotal: function() {
+        const rows = document.querySelectorAll('.ws-order-item-row');
         let total = 0;
-        document.querySelectorAll('.ws-order-item-row').forEach(row => {
-            const qty = parseFloat(row.querySelector('.ws-order-qty-input').value) || 0;
-            const price = parseFloat(row.querySelector('.ws-order-price-input').value) || 0;
-            total += qty * price;
+        
+        rows.forEach(row => {
+            const quantity = parseFloat(row.querySelector('.quantity-input')?.value) || 0;
+            const price = parseFloat(row.querySelector('.price-input')?.value) || 0;
+            total += quantity * price;
         });
-        document.getElementById('orderTotalAmount').innerText = '₺' + total.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+        
+        const totalElement = document.getElementById('totalAmount');
+        if (totalElement) {
+            totalElement.textContent = `₺${total.toFixed(2)}`;
+        }
+    },
+
+    recalculateTotal: function () {
+        this.calculateTotal(); // Yeni hesaplama metodunu çağır
     },
 
     applyStatusColor: function (select) {
@@ -124,11 +225,6 @@ const OrderManager = {
             }
         });
 
-        // Modal Tetikleyici
-        document.getElementById('btnNewOrder')?.addEventListener('click', () => {
-            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('newOrderModal'));
-            modal.show();
-        });
     }
 };
 

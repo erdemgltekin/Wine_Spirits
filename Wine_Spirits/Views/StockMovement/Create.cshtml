@@ -1,0 +1,15 @@
+@model Wine_Spirits.Models.StockMovement
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Yeni Stok Hareketi";
+}
+<div class="ws-standalone-form-wrap">
+    <div class="ws-standalone-form-card">
+        <partial name="_StockMovementFormPartial" model="Model" />
+        <div class="text-center pb-4">
+            <a asp-action="Index" class="text-muted small text-decoration-none">
+                <i data-lucide="chevron-left"></i> Listeye Geri Dön
+            </a>
+        </div>
+    </div>
+</div>
