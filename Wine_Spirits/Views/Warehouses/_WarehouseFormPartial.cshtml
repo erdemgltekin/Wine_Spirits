@@ -6,16 +6,8 @@
     string buttonText = isEdit ? "Güncelle" : "Depoyu Kaydet";
 }
 
-@* ─── MODAL HEADER ─── *@
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">@title</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
-        <i data-lucide="x"></i>
-    </button>
-</div>
-
-@* ─── FORM ─── *@
-<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="warehouseForm">
+@* Formu en dışa alıyoruz ve modal-content sınıfını buraya veriyoruz *@
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="warehouseForm" class="modal-content">
     @Html.AntiForgeryToken()
     
     @if (isEdit)
@@ -24,6 +16,15 @@
         <input type="hidden" asp-for="CreatedDate" />
     }
 
+    @* ─── 1. BÖLÜM: SABİT HEADER ─── *@
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">@title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    @* ─── 2. BÖLÜM: KAYDIRILABİLİR BODY ─── *@
     <div class="ws-modal-body">
         @* Row 1 — Depo Adı *@
         <div class="ws-form-group ws-form-group--full">
@@ -49,14 +50,14 @@
         <div class="ws-info-alert">
             <i data-lucide="info"></i>
             <span>
-                @(isEdit 
-                    ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir." 
+                @(isEdit
+                    ? "Yapılan değişiklikler tüm stok kayıtlarını etkileyecektir."
                     : "Yeni oluşturulan depolar varsayılan olarak aktif durumdadır.")
             </span>
         </div>
     </div>
 
-    @* ─── FOOTER ACTIONS ─── *@
+    @* ─── 3. BÖLÜM: SABİT FOOTER ACTIONS ─── *@
     <div class="ws-form-actions">
         <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
         <button type="submit" class="ws-btn-main">

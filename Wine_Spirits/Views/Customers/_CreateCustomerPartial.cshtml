@@ -1,85 +1,96 @@
 ﻿@model Wine_Spirits.Models.Customer
 
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">@(Model.Id == Guid.Empty ? "Yeni Müşteri Oluştur" : "Müşteri Bilgilerini Düzenle")</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-
-<form id="createCustomerForm" class="ws-modal-form-container">
+@* Formu modal-content yaparak sticky header/footer mekanizmasını tetikliyoruz *@
+<form id="createCustomerForm" class="modal-content">
     @Html.AntiForgeryToken()
     @if (Model.Id != Guid.Empty)
     {
         <input type="hidden" asp-for="Id" />
     }
 
+    @* ─── 1. SABİT HEADER ─── *@
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">@(Model.Id == Guid.Empty ? "Yeni Müşteri Oluştur" : "Müşteri Bilgilerini Düzenle")</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    @* ─── 2. SCROLLABLE BODY (Grid Motoru Burada Çalışır) ─── *@
     <div class="ws-modal-body">
+        
+        @* Bu ilk eleman olduğu için SCSS kuralın gereği otomatik 'grid-column: span 2' olacak *@
         <div class="ws-form-group">
             <label class="ws-form-label">Müşteri Adı / Firma *</label>
-            <div class="ws-input-group">
-                <span class="ws-input-icon"><i data-lucide="building"></i></span>
-                <input asp-for="Name" class="form-control ws-input-premium" placeholder="Müşteri adını girin" required>
+            <div class="ws-filter-item">
+                @* _forms.scss içindeki ikonlu yapı için ws-filter-item kullandık *@
+                <i data-lucide="building"></i>
+                <input asp-for="Name" class="ws-input-premium ws-filter-el" placeholder="Müşteri adını girin" required>
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">E-posta</label>
-            <div class="ws-input-group">
-                <span class="ws-input-icon"><i data-lucide="mail"></i></span>
-                <input asp-for="Email" type="email" class="form-control ws-input-premium" placeholder="E-posta adresi">
-            </div>
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+            @* Aşağıdakiler 50/50 yan yana dizilecek *@
+            <div class="ws-form-group">
+                <label class="ws-form-label">E-posta</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="mail"></i>
+                    <input asp-for="Email" type="email" class="ws-input-premium ws-filter-el" placeholder="E-posta adresi">
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Telefon</label>
-            <div class="ws-input-group">
-                <span class="ws-input-icon"><i data-lucide="phone"></i></span>
-                <input asp-for="Phone" class="form-control ws-input-premium" placeholder="Telefon numarası">
-            </div>
-            <span asp-validation-for="Phone" class="text-danger"></span>
-        </div>
+                <div class="ws-form-group">
+                    <label class="ws-form-label">Telefon</label>
+                    <div class="ws-filter-item">
+                        <i data-lucide="phone"></i>
+                        <input asp-for="Phone" class="ws-input-premium ws-filter-el" placeholder="Telefon numarası">
+                        </div>
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Vergi Dairesi</label>
-            <div class="ws-input-group">
-                <span class="ws-input-icon"><i data-lucide="landmark"></i></span>
-                <input asp-for="TaxOffice" class="form-control ws-input-premium" placeholder="Vergi dairesi">
-            </div>
-            <span asp-validation-for="TaxOffice" class="text-danger"></span>
-        </div>
+                    <div class="ws-form-group">
+                        <label class="ws-form-label">Vergi Dairesi</label>
+                        <div class="ws-filter-item">
+                            <i data-lucide="landmark"></i>
+                            <input asp-for="TaxOffice" class="ws-input-premium ws-filter-el" placeholder="Vergi dairesi">
+                            </div>
+                            <span asp-validation-for="TaxOffice" class="text-danger"></span>
+                        </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Vergi Numarası</label>
-            <div class="ws-input-group">
-                <span class="ws-input-icon"><i data-lucide="hash"></i></span>
-                <input asp-for="TaxNumber" class="form-control ws-input-premium" placeholder="Vergi numarası">
-            </div>
-            <span asp-validation-for="TaxNumber" class="text-danger"></span>
-        </div>
+                        <div class="ws-form-group">
+                            <label class="ws-form-label">Vergi Numarası</label>
+                            <div class="ws-filter-item">
+                                <i data-lucide="hash"></i>
+                                <input asp-for="TaxNumber" class="ws-input-premium ws-filter-el" placeholder="Vergi numarası">
+                                </div>
+                                <span asp-validation-for="TaxNumber" class="text-danger"></span>
+                            </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Adres</label>
-            <div class="ws-input-group align-items-start">
-                <span class="ws-input-icon mt-2"><i data-lucide="map-pin"></i></span>
-                <textarea asp-for="Adress" class="form-control ws-input-premium" rows="2" placeholder="Adres bilgisini girin"></textarea>
-            </div>
-            <span asp-validation-for="Adress" class="text-danger"></span>
-        </div>
+                            @* Adres alanı için tam genişlik zorluyoruz *@
+                            <div class="ws-form-group ws-form-group--full">
+                                <label class="ws-form-label">Adres</label>
+                                <div class="ws-filter-item">
+                                    <i data-lucide="map-pin"></i>
+                                    <textarea asp-for="Adress" class="ws-input-premium ws-textarea ws-filter-el" rows="2" placeholder="Adres bilgisini girin"></textarea>
+                                </div>
+                                <span asp-validation-for="Adress" class="text-danger"></span>
+                            </div>
 
-        <div class="ws-info-alert mt-4 d-flex align-items-center gap-2 p-3 rounded-3 bg-primary-subtle text-primary border border-primary-subtle">
-            <i data-lucide="info" class="ws-icon-18"></i>
-            <span class="fs-xs fw-medium">
-                Yeni müşteri kayıtları varsayılan olarak <strong>aktif</strong> durumdadır. Müşteri bilgilerini dilediğiniz zaman güncelleyebilirsiniz.
-            </span>
-        </div>
-    </div>
+                            @* Bilgi Paneli *@
+                            <div class="ws-info-alert">
+                                <i data-lucide="info"></i>
+                                <span>
+                                    Yeni müşteri kayıtları varsayılan olarak <strong>aktif</strong> durumdadır. Müşteri bilgilerini dilediğiniz zaman güncelleyebilirsiniz.
+                                </span>
+                            </div>
+                        </div>
 
-    <div class="ws-form-actions">
-        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
-        <button type="submit" class="ws-btn-main">
-            <i data-lucide="save" class="me-1"></i>
-            @(Model.Id == Guid.Empty ? "Müşteri Ekle" : "Değişiklikleri Kaydet")
-        </button>
-    </div>
-</form>
+                        @* ─── 3. SABİT FOOTER ─── *@
+                        <div class="ws-form-actions">
+                            @* _modals.scss içindeki footer sınıfın *@
+                            <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
+                            <button type="submit" class="ws-btn-main">
+                                <i data-lucide="save"></i>
+                                @(Model.Id == Guid.Empty ? "Müşteri Ekle" : "Değişiklikleri Kaydet")
+                            </button>
+                        </div>
+                    </form>

@@ -97,12 +97,12 @@
             .ws-order-details {
                 display: flex;
                 flex-direction: column;
-                
+
                 strong {
                     font-size: 14px;
                     color: $gray-900;
                 }
-                
+
                 small {
                     font-size: 12px;
                     color: $gray-500;
@@ -112,42 +112,54 @@
     }
 }
 
-/* 2. ORDER CREATE MODAL (Final Polish - image_e2335e.png) */
-.ws-modal-form-container {
+/* 2. ORDER CREATE MODAL (Unified & Fixed for Smart Scroll) */
+// Not: Formun kendisi modal-content sınıfına sahip olduğu için bu kapsayıcı ona hükmeder.
+.modal-content {
     .ws-modal-body {
-        display: block !important; 
+        display: block !important; // Gridlerin çakışmaması için block şart
+        flex: 1 1 auto !important; // Orta alanı doldurur
+        overflow-y: auto !important; // Sadece burası kayar
         padding: 1.5rem 2rem !important;
-    }
+        width: 100%;
+        box-sizing: border-box;
+        /* İnce Scrollbar */
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
 
-    // Header Logic: Customer (Full), Depot & Date (50/50)
+        &::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    }
+    // Üst Bölüm: Müşteri, Depo, Tarih Grid
     .ws-master-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr; 
+        grid-template-columns: 1fr 1fr;
         gap: 1.25rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
 
         .ws-form-group {
             margin: 0 !important;
         }
 
-        .ws-form-group:first-child {
-            grid-column: span 2; 
-        }
+            .ws-form-group:first-child {
+                grid-column: span 2;
+            }
     }
-
-    // Order Items Section
+    // Ürün Kalemleri Paneli
     .ws-order-section {
         background: #fcfcfd;
         border: 1px solid #edf2f7;
         border-radius: 20px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
+        padding: 1.25rem !important;
+        margin-bottom: 1.5rem !important;
 
         .ws-section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem !important;
 
             .ws-section-title {
                 font-size: 1.1rem !important;
@@ -160,40 +172,49 @@
                 padding: 10px 18px !important;
                 height: 40px !important;
                 background: $primary !important;
-                border: none !important;
                 border-radius: 12px !important;
                 color: white !important;
                 font-weight: 600 !important;
                 @include flex-center;
                 gap: 8px;
+                border: none !important;
                 transition: all 0.25s ease !important;
 
                 &:hover {
                     background: darken($primary, 5%) !important;
                     transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba($primary, 0.25);
                 }
             }
         }
     }
-
-    // Row Fixes (Product - Qty - Price - Trash)
+    // Ürün Satır Hizalamaları (Bozulmayı önleyen kritik kısım)
     .ws-order-item-header, .ws-order-item-row {
         display: flex;
         gap: 0.75rem;
-        align-items: flex-end; 
-        margin-bottom: 1rem;
+        align-items: center; // Elemanları dikeyde ortalar
+        margin-bottom: 0.75rem;
         width: 100%;
 
-        .col-product { flex: 4; }
-        .col-qty { width: 95px !important; } 
-        .col-price { width: 140px; }
-        .col-action { 
-            width: 45px; 
-            padding-bottom: 6px; 
+        .col-product {
+            flex: 4;
+            min-width: 0;
+        }
+
+        .col-qty {
+            width: 90px !important;
+            flex-shrink: 0;
+        }
+
+        .col-price {
+            width: 130px !important;
+            flex-shrink: 0;
+        }
+
+        .col-action {
+            width: 45px;
+            flex-shrink: 0;
             display: flex;
             justify-content: center;
-            flex-shrink: 0 !important; 
         }
     }
 
@@ -201,7 +222,7 @@
         border-bottom: 1px solid #edf2f7;
         padding-bottom: 10px;
         margin-bottom: 15px;
-        
+
         .ws-order-header-cell {
             font-size: 0.75rem;
             font-weight: 700;
@@ -209,21 +230,19 @@
             text-transform: uppercase;
         }
     }
-
-    /* 5. Add/Remove Buttons & Inputs (Premium Hover/Focus Overrides) */
+    // Input Tasarımları
     .ws-input-premium, .ws-textarea {
         background: #ffffff !important;
-        border: 1.5px solid #e2e8f0 !important; /* Requirement: 1.5px solid $gray-200 */
+        border: 1.5px solid #e2e8f0 !important;
         height: 44px !important;
-        border-radius: 12px !important;
+        border-radius: 10px !important;
         font-size: 0.875rem !important;
         width: 100% !important;
-        transition: all 0.3s ease !important; /* Requirement: 0.3s ease */
+        padding: 0 12px !important;
 
-        &:hover, &:focus {
-            border-color: $primary !important; /* Requirement: 1.5px solid $primary */
-            background: #ffffff !important;
-            box-shadow: 0 4px 12px rgba($primary, 0.08) !important; /* Requirement: 0 4px 12px rgba($primary, 0.08) */
+        &:focus {
+            border-color: $primary !important;
+            box-shadow: 0 4px 12px rgba($primary, 0.08) !important;
             outline: none !important;
         }
     }
@@ -234,92 +253,88 @@
     }
 
     .remove-item-btn {
-        width: 38px !important; 
+        width: 38px !important;
         height: 38px !important;
         background: #fff !important;
         border: 1.5px solid #fee2e2 !important;
         color: #ef4444 !important;
         border-radius: 10px;
         @include flex-center;
-        transition: all 0.25s ease;
-        &:hover { background: #ffe4e6; transform: scale(1.05); }
-    }
+        cursor: pointer;
 
-    /* 6. Summary Card Polish (image_e1d986.png) */
+        &:hover {
+            background: #ffe4e6;
+            transform: scale(1.05);
+        }
+    }
+    // Özet Bölümü (Açıklama & Toplam)
     .ws-summary-grid {
         display: grid;
         grid-template-columns: 2fr 1fr;
         gap: 2rem;
-        align-items: center;
+        align-items: flex-start;
+        margin-top: 1rem;
     }
 
-    /* Refined Total Card (Slim Version) */
     .ws-total-card {
-        background: #f1f5f9 !important; 
+        background: #f8fafc !important;
         border: 2px solid $primary !important;
-        color: $primary !important;
         padding: 0.75rem 1.5rem !important;
         border-radius: 14px !important;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-width: 180px;
-        height: 70px !important;
-        box-shadow: none !important;
+        height: 64px !important;
 
-        .ws-total-label { 
-            font-size: 0.75rem !important; 
-            font-weight: 700; 
+        .ws-total-label {
+            font-size: 0.75rem !important;
+            font-weight: 700;
+            color: $primary !important;
             text-transform: uppercase;
             margin-bottom: 2px;
-            color: $primary !important;
-            opacity: 0.8;
         }
-        .ws-total-amount { 
-            font-size: 1.45rem !important; 
-            font-weight: 850; 
+
+        .ws-total-amount {
+            font-size: 1.25rem !important;
+            font-weight: 850;
+            color: $primary !important;
         }
     }
-
-    /* 7. Modal Footer Alignment (Absolute Centering & Balance) */
+    // Sabit Footer Hizalaması
     .ws-modal-footer {
+        flex-shrink: 0 !important; // Asla kaybolmaz
+        background: #ffffff !important;
+        border-top: 1px solid #f1f5f9 !important;
+        padding: 1.25rem 2rem 1.5rem !important;
         display: flex !important;
-        justify-content: center !important; /* Horizontal Center */
-        align-items: center !important;     /* Vertical Center */
-        padding: 2rem 0 !important;         /* Uniform Padding for top and bottom */
-        margin-top: 1rem !important;
-        border-top: 1px solid #f1f5f9 !important; /* Subtle Separator */
-        gap: 1.5rem !important;             /* Breathable space between buttons */
-        margin-bottom: 0 !important;        /* Prevent accidental inherited margins */
+        justify-content: center !important;
+        gap: 1.5rem !important;
+        z-index: 20;
 
         .ws-btn-main, .ws-btn-secondary {
-            margin: 0 !important;           /* Remove any default margins as requested */
             height: 48px !important;
-            min-width: 160px !important;    /* Consistent Button Width */
+            min-width: 160px !important;
             border-radius: 12px !important;
             font-weight: 600 !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             @include flex-center;
+            transition: all 0.3s ease !important;
 
             &:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+                transform: translateY(-2px);
             }
         }
 
         .ws-btn-main {
             background: $primary !important;
             color: white !important;
-            box-shadow: 0 4px 10px rgba($primary, 0.2) !important;
-            &:hover { background: darken($primary, 5%) !important; }
+            border: none !important;
         }
 
         .ws-btn-secondary {
             background: #f8fafc !important;
             color: $gray-600 !important;
             border: 1.5px solid #e2e8f0 !important;
-            &:hover { background: #f1f5f9 !important; }
         }
     }
 }

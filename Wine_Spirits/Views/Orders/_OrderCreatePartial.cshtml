@@ -6,13 +6,17 @@
     var warehouses = ViewBag.Warehouses as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
 }
 
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">Yeni Sipariş Oluştur</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-
-<form asp-action="Create" id="createOrderModalForm" class="ws-modal-form-container">
+@* Formu modal-content yaparak tüm motoru çalıştırıyoruz *@
+<form asp-action="Create" id="createOrderModalForm" class="modal-content">
     @Html.AntiForgeryToken()
+
+    @* ─── 1. BÖLÜM: SABİT HEADER ─── *@
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">Yeni Sipariş Oluştur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    @* ─── 2. BÖLÜM: KAYDIRILABİLİR BODY ─── *@
     <div class="ws-modal-body">
         
         <div class="ws-master-grid">
@@ -55,21 +59,22 @@
                 </div>
 
                 <div class="ws-order-items-container" id="orderItemsContainer">
+                    @* İlk kalem varsayılan olarak gelir *@
                     <div class="ws-order-item-row" data-item-index="0">
                         <div class="col-product">
                             <select name="OrderItems[0].ProductId" class="ws-input-premium product-select" data-index="0">
                                 <option value="">Ürün seçiniz...</option>
                             </select>
                         </div>
-    
+
                         <div class="col-qty">
                             <input type="number" name="OrderItems[0].Quantity" class="ws-input-premium quantity-input text-center" value="1">
                         </div>
-    
+
                         <div class="col-price">
                             <input type="number" name="OrderItems[0].UnitPrice" class="ws-input-premium price-input text-end" step="0.01">
                         </div>
-    
+
                         <div class="col-action">
                             <button type="button" class="remove-item-btn"><i data-lucide="trash-2"></i></button>
                         </div>
@@ -83,7 +88,7 @@
                         <label class="ws-form-label">Sipariş Notu / Açıklama</label>
                         <textarea asp-for="Description" class="ws-textarea" rows="2" placeholder="Siparişle ilgili açıklama giriniz..."></textarea>
                     </div>
-            
+        
                     <div class="ws-total-card">
                         <div class="ws-total-label">Ödenecek Toplam</div>
                         <div class="ws-total-amount" id="totalAmount">₺0.00</div>
@@ -92,6 +97,7 @@
             </div>
         </div>
 
+        @* ─── 3. BÖLÜM: SABİT FOOTER ─── *@
         <div class="ws-modal-footer">
             <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
             <button type="submit" class="ws-btn-main">Siparişi Onayla ve Kaydet</button>

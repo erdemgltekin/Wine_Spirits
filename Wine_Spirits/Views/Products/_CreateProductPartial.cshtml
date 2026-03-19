@@ -1,12 +1,14 @@
 @model Wine_Spirits.Models.Product
 
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">Yeni Ürün Ekle</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-
-<form asp-action="Create" id="createProductModalForm" class="ws-modal-form-container">
+@* Formu en dışa alıyoruz ki içindeki Header-Body-Footer yapısı SCSS ile tam uyumlu olsun *@
+<form asp-action="Create" id="createProductModalForm" class="modal-content">
     @Html.AntiForgeryToken()
+
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">Yeni Ürün Ekle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
     <div class="ws-modal-body">
         <div class="ws-form-group">
             <label class="ws-form-label">Ürün Tanımı / Adı *</label>
@@ -42,40 +44,40 @@
             <div class="ws-filter-item">
                 <i data-lucide="database"></i>
                 <input asp-for="StockQuantity" class="ws-filter-el ws-input-premium" type="number" placeholder="0">
+                </div>
+                <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div>
-            <span asp-validation-for="StockQuantity" class="text-danger"></span>
-        </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Satış Fiyatı (₺)</label>
-            <div class="ws-filter-item">
-                <i data-lucide="banknote"></i>
-                <input asp-for="Price" class="ws-filter-el ws-input-premium" type="number" step="0.01" placeholder="0.00">
+            <div class="ws-form-group">
+                <label class="ws-form-label">Satış Fiyatı (₺)</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="banknote"></i>
+                    <input asp-for="Price" class="ws-filter-el ws-input-premium" type="number" step="0.01" placeholder="0.00">
+                    </div>
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="ws-form-group">
+                    <label class="ws-form-label">Tedarikçi</label>
+                    <div class="ws-filter-item">
+                        <i data-lucide="truck"></i>
+                        <select asp-for="SupplierId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.SupplierId"></select>
+                    </div>
+                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                </div>
+
+                <div class="ws-form-group">
+                    <label class="ws-form-label">Menşei Ülke</label>
+                    <div class="ws-filter-item">
+                        <i data-lucide="globe"></i>
+                        <select asp-for="CountryId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.CountryId"></select>
+                    </div>
+                    <span asp-validation-for="CountryId" class="text-danger"></span>
+                </div>
             </div>
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
 
-        <div class="ws-form-group">
-            <label class="ws-form-label">Tedarikçi</label>
-            <div class="ws-filter-item">
-                <i data-lucide="truck"></i>
-                <select asp-for="SupplierId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.SupplierId"></select>
+            <div class="ws-form-actions">
+                <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="submit" class="ws-btn-main">Ürünü Kaydet</button>
             </div>
-            <span asp-validation-for="SupplierId" class="text-danger"></span>
-        </div>
-
-        <div class="ws-form-group">
-            <label class="ws-form-label">Menşei Ülke</label>
-            <div class="ws-filter-item">
-                <i data-lucide="globe"></i>
-                <select asp-for="CountryId" class="ws-filter-el ws-input-premium select2-enable" asp-items="ViewBag.CountryId"></select>
-            </div>
-            <span asp-validation-for="CountryId" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="ws-form-actions">
-        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
-        <button type="submit" class="ws-btn-main">Ürünü Kaydet</button>
-    </div>
-</form>
+        </form>

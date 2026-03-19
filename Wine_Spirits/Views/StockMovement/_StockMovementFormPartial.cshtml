@@ -6,16 +6,8 @@
     string buttonText = isEdit ? "Güncelle" : "Hareketi Kaydet";
 }
 
-@* ─── MODAL HEADER ─── *@
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">@title</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
-        <i data-lucide="x"></i>
-    </button>
-</div>
-
-@* ─── FORM ─── *@
-<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="stockMovementForm">
+@* Formu modal-content yaparak Header-Body-Footer üçlüsünü sabitliyoruz *@
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="stockMovementForm" class="modal-content">
     @Html.AntiForgeryToken()
     
     @if (isEdit)
@@ -24,6 +16,15 @@
         <input type="hidden" asp-for="CreatedDate" />
     }
 
+    @* ─── 1. BÖLÜM: SABİT HEADER ─── *@
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">@title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    @* ─── 2. BÖLÜM: KAYDIRILABİLİR BODY ─── *@
     <div class="ws-modal-body">
         @* Row 1 — Ürün Seçimi *@
         <div class="ws-form-group ws-form-group--full">
@@ -37,7 +38,7 @@
             <span asp-validation-for="ProductId" class="text-danger"></span>
         </div>
 
-        @* Row 2 — Depo Seçimi (Requested as standalone, though not in model directly) *@
+        @* Row 2 — Depo Seçimi *@
         <div class="ws-form-group ws-form-group--full">
             <label class="ws-form-label">Depo Seçimi</label>
             <div class="ws-filter-item">
@@ -82,7 +83,7 @@
         </div>
     </div>
 
-    @* ─── FOOTER ACTIONS ─── *@
+    @* ─── 3. BÖLÜM: SABİT FOOTER ─── *@
     <div class="ws-form-actions">
         <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
         <button type="submit" class="ws-btn-main">
