@@ -19,29 +19,44 @@
         </button>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-indigo-50 text-primary"><i data-lucide="building-2"></i></div>
-                <div><small class="text-muted d-block">Toplam Depo</small><span class="fw-bold h5">@Model.Count()</span></div>
+    <div class="ws-summary-grid-4 mb-4">
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="building-2"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Depo</span>
+                <span class="ws-stat-value">@Model.Count()</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-emerald-50 text-success"><i data-lucide="navigation"></i></div>
-                <div><small class="text-muted d-block">Aktif Lokasyon</small><span class="fw-bold h5">@Model.Select(x => x.Location).Distinct().Count()</span></div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
+                <i data-lucide="navigation"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Aktif Lokasyon</span>
+                <span class="ws-stat-value">@Model.Select(x => x.Location).Distinct().Count()</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-amber-50 text-warning"><i data-lucide="package-check"></i></div>
-                <div><small class="text-muted d-block">Toplam Kapasite</small><span class="fw-bold h5">94%</span></div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="package-check"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Kapasite</span>
+                <span class="ws-stat-value">94%</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-rose-50 text-danger"><i data-lucide="alert-circle"></i></div>
-                <div><small class="text-muted d-block">Kritik Doluluk</small><span class="fw-bold h5">2</span></div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-rose">
+                <i data-lucide="alert-circle"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Kritik Doluluk</span>
+                <span class="ws-stat-value">2</span>
             </div>
         </div>
     </div>

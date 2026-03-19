@@ -7,88 +7,79 @@
     Layout = "_Layout";
 }
 
-@section Styles {
-    @* Kütüphane CSS'leri *@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="~/css/supplier/supplier.css" asp-append-version="true" />
-}
 
-<div class="ws-page-container p-4">
+
+<div class="ws-suppliers-container">
     @* ÜST BAŞLIK VE AKSİYON *@
-    <div class="ws-page-header d-flex justify-content-between align-items-center mb-4">
+    <div class="ws-page-header mb-4">
         <div>
             <h2 class="ws-page-title fs-4 fw-bold text-dark mb-1">Tedarikçi Yönetimi</h2>
             <p class="ws-page-subtitle text-muted mb-0 opacity-75">Global tedarik ağınızı ve alım performansınızı izleyin.</p>
         </div>
         <button type="button" class="ws-btn-main shadow-sm d-flex align-items-center gap-2" id="btnCreateSupplier">
-            <i data-lucide="plus-circle" class="size-18"></i> Yeni Tedarikçi Ekle
+            <i data-lucide="plus-circle"></i> Yeni Tedarikçi Ekle
         </button>
     </div>
 
-    @* İSTATİSTİK KARTLARI (v2 Yapısı) *@
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-indigo-50 text-primary">
-                    <i data-lucide="truck"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Toplam Tedarikçi</small>
-                    <span class="fw-bold h5 mb-0">@Model.Stats.TotalSuppliers</span>
-                </div>
+    @* İSTATİSTİK KARTLARI *@
+    <div class="ws-summary-grid-4 mb-4">
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="truck"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Tedarikçi</span>
+                <span class="ws-stat-value">@Model.Stats.TotalSuppliers</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-emerald-50 text-success">
-                    <i data-lucide="check-circle"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Aktif Tedarikçi</small>
-                    <span class="fw-bold h5 mb-0">@Model.Stats.ActiveSuppliers</span>
-                </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
+                <i data-lucide="check-circle"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Aktif Tedarikçi</span>
+                <span class="ws-stat-value">@Model.Stats.ActiveSuppliers</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-amber-50 text-warning">
-                    <i data-lucide="package"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Toplam Ürün</small>
-                    <span class="fw-bold h5 mb-0">@Model.Stats.TotalProducts</span>
-                </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="package"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Ürün</span>
+                <span class="ws-stat-value">@Model.Stats.TotalProducts</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="ws-stat-card-v2 shadow-sm">
-                <div class="ws-stat-icon-box bg-rose-50 text-danger">
-                    <i data-lucide="shopping-cart"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Toplam Alım</small>
-                    <span class="fw-bold h5 mb-0 text-nowrap">@Model.Stats.TotalPurchase</span>
-                </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-rose">
+                <i data-lucide="shopping-cart"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Alım</span>
+                <span class="ws-stat-value">@Model.Stats.TotalPurchase</span>
             </div>
         </div>
     </div>
 
-    @* FİLTRELEME KONTEYNERI (Ürünler Sayfasıyla Aynı) *@
-    <div class="ws-filter-container shadow-sm mb-4">
-        <div class="ws-filter-item flex-grow-1">
+    @* FİLTRELEME KONTEYNERI *@
+    <div class="ws-filter-container d-flex align-items-stretch shadow-sm mb-4">
+        <div class="ws-filter-item flex-fill">
             <i data-lucide="search" class="text-muted"></i>
-            <input type="text" id="supplierSearch" class="ws-filter-el" placeholder="Tedarikçi adı veya e-posta ara...">
+            <input type="text" id="supplierSearch" class="ws-filter-el w-100" placeholder="Tedarikçi adı veya e-posta ara...">
         </div>
 
         <div class="ws-filter-item">
             <i data-lucide="calendar" class="text-muted"></i>
-            <input type="text" id="dateFilter" class="ws-filter-el" placeholder="Kayıt Tarihi" readonly>
+            <input type="text" id="dateFilter" class="ws-filter-el ws-datepicker" placeholder="Kayıt Tarihi" readonly>
         </div>
 
         <div class="dropdown">
-            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
+            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
                 <i data-lucide="activity"></i> <span id="selectedStatusText">Durum</span>
-                <i data-lucide="chevron-down" class="ms-2 opacity-50 size-14"></i>
+                <i data-lucide="chevron-down" class="opacity-50"></i>
             </button>
             <ul class="dropdown-menu shadow border-0">
                 <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="filterStatus('', 'Tüm Durumlar')">Tüm Durumlar</a></li>
@@ -99,8 +90,8 @@
         </div>
 
         <div class="dropdown">
-            <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="sliders-horizontal"></i> Sırala
+            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="sliders-horizontal"></i> <span>Sırala</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                 <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="sortSuppliers('name-asc')"><i data-lucide="sort-asc" class="me-2 size-18 text-muted"></i> İsim (A-Z)</a></li>

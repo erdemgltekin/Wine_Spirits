@@ -26,4 +26,9 @@
 @import 'pages/dashboard';
 @import 'pages/product';
 @import 'pages/order'; // High specificity isolated rules for order modal
-     
+@import 'pages/stock-movements';
+@import 'pages/stock-reports';
+@import 'pages/orders';
+@import 'pages/customers';
+@import 'pages/suppliers';
+              

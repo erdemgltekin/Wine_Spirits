@@ -6,12 +6,27 @@
  * @description Depo Yönetimi sayfası için global premium tasarıma uygun stiller.
  */
 
-/* 1. GRID YAPISI */
+/* 1. GRID YAPILARI */
 .ws-warehouse-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
     gap: 20px;
     padding-bottom: 2rem;
+}
+
+// Üst İstatistik Kartları İçin 4'lü Grid
+.ws-summary-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+
+    @media (max-width: 1200px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* 2. ANA KART LAYOUT (Visual styles come from components/_cards.scss) */

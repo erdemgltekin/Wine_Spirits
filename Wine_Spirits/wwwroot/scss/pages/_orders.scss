@@ -1,0 +1,184 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-orders-container {
+    padding: 2rem;
+
+    /* 1. Header & Stats Grid Layout */
+    .ws-page-header {
+        @include flex-between;
+        margin-bottom: 2rem;
+
+        .ws-page-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: $gray-900;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .ws-page-subtitle {
+            font-size: 0.875rem;
+            color: $gray-500;
+        }
+    }
+
+    /* 2. Filter Bar Alignment Fixes */
+    .ws-filter-container {
+        display: flex !important;
+        align-items: center !important;
+        background: #ffffff !important;
+        border: 1px solid $gray-200 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        height: 52px !important;
+        margin-bottom: 2rem !important;
+        padding: 0 !important;
+
+        .ws-filter-item {
+            flex: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 0 20px !important;
+            border-right: 1px solid $gray-100 !important;
+            height: 100% !important;
+
+            i, svg {
+                color: $gray-400 !important;
+                flex-shrink: 0 !important;
+            }
+
+            .ws-filter-el {
+                border: none !important;
+                background: transparent !important;
+                height: 100% !important;
+                padding: 0 !important;
+                font-size: 14px !important;
+                color: $gray-700 !important;
+                outline: none !important;
+                width: 100% !important;
+
+                &::placeholder {
+                    color: $gray-400 !important;
+                }
+            }
+        }
+
+        /* 3. Dropdowns inside Filter Bar */
+        .ws-dropdown {
+            flex: 0.8 !important;
+            height: 100% !important;
+            border-right: 1px solid $gray-100 !important;
+            position: relative;
+
+            &:last-child {
+                border-right: none !important;
+            }
+
+            .ws-dropdown-trigger {
+                all: unset !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                height: 100% !important;
+                padding: 0 20px !important;
+                cursor: pointer !important;
+                font-size: 14px !important;
+                color: $gray-700 !important;
+                width: calc(100% - 40px) !important;
+
+                &:hover {
+                    background: $gray-50 !important;
+                }
+
+                i, svg {
+                    color: $gray-400 !important;
+                    margin-right: 8px !important;
+                    
+                    &:last-child {
+                        margin-right: 0 !important;
+                        margin-left: auto !important;
+                    }
+                }
+            }
+
+            .ws-dropdown-menu {
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 0;
+                width: 200px;
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: $shadow-lg;
+                border: 1px solid $gray-100;
+                z-index: 1000;
+                padding: 8px;
+                display: none; // Hidden by default, toggled by JS
+
+                &.show {
+                    display: block;
+                }
+
+                .ws-dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    color: $gray-600;
+                    font-size: 14px;
+                    text-decoration: none;
+
+                    &:hover {
+                        background: $gray-50;
+                        color: $primary;
+                    }
+                }
+            }
+        }
+    }
+
+    /* 4. Order List Page specific status pills */
+    .status-active {
+        background: rgba($success, 0.1) !important;
+        color: $success !important;
+    }
+
+    .status-pending {
+        background: rgba($warning, 0.1) !important;
+        color: $warning !important;
+    }
+
+    .ws-table-premium {
+        .ws-order-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .ws-order-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                background: rgba($primary, 0.05);
+                color: $primary;
+                @include flex-center;
+            }
+
+            .ws-order-details {
+                display: flex;
+                flex-direction: column;
+                
+                strong {
+                    font-size: 14px;
+                    color: $gray-900;
+                }
+                
+                small {
+                    font-size: 12px;
+                    color: $gray-500;
+                }
+            }
+        }
+    }
+}

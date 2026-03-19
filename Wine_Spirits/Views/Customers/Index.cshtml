@@ -8,13 +8,10 @@
     var culture = new System.Globalization.CultureInfo("tr-TR");
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/customer/customer.css" asp-append-version="true" />
-}
 
-<div class="ws-page-container p-4">
+<div class="ws-customers-container">
     @* --- Üst Başlık --- *@
-    <div class="ws-page-header d-flex justify-content-between align-items-center mb-4">
+    <div class="ws-page-header mb-4">
         <div>
             <h2 class="ws-page-title fs-4 fw-bold text-dark mb-1">Müşteri Yönetimi</h2>
             <p class="ws-page-subtitle text-muted mb-0 opacity-75">Müşteri portföyünüzü ve ticari bilgileri yönetin.</p>
@@ -24,146 +21,125 @@
         </button>
     </div>
 
-    @* --- İstatistik Kartları (Sipariş Sayfasıyla Aynı Yapı) --- *@
-    <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "total", Label = "Toplam Müşteri", Value = Model.Stats.TotalCustomers.ToString(), Icon = "users", IconClass = "bg-gray-100" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "active", Label = "Aktif Müşteri", Value = Model.Stats.ActiveCustomers.ToString(), Icon = "user-check", IconClass = "bg-emerald-50" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "orders", Label = "Toplam Sipariş", Value = Model.Stats.TotalOrders.ToString(), Icon = "package", IconClass = "bg-primary-50" }' />
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "revenue", Label = "Toplam Ciro", Value = Model.Stats.TotalRevenue, Icon = "trending-up", IconClass = "bg-violet-50" }' />
-        </div>
+    @* --- İstatistik Kartları --- *@
+    <div class="ws-summary-grid-4 mb-4">
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "total", Label = "Toplam Müşteri", Value = Model.Stats.TotalCustomers.ToString(), Icon = "users", IconClass = "ws-icon-indigo" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "active", Label = "Aktif Müşteri", Value = Model.Stats.ActiveCustomers.ToString(), Icon = "user-check", IconClass = "ws-icon-emerald" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "orders", Label = "Toplam Sipariş", Value = Model.Stats.TotalOrders.ToString(), Icon = "package", IconClass = "ws-icon-indigo" }' />
+        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "revenue", Label = "Toplam Ciro", Value = Model.Stats.TotalRevenue, Icon = "trending-up", IconClass = "ws-icon-emerald" }' />
     </div>
 
-    @* --- 2. GÖRSELDEKİ PARÇALI FİLTRE YAPISI --- *@
-    <div class="row g-3 mb-4 align-items-stretch">
+    @* --- FİLTRELEME BAR --- *@
+    <div class="ws-filter-container d-flex align-items-stretch shadow-sm mb-4">
         @* Arama Kutusu *@
-        <div class="col-lg-4">
-            <div class="ws-filter-card bg-white border rounded-3 shadow-sm d-flex align-items-center px-3 py-2 h-100">
-                <i data-lucide="search" class="text-muted me-2 ws-icon-sm"></i>
-                <input type="text" class="form-control border-0 shadow-none bg-transparent p-0 fs-sm" placeholder="Müşteri adı veya e-posta ara..." id="customerSearch">
-            </div>
+        <div class="ws-filter-item flex-fill">
+            <i data-lucide="search" class="text-muted"></i>
+            <input type="text" class="ws-filter-el w-100" placeholder="Müşteri adı veya e-posta ara..." id="customerSearch">
         </div>
 
         @* Durum Filtre Kutusu *@
-        <div class="col-lg-3">
-            <div class="ws-filter-card bg-white border rounded-3 shadow-sm d-flex align-items-center px-3 py-2 h-100">
-                <i data-lucide="filter" class="text-muted me-2 ws-icon-sm"></i>
-                <select class="form-select border-0 shadow-none bg-transparent p-0 fs-sm cursor-pointer" id="filterStatus">
-                    <option value="">Tüm Durumlar</option>
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Pasif</option>
-                </select>
-            </div>
+        <div class="ws-filter-item">
+            <i data-lucide="filter" class="text-muted"></i>
+            <select class="form-select border-0 shadow-none bg-transparent p-0 fs-sm cursor-pointer" id="filterStatus">
+                <option value="">Tüm Durumlar</option>
+                <option value="active">Aktif</option>
+                <option value="inactive">Pasif</option>
+            </select>
         </div>
 
         @* Tarih Aralığı Kutusu *@
-        <div class="col-lg-3">
-            <div class="ws-filter-card bg-white border rounded-3 shadow-sm d-flex align-items-center px-3 py-2 h-100">
-                <i data-lucide="calendar" class="text-muted me-2 ws-icon-sm"></i>
-                <input type="text" class="form-control border-0 shadow-none bg-transparent p-0 fs-sm ws-datepicker cursor-pointer" id="filterDate" placeholder="Kayıt Tarihi Aralığı" readonly>
-            </div>
+        <div class="ws-filter-item">
+            <i data-lucide="calendar" class="text-muted"></i>
+            <input type="text" class="ws-filter-el ws-datepicker cursor-pointer" id="filterDate" placeholder="Kayıt Tarihi Aralığı" readonly>
         </div>
 
         @* Filtrele / Sırala Butonu *@
-        <div class="col-lg-2">
-            <div class="dropdown h-100">
-                <button class="btn bg-white border rounded-3 shadow-sm d-flex align-items-center justify-content-between w-100 h-100 py-2 px-3 fw-medium fs-sm" type="button" data-bs-toggle="dropdown">
-                    <div class="d-flex align-items-center gap-2">
-                        <i data-lucide="sliders-horizontal" class="text-muted ws-icon-sm"></i>
-                        <span>Sırala</span>
-                    </div>
-                    <i data-lucide="chevron-down" class="opacity-50 ws-icon-xs"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
-                    <li><h6 class="dropdown-header">Sıralama</h6></li>
-                    <li><a class="dropdown-item fs-sm" href="#">A'dan Z'ye</a></li>
-                    <li><a class="dropdown-item fs-sm" href="#">Z'den A'ya</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item fs-sm" href="#">En Yüksek Ciro</a></li>
-                    <li><a class="dropdown-item fs-sm" href="#">Son Eklenenler</a></li>
-                </ul>
-            </div>
+        <div class="dropdown">
+            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="sliders-horizontal" class="text-muted"></i>
+                <span>Sırala</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
+                <li><h6 class="dropdown-header">Sıralama</h6></li>
+                <li><a class="dropdown-item fs-sm" href="#">A'dan Z'ye</a></li>
+                <li><a class="dropdown-item fs-sm" href="#">Z'den A'ya</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item fs-sm" href="#">En Yüksek Ciro</a></li>
+                <li><a class="dropdown-item fs-sm" href="#">Son Eklenenler</a></li>
+            </ul>
         </div>
     </div>
 
-    @* --- Modern Tablo Kartı --- *@
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="table-responsive">
-            <table class="table ws-custom-table align-middle mb-0">
-                <thead class="bg-light-subtle">
-                    <tr class="border-bottom">
-                        <th class="ps-4 py-3 text-muted text-uppercase fs-xs fw-bold">Müşteri Kodu</th>
-                        <th class="py-3 text-muted text-uppercase fs-xs fw-bold">Müşteri Bilgisi</th>
-                        <th class="py-3 text-muted text-uppercase fs-xs fw-bold">İletişim</th>
-                        <th class="py-3 text-muted text-uppercase fs-xs fw-bold">Vergi Bilgileri</th>
-                        <th class="py-3 text-muted text-uppercase fs-xs fw-bold">Sipariş / Harcama</th>
-                        <th class="py-3 text-muted text-uppercase fs-xs fw-bold text-center">Durum</th>
-                        <th class="text-end pe-4 py-3 text-muted text-uppercase fs-xs fw-bold">İşlemler</th>
+    @* --- Modern Tablo --- *@
+    <div class="ws-table-wrapper">
+        <table class="ws-table-premium align-middle mb-0" id="reportTable">
+            <thead>
+                <tr>
+                    <th class="ps-4">MÜŞTERİ KODU</th>
+                    <th>MÜŞTERİ BİLGİSİ</th>
+                    <th>İLETİŞİM</th>
+                    <th>VERGİ BİLGİLERİ</th>
+                    <th>SİPARİŞ / HARCAMA</th>
+                    <th class="text-center">DURUM</th>
+                    <th class="text-end pe-4">İŞLEMLER</th>
+                </tr>
+            </thead>
+            <tbody id="customersTableBody">
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr class="ws-table-row">
+                        <td class="ps-4">
+                            <span class="text-muted fs-xs fw-medium">#@customer.Id.ToString().Substring(0, 8).ToUpper()</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle">
+                                    @customer.Name[0]@customer.Lastname[0]
+                                </div>
+                                <div class="fw-bold text-dark fs-sm">@customer.Name @customer.Lastname</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="text-dark fs-sm fw-medium">@customer.Email</span>
+                                <small class="text-muted fs-xs">@customer.Phone</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="text-dark fs-sm">@customer.TaxOffice</span>
+                                <small class="text-muted fs-xs">No: @customer.TaxNumber</small>
+                            </div>
+                        </td>
+                        <td>
+                            @{
+                                var orderCount = customer.Orders?.Count ?? 0;
+                                var totalSpent = customer.Orders?.SelectMany(o => o.OrderDetails).Sum(od => (decimal?)od.TotalPrice) ?? 0;
+                            }
+                            <div class="d-flex flex-column">
+                                <span class="text-dark fs-sm fw-bold">@orderCount Adet Sipariş</span>
+                                <span class="text-primary fs-xs fw-medium">@totalSpent.ToString("C2", culture)</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="status-pill @(customer.IsActive ? "status-success" : "status-warning")" id="badge-@customer.Id">
+                                <i data-lucide="@(customer.IsActive ? "check-circle" : "minus-circle")" style="width:14px"></i>
+                                @(customer.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <button class="ws-action-btn btn-toggle-status" data-id="@customer.Id" title="Durum Değiştir">
+                                    <i data-lucide="power" class="@(customer.IsActive ? "text-success" : "text-muted")" style="width: 16px;"></i>
+                                </button>
+                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" style="width: 16px;"></i></button>
+                                <button class="ws-action-btn text-danger btn-delete-customer" data-id="@customer.Id" title="Sil"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody id="customersTableBody">
-                    @foreach (var customer in Model.Customers)
-                    {
-                        <tr class="ws-table-row" data-date="@customer.CreatedDate.ToString("yyyy-MM-dd")">
-                            <td class="ps-4">
-                                <span class="text-muted fs-xs fw-medium">#@customer.Id.ToString().Substring(0, 8).ToUpper()</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 11px;">
-                                        @customer.Name[0]@customer.Lastname[0]
-                                    </div>
-                                    <div class="fw-bold text-dark fs-sm">@customer.Name @customer.Lastname</div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span class="text-dark fs-sm fw-medium">@customer.Email</span>
-                                    <small class="text-muted fs-xs">@customer.Phone</small>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span class="text-dark fs-sm">@customer.TaxOffice</span>
-                                    <small class="text-muted fs-xs">No: @customer.TaxNumber</small>
-                                </div>
-                            </td>
-                            <td>
-                                @{
-                                    var orderCount = customer.Orders?.Count ?? 0;
-                                    var totalSpent = customer.Orders?.SelectMany(o => o.OrderDetails).Sum(od => (decimal?)od.TotalPrice) ?? 0;
-                                }
-                                <div class="d-flex flex-column">
-                                    <span class="text-dark fs-sm fw-bold">@orderCount Adet Sipariş</span>
-                                    <span class="text-primary fs-xs fw-medium">@totalSpent.ToString("C2", culture)</span>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <div class="status-pill @(customer.IsActive ? "status-success" : "status-warning") fs-xs d-inline-flex align-items-center" id="badge-@customer.Id">
-                                    <i data-lucide="@(customer.IsActive ? "check-circle" : "minus-circle")" class="me-1" style="width:12px"></i>
-                                    @(customer.IsActive ? "Aktif" : "Pasif")
-                                </div>
-                            </td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="ws-action-btn border rounded-2 btn-toggle-status" data-id="@customer.Id" title="Durum Değiştir">
-                                        <i data-lucide="power" class="@(customer.IsActive ? "text-success" : "text-muted")" style="width: 16px;"></i>
-                                    </button>
-                                    <button class="ws-action-btn border rounded-2" title="Düzenle"><i data-lucide="edit-3" style="width: 16px;"></i></button>
-                                    <button class="ws-action-btn text-danger border rounded-2 btn-delete-customer" data-id="@customer.Id" title="Sil"><i data-lucide="trash-2" style="width: 16px;"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 

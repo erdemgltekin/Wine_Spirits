@@ -5,7 +5,8 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid py-4">
+
+<div class="ws-stock-reports-container">
     @* --- SAYFA BAŞLIĞI --- *@
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
@@ -19,63 +20,54 @@
     </div>
 
     @* --- İSTATİSTİK KARTLARI (Global StatCard Yapısı) --- *@
-    <div class="row g-4 mb-4">
-        <div class="col-xl-4 col-sm-6">
-            <div class="ws-stat-card-v2">
-                <div class="ws-stat-icon-box bg-indigo-50">
-                    <i data-lucide="boxes"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Toplam Stok Miktarı</div>
-                    <div class="fs-4 fw-bold text-dark">12.480 <small class="fs-6 fw-normal text-muted">Adet</small></div>
-                </div>
+    <div class="ws-summary-grid-3 mb-4">
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="boxes"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Stok Miktarı</span>
+                <span class="ws-stat-value">12.480 <small class="text-muted fw-normal">Adet</small></span>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-6">
-            <div class="ws-stat-card-v2">
-                <div class="ws-stat-icon-box bg-emerald-50">
-                    <i data-lucide="banknote"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Toplam Stok Değeri</div>
-                    <div class="fs-4 fw-bold text-dark">₺2.847.650</div>
-                </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
+                <i data-lucide="banknote"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Stok Değeri</span>
+                <span class="ws-stat-value">₺2.847.650</span>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-12">
-            <div class="ws-stat-card-v2">
-                <div class="ws-stat-icon-box bg-rose-50">
-                    <i data-lucide="alert-triangle"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Kritik Seviyedeki Ürünler</div>
-                    <div class="fs-4 fw-bold text-dark">14 <small class="fs-6 fw-normal text-muted">Kalem</small></div>
-                </div>
+
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-rose">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Kritik Seviye</span>
+                <span class="ws-stat-value">14 <small class="text-muted fw-normal">Kalem</small></span>
             </div>
         </div>
     </div>
 
     @* --- FİLTRELEME BAR --- *@
-    
-    <div class="ws-filter-container d-flex align-items-stretch gap-3 shadow-sm mb-4 p-2">
-
+    <div class="ws-filter-container d-flex align-items-stretch shadow-sm mb-4">
         @* 1. Ürün Arama *@
         <div class="ws-filter-item flex-fill">
             <i data-lucide="search" class="ws-icon-18 text-muted"></i>
             <input type="text" class="ws-filter-el w-100" placeholder="Ürün veya Kod ara..." id="reportSearch">
         </div>
 
-        @* 2. Depo Seçimi (Custom Dropdown) *@
+        @* 2. Depo Seçimi *@
         <div class="dropdown flex-fill">
-            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100"
-                 data-bs-toggle="dropdown"
-                 aria-expanded="false"
-                 role="button">
+            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button">
                 <div class="d-flex align-items-center gap-2">
-                    <i data-lucide="warehouse" class="ws-icon-18 text-muted"></i>
+                    <i data-lucide="warehouse"></i>
                     <span id="selectedWarehouse" class="ws-filter-label text-truncate">Tüm Depolar</span>
                 </div>
-                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50 ms-2"></i>
+                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
             </div>
             <ul class="dropdown-menu shadow-lg border-0 w-100 mt-2">
                 <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Tüm Depolar')">Tüm Depolar</a></li>
@@ -87,28 +79,24 @@
 
         @* 3. Tarih Aralığı *@
         <div class="ws-filter-item flex-fill">
-            <i data-lucide="calendar-range" class="ws-icon-18 text-muted"></i>
+            <i data-lucide="calendar-range"></i>
             <input type="text" class="ws-filter-el ws-datepicker w-100" id="reportDateRange" placeholder="Tarih Aralığı" readonly>
         </div>
 
         @* 4. Filtrele / Sırala *@
         <div class="dropdown">
-            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    style="white-space: nowrap;">
-                <i data-lucide="sliders-horizontal" class="ws-icon-18"></i>
+            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                <i data-lucide="sliders-horizontal"></i>
                 <span>Filtrele</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style="min-width: 220px;">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
                 <li><h6 class="dropdown-header text-primary fw-bold">Stok Durumu</h6></li>
-                <li><a class="dropdown-item active d-flex align-items-center justify-content-between" href="#" data-sort="all">Tümü <i data-lucide="check" class="ws-icon-14"></i></a></li>
+                <li><a class="dropdown-item active" href="#" data-sort="all">Tümü</a></li>
                 <li><a class="dropdown-item" href="#" data-sort="critical">Kritik Stoklar</a></li>
-                <li><a class="dropdown-item" href="#" data-sort="low">Düşük Stoklar</a></li>
                 <li><hr class="dropdown-divider opacity-50"></li>
-                <li><h6 class="dropdown-header text-primary fw-bold">Değer Sıralaması</h6></li>
-                <li><a class="dropdown-item" href="#" data-sort="value-desc">Değer: Yüksekten Düşüğe</a></li>
-                <li><a class="dropdown-item" href="#" data-sort="value-asc">Değer: Düşükten Yükseğe</a></li>
+                <li><h6 class="dropdown-header text-primary fw-bold">Sıralama</h6></li>
+                <li><a class="dropdown-item" href="#" data-sort="value-desc">Değer: Yüksek</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="value-asc">Değer: Düşük</a></li>
             </ul>
         </div>
     </div>

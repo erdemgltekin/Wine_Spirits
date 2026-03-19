@@ -1,0 +1,148 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+.ws-stock-reports-container {
+    padding: 2rem;
+
+    /* 1. Filter Bar Alignment Fixes (Standardizing across report pages) */
+    .ws-filter-container {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0 !important;
+        background: #ffffff !important;
+        border: 1px solid $gray-200 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        height: 52px !important;
+        margin-bottom: 2rem !important;
+        padding: 0 !important; // Reset internal layout for horizontal flow
+
+        .ws-filter-item {
+            flex: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 0 20px !important;
+            border-right: 1px solid $gray-100 !important;
+            height: 100% !important;
+
+            &:last-child {
+                border-right: none !important;
+            }
+
+            i, svg {
+                color: $gray-400 !important;
+                flex-shrink: 0 !important;
+            }
+
+            .ws-filter-el {
+                border: none !important;
+                background: transparent !important;
+                height: 100% !important;
+                padding: 0 !important;
+                font-size: 14px !important;
+                color: $gray-700 !important;
+                outline: none !important;
+
+                &::placeholder {
+                    color: $gray-400 !important;
+                }
+            }
+        }
+
+        .dropdown {
+            height: 100% !important;
+            border-right: 1px solid $gray-100 !important;
+
+            .ws-filter-item {
+                border-right: none !important;
+                cursor: pointer !important;
+
+                &:hover {
+                    background-color: $gray-50 !important;
+                }
+            }
+
+            .ws-btn-filter-action {
+                border: none !important;
+                border-radius: 0 !important;
+                height: 100% !important;
+                padding: 0 25px !important;
+                background: $gray-50 !important; // Matches our grey-ish filter button style
+                color: $gray-600 !important;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+
+                &:hover {
+                    background: $gray-100 !important;
+                }
+            }
+        }
+    }
+
+    /* 2. Status Pill Redefinition (Page Specific Override) */
+    .status-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 5px 12px !important;
+        border-radius: 30px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.02em !important;
+
+        &.status-success {
+            background-color: rgba($success, 0.1) !important;
+            color: $success !important;
+        }
+
+        &.status-danger {
+            background-color: rgba($danger, 0.1) !important;
+            color: $danger !important;
+        }
+
+        &.status-warning {
+            background-color: rgba($warning, 0.1) !important;
+            color: $warning !important;
+        }
+    }
+
+    /* 3. Table Adjustments */
+    .ws-table-premium {
+        tfoot {
+            background-color: $gray-50 !important;
+            
+            tr {
+                border-top: 2px solid $gray-200 !important;
+                
+                td {
+                    padding: 20px !important;
+                    font-weight: 800 !important;
+                    color: $gray-800 !important;
+                    font-size: 15px !important;
+                    
+                    &.text-primary {
+                        color: $primary !important;
+                    }
+                }
+            }
+        }
+    }
+
+    /* 4. Grid Layout for Statistics */
+    .ws-summary-grid-3 {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 20px !important;
+        margin-bottom: 2rem !important;
+
+        @media (max-width: 1200px) {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+        }
+    }
+}

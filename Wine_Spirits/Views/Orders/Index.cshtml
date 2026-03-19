@@ -14,7 +14,7 @@
     @* Sayfaya özel ek CSS gerekirse buraya, ama main.css her şeyi çözüyor *@
 }
 
-<div class="ws-page-container">
+<div class="ws-orders-container">
     <div class="ws-page-header">
         <div>
             <h2 class="ws-page-title">Sipariş Yönetimi</h2>
@@ -25,53 +25,56 @@
         </button>
     </div>
 
-    <div class="ws-stats-grid">
+    <div class="ws-summary-grid-4 mb-4">
         <div class="ws-stat-card">
-            <div class="ws-stat-icon">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="shopping-bag"></i>
             </div>
             <div class="ws-stat-content">
-                <div class="ws-stat-value">@totalOrders</div>
-                <div class="ws-stat-label">Toplam Sipariş</div>
+                <span class="ws-stat-label">Toplam Sipariş</span>
+                <span class="ws-stat-value">@totalOrders</span>
             </div>
         </div>
+
         <div class="ws-stat-card">
-            <div class="ws-stat-icon">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
                 <i data-lucide="clock"></i>
             </div>
             <div class="ws-stat-content">
-                <div class="ws-stat-value">@activeOrders</div>
-                <div class="ws-stat-label">Aktif Sipariş</div>
+                <span class="ws-stat-label">Aktif Sipariş</span>
+                <span class="ws-stat-value">@activeOrders</span>
             </div>
         </div>
+
         <div class="ws-stat-card">
-            <div class="ws-stat-icon">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="check-circle"></i>
             </div>
             <div class="ws-stat-content">
-                <div class="ws-stat-value">0</div>
-                <div class="ws-stat-label">Tamamlanan</div>
+                <span class="ws-stat-label">Tamamlanan</span>
+                <span class="ws-stat-value">0</span>
             </div>
         </div>
+
         <div class="ws-stat-card">
-            <div class="ws-stat-icon">
+            <div class="ws-stat-icon-wrapper ws-icon-rose">
                 <i data-lucide="x-octagon"></i>
             </div>
             <div class="ws-stat-content">
-                <div class="ws-stat-value">0</div>
-                <div class="ws-stat-label">İptal Edilen</div>
+                <span class="ws-stat-label">İptal Edilen</span>
+                <span class="ws-stat-value">0</span>
             </div>
         </div>
     </div>
 
-    <div class="ws-filter-container">
+    <div class="ws-filter-container d-flex align-items-stretch">
         <div class="ws-filter-item">
             <i data-lucide="search"></i>
             <input type="text" id="orderSearch" class="ws-filter-el" placeholder="Sipariş No veya Müşteri ara...">
         </div>
         <div class="ws-filter-item">
             <i data-lucide="calendar"></i>
-            <input type="text" id="orderDateFilter" class="ws-filter-el" placeholder="Tarih Aralığı" readonly>
+            <input type="text" id="orderDateFilter" class="ws-filter-el ws-datepicker" placeholder="Tarih Aralığı" readonly>
         </div>
         <div class="ws-dropdown">
             <button class="ws-dropdown-trigger" type="button">
@@ -91,7 +94,7 @@
                 <i data-lucide="sliders-horizontal"></i>
                 <span>Sırala</span>
             </button>
-            <div class="ws-dropdown-menu">
+            <div class="ws-dropdown-menu px-2 py-2">
                 <a class="ws-dropdown-item" href="javascript:void(0)" onclick="sortOrders('date-desc')"><i data-lucide="calendar"></i> Yeniden Eskiye</a>
                 <a class="ws-dropdown-item" href="javascript:void(0)" onclick="sortOrders('amount-desc')"><i data-lucide="trending-up"></i> Tutar (Yüksek)</a>
             </div>
@@ -99,16 +102,16 @@
     </div>
 
     <div class="ws-table-wrapper">
-        <table class="ws-table">
+        <table class="ws-table-premium">
             <thead>
                 <tr>
-                    <th>SİPARİŞ BİLGİSİ</th>
+                    <th class="ps-4">SİPARİŞ BİLGİSİ</th>
                     <th>MÜŞTERİ</th>
                     <th>DEPO</th>
                     <th>TARİH</th>
                     <th>TUTAR</th>
                     <th>DURUM</th>
-                    <th>İŞLEMLER</th>
+                    <th class="text-end pe-4">İŞLEMLER</th>
                 </tr>
             </thead>
             <tbody>
@@ -117,7 +120,7 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>
+                            <td class="ps-4">
                                 <div class="ws-order-info">
                                     <div class="ws-order-icon">
                                         <i data-lucide="package"></i>
@@ -129,33 +132,31 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="ws-customer-name">@item.Customer?.Name @item.Customer?.Lastname</div>
+                                <div class="fw-bold text-dark">@item.Customer?.Name @item.Customer?.Lastname</div>
                             </td>
                             <td>
-                                <div class="ws-warehouse-tag">
-                                    <i data-lucide="warehouse"></i>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i data-lucide="warehouse" class="text-muted" style="width:14px;"></i>
                                     @(item.Warehouse?.Name ?? "Merkez")
                                 </div>
                             </td>
                             <td>
-                                <div class="ws-date-info">
-                                    <div>@item.OrderDate.ToString("dd.MM.yyyy")</div>
-                                    <small>@item.OrderDate.ToString("HH:mm")</small>
-                                </div>
+                                <div class="text-dark">@item.OrderDate.ToString("dd.MM.yyyy")</div>
+                                <small class="text-muted">@item.OrderDate.ToString("HH:mm")</small>
                             </td>
                             <td>
-                                <div class="ws-amount">₺@((item.OrderDetails?.Sum(od => od.TotalPrice) ?? 0).ToString("N2"))</div>
+                                <div class="fw-bold text-dark">₺@((item.OrderDetails?.Sum(od => od.TotalPrice) ?? 0).ToString("N2"))</div>
                             </td>
                             <td>
-                                <div class="ws-status @(item.IsActive ? "status-active" : "status-pending")">
-                                    <i data-lucide="@(item.IsActive ? "check" : "clock")"></i>
+                                <span class="status-pill @(item.IsActive ? "status-success" : "status-warning")">
+                                    <i data-lucide="@(item.IsActive ? "check-circle" : "clock")" style="width:14px;"></i>
                                     @(item.IsActive ? "Aktif" : "Beklemede")
-                                </div>
+                                </span>
                             </td>
-                            <td>
-                                <div class="ws-actions">
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
                                     <button class="ws-action-btn" title="Detay"><i data-lucide="eye"></i></button>
-                                    <button class="ws-action-btn danger" title="Sil"><i data-lucide="trash-2"></i></button>
+                                    <button class="ws-action-btn" title="Sil"><i data-lucide="trash-2" class="text-danger"></i></button>
                                 </div>
                             </td>
                         </tr>
