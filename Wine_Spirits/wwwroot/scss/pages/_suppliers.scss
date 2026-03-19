@@ -4,13 +4,11 @@
 .ws-suppliers-container {
     padding: 2rem;
 
-    /* 1. Header Layout */
     .ws-page-header {
         @include flex-between;
         margin-bottom: 2rem;
     }
 
-    /* 2. Filter Bar Alignment Fixes */
     .ws-filter-container {
         display: flex !important;
         align-items: center !important;
@@ -55,7 +53,7 @@
         .dropdown {
             flex: 0.6 !important;
             height: 100% !important;
-            
+
             .ws-btn-filter-action {
                 background: $gray-50 !important;
                 border: none !important;
@@ -74,7 +72,6 @@
         }
     }
 
-    /* 3. Grid Structure for Supplier Cards */
     .ws-supplier-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -82,9 +79,8 @@
         padding-bottom: 3rem;
     }
 
-    /* 4. Supplier Card Individual Styling */
     .ws-supplier-card {
-        @extend .ws-card; // Inherit main card styles (shadow, hover, border)
+        @extend .ws-card;
         display: flex;
         flex-direction: column;
         padding: 1.5rem;
@@ -128,9 +124,7 @@
                     border: 1px solid $gray-100;
                     border-radius: 8px;
                     background: #fff;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    @include flex-center;
                     transition: all 0.2s ease;
                     color: $gray-400;
 
@@ -188,22 +182,33 @@
                     font-size: 0.9rem;
                     font-weight: 750;
                     color: $gray-900;
-
-                    &.text-success { color: $success !important; }
-                    &.text-danger { color: $danger !important; }
                 }
             }
         }
+    }
+}
 
-        .ws-supplier-progress {
-            height: 6px;
-            border-radius: 10px;
-            background-color: #eee;
-            margin-top: 4px;
+/* ─── MODAL SELECT2 FIX (Görseldeki v v v hatası çözümü) ─── */
+.modal-content {
+    .select2-container--default {
+        width: 100% !important;
 
-            .progress-bar {
-                border-radius: 10px;
+        .select2-selection--single {
+            border: none !important;
+            background: transparent !important;
+            height: 40px !important;
+            display: flex;
+            align-items: center;
+
+            .select2-selection__rendered {
+                padding-left: 0 !important;
+                color: $gray-700 !important;
             }
+
+            .select2-selection__arrow {
+                display: none !important;
+            }
+            // Select2'nin kendi okunu gizle
         }
     }
 }

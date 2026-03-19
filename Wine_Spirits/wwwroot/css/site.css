@@ -2776,10 +2776,6 @@ body.login-body {
 
 .ws-suppliers-container {
   padding: 2rem;
-  /* 1. Header Layout */
-  /* 2. Filter Bar Alignment Fixes */
-  /* 3. Grid Structure for Supplier Cards */
-  /* 4. Supplier Card Individual Styling */
 }
 .ws-suppliers-container .ws-page-header {
   display: flex;
@@ -2944,18 +2940,22 @@ body.login-body {
   font-weight: 750;
   color: #0f172a;
 }
-.ws-suppliers-container .ws-supplier-card .supplier-footer-v3 .kpi-box .kpi-value.text-success {
-  color: #10b981 !important;
+
+/* ─── MODAL SELECT2 FIX (Görseldeki v v v hatası çözümü) ─── */
+.modal-content .select2-container--default {
+  width: 100% !important;
 }
-.ws-suppliers-container .ws-supplier-card .supplier-footer-v3 .kpi-box .kpi-value.text-danger {
-  color: #ef4444 !important;
+.modal-content .select2-container--default .select2-selection--single {
+  border: none !important;
+  background: transparent !important;
+  height: 40px !important;
+  display: flex;
+  align-items: center;
 }
-.ws-suppliers-container .ws-supplier-card .ws-supplier-progress {
-  height: 6px;
-  border-radius: 10px;
-  background-color: #eee;
-  margin-top: 4px;
+.modal-content .select2-container--default .select2-selection--single .select2-selection__rendered {
+  padding-left: 0 !important;
+  color: #334155 !important;
 }
-.ws-suppliers-container .ws-supplier-card .ws-supplier-progress .progress-bar {
-  border-radius: 10px;
+.modal-content .select2-container--default .select2-selection--single .select2-selection__arrow {
+  display: none !important;
 }

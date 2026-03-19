@@ -6,75 +6,86 @@
     var warehouses = ViewBag.Warehouses as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
 }
 
-@* Formu modal-content yaparak tüm motoru çalıştırıyoruz *@
-<form asp-action="Create" id="createOrderModalForm" class="modal-content">
+@* Formu modal-content yaparak tüm motoru (sticky header/footer) aktif ediyoruz *@
+<form asp-action="Create" id="createOrderModalForm" class="modal-content" method="post">
     @Html.AntiForgeryToken()
 
     @* ─── 1. BÖLÜM: SABİT HEADER ─── *@
     <div class="ws-modal-header">
         <h5 class="ws-modal-title">Yeni Sipariş Oluştur</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
     </div>
 
     @* ─── 2. BÖLÜM: KAYDIRILABİLİR BODY ─── *@
     <div class="ws-modal-body">
         
+        @* Üst Bilgiler (Müşteri Üstte Tam, Diğerleri Yan Yana) *@
         <div class="ws-master-grid">
-            <div class="ws-form-group">
+            <div class="ws-form-group ws-form-group--full">
                 <label class="ws-form-label">Müşteri *</label>
-                <select asp-for="CustomerId" class="ws-input-premium select2-enable" asp-items="customers">
-                    <option value="">Müşteri seçiniz...</option>
-                </select>
+                <div class="ws-filter-item">
+                    <i data-lucide="user"></i>
+                    <select asp-for="CustomerId" class="ws-input-premium select2-enable ws-filter-el" asp-items="customers">
+                        <option value="">Müşteri seçiniz...</option>
+                    </select>
+                </div>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
 
+            @* Depo ve Tarih yan yana dizilir *@
             <div class="ws-form-group">
                 <label class="ws-form-label">Depo *</label>
-                <select asp-for="WarehouseId" class="ws-input-premium select2-enable" asp-items="warehouses">
-                    <option value="">Depo seçiniz...</option>
-                </select>
+                <div class="ws-filter-item">
+                    <i data-lucide="warehouse"></i>
+                    <select asp-for="WarehouseId" class="ws-input-premium select2-enable ws-filter-el" asp-items="warehouses">
+                        <option value="">Depo seçiniz...</option>
+                    </select>
+                </div>
                 <span asp-validation-for="WarehouseId" class="text-danger"></span>
             </div>
 
             <div class="ws-form-group">
                 <label class="ws-form-label">Sipariş Tarihi *</label>
-                <input asp-for="OrderDate" class="ws-input-premium flatpickr" type="text" placeholder="Tarih seçiniz..." readonly>
+                <div class="ws-filter-item">
+                    <i data-lucide="calendar"></i>
+                    <input asp-for="OrderDate" class="ws-input-premium ws-datepicker ws-filter-el" type="text" placeholder="Tarih seçiniz..." readonly>
+                    </div>
                     <span asp-validation-for="OrderDate" class="text-danger"></span>
                 </div>
             </div>
 
-            <div class="ws-order-section">
-                <div class="ws-section-header">
+            @* Sipariş Kalemleri Bölümü *@
+            <div class="ws-order-section mt-4">
+                <div class="ws-section-header d-flex justify-content-between align-items-center mb-3">
                     <h6 class="ws-section-title">Sipariş Kalemleri</h6>
                     <button type="button" class="ws-btn-main ws-btn-sm" id="btnAddOrderItem">
                         <i data-lucide="plus"></i> Ürün Ekle
                     </button>
                 </div>
 
+                @* Grid Başlıklar *@
                 <div class="ws-order-item-header">
-                    <div class="col-product ws-order-header-cell">Ürün Adı</div>
-                    <div class="col-qty ws-order-header-cell text-center">Miktar</div>
-                    <div class="col-price ws-order-header-cell text-center">Birim Fiyat</div>
-                    <div class="col-action ws-order-header-cell"></div>
+                    <div class="col-product">Ürün Adı</div>
+                    <div class="col-qty text-center">Miktar</div>
+                    <div class="col-price text-center">Birim Fiyat</div>
+                    <div class="col-action"></div>
                 </div>
 
-                <div class="ws-order-items-container" id="orderItemsContainer">
-                    @* İlk kalem varsayılan olarak gelir *@
+                @* Dinamik İçerik Alanı *@
+                <div id="orderItemsContainer" class="ws-order-items-container">
+                    @* İlk kalem varsayılan gelir *@
                     <div class="ws-order-item-row" data-item-index="0">
                         <div class="col-product">
-                            <select name="OrderItems[0].ProductId" class="ws-input-premium product-select" data-index="0">
+                            <select name="OrderItems[0].ProductId" class="ws-input-premium select2-enable product-select">
                                 <option value="">Ürün seçiniz...</option>
                             </select>
                         </div>
-
                         <div class="col-qty">
-                            <input type="number" name="OrderItems[0].Quantity" class="ws-input-premium quantity-input text-center" value="1">
+                            <input type="number" name="OrderItems[0].Quantity" class="ws-input-premium text-center quantity-input" value="1" min="1">
                         </div>
-
                         <div class="col-price">
-                            <input type="number" name="OrderItems[0].UnitPrice" class="ws-input-premium price-input text-end" step="0.01">
+                            <input type="number" name="OrderItems[0].UnitPrice" class="ws-input-premium text-end price-input" step="0.01" value="0.00">
                         </div>
-
                         <div class="col-action">
                             <button type="button" class="remove-item-btn"><i data-lucide="trash-2"></i></button>
                         </div>
@@ -82,24 +93,27 @@
                 </div>
             </div>
 
-            <div class="ws-order-summary">
+            @* Özet ve Not Bölümü *@
+            <div class="ws-order-summary mt-4">
                 <div class="ws-summary-grid">
                     <div class="ws-form-group">
                         <label class="ws-form-label">Sipariş Notu / Açıklama</label>
-                        <textarea asp-for="Description" class="ws-textarea" rows="2" placeholder="Siparişle ilgili açıklama giriniz..."></textarea>
+                        <textarea asp-for="Description" class="ws-input-premium ws-textarea" rows="2" placeholder="Siparişle ilgili açıklama giriniz..."></textarea>
                     </div>
-        
-                    <div class="ws-total-card">
-                        <div class="ws-total-label">Ödenecek Toplam</div>
-                        <div class="ws-total-amount" id="totalAmount">₺0.00</div>
+    
+                    <div class="ws-total-card p-3 rounded-4 bg-primary-subtle border border-primary-subtle text-end">
+                        <div class="ws-total-label fs-xs text-uppercase fw-bold text-primary opacity-75">Ödenecek Toplam</div>
+                        <div class="ws-total-amount fs-3 fw-bold text-primary" id="totalAmount">₺0.00</div>
                     </div>
                 </div>
             </div>
         </div>
 
         @* ─── 3. BÖLÜM: SABİT FOOTER ─── *@
-        <div class="ws-modal-footer">
+        <div class="ws-form-actions">
             <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
-            <button type="submit" class="ws-btn-main">Siparişi Onayla ve Kaydet</button>
+            <button type="submit" class="ws-btn-main">
+                <i data-lucide="check-circle"></i> Siparişi Onayla ve Kaydet
+            </button>
         </div>
     </form>

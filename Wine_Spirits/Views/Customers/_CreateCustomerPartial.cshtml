@@ -1,7 +1,7 @@
 ﻿@model Wine_Spirits.Models.Customer
 
 @* Formu modal-content yaparak sticky header/footer mekanizmasını tetikliyoruz *@
-<form id="createCustomerForm" class="modal-content">
+<form asp-action="@(Model.Id == Guid.Empty ? "Create" : "Edit")" id="createCustomerForm" class="modal-content" method="post">
     @Html.AntiForgeryToken()
     @if (Model.Id != Guid.Empty)
     {
@@ -14,21 +14,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
 
-    @* ─── 2. SCROLLABLE BODY (Grid Motoru Burada Çalışır) ─── *@
+    @* ─── 2. SCROLLABLE BODY (Grid Motoru) ─── *@
     <div class="ws-modal-body">
         
-        @* Bu ilk eleman olduğu için SCSS kuralın gereği otomatik 'grid-column: span 2' olacak *@
+        @* İlk eleman: Otomatik span 2 *@
         <div class="ws-form-group">
             <label class="ws-form-label">Müşteri Adı / Firma *</label>
             <div class="ws-filter-item">
-                @* _forms.scss içindeki ikonlu yapı için ws-filter-item kullandık *@
                 <i data-lucide="building"></i>
                 <input asp-for="Name" class="ws-input-premium ws-filter-el" placeholder="Müşteri adını girin" required>
                 </div>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            @* Aşağıdakiler 50/50 yan yana dizilecek *@
+            @* 50/50 Alanlar *@
             <div class="ws-form-group">
                 <label class="ws-form-label">E-posta</label>
                 <div class="ws-filter-item">
@@ -42,7 +41,7 @@
                     <label class="ws-form-label">Telefon</label>
                     <div class="ws-filter-item">
                         <i data-lucide="phone"></i>
-                        <input asp-for="Phone" class="ws-input-premium ws-filter-el" placeholder="Telefon numarası">
+                        <input asp-for="Phone" class="ws-input-premium ws-filter-el" placeholder="05XX XXX XX XX">
                         </div>
                         <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
@@ -53,7 +52,6 @@
                             <i data-lucide="landmark"></i>
                             <input asp-for="TaxOffice" class="ws-input-premium ws-filter-el" placeholder="Vergi dairesi">
                             </div>
-                            <span asp-validation-for="TaxOffice" class="text-danger"></span>
                         </div>
 
                         <div class="ws-form-group">
@@ -62,10 +60,9 @@
                                 <i data-lucide="hash"></i>
                                 <input asp-for="TaxNumber" class="ws-input-premium ws-filter-el" placeholder="Vergi numarası">
                                 </div>
-                                <span asp-validation-for="TaxNumber" class="text-danger"></span>
                             </div>
 
-                            @* Adres alanı için tam genişlik zorluyoruz *@
+                            @* Tam Genişlik: Adres *@
                             <div class="ws-form-group ws-form-group--full">
                                 <label class="ws-form-label">Adres</label>
                                 <div class="ws-filter-item">
@@ -76,20 +73,21 @@
                             </div>
 
                             @* Bilgi Paneli *@
-                            <div class="ws-info-alert">
-                                <i data-lucide="info"></i>
-                                <span>
-                                    Yeni müşteri kayıtları varsayılan olarak <strong>aktif</strong> durumdadır. Müşteri bilgilerini dilediğiniz zaman güncelleyebilirsiniz.
-                                </span>
+                            <div class="ws-form-group ws-form-group--full">
+                                <div class="ws-info-alert d-flex align-items-center gap-2 p-3 rounded-3 bg-primary-subtle text-primary border border-primary-subtle">
+                                    <i data-lucide="info" style="width:18px;"></i>
+                                    <span style="font-size: 0.75rem;">
+                                        Yeni müşteri kayıtları varsayılan olarak <strong>aktif</strong> durumdadır.
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
                         @* ─── 3. SABİT FOOTER ─── *@
                         <div class="ws-form-actions">
-                            @* _modals.scss içindeki footer sınıfın *@
                             <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
                             <button type="submit" class="ws-btn-main">
-                                <i data-lucide="save"></i>
+                                <i data-lucide="check-circle"></i>
                                 @(Model.Id == Guid.Empty ? "Müşteri Ekle" : "Değişiklikleri Kaydet")
                             </button>
                         </div>

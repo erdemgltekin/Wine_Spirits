@@ -1,88 +1,95 @@
 @model Wine_Spirits.Models.Supplier
 
 @{
-    bool isEdit      = Model != null && Model.Id != Guid.Empty;
-    string title     = isEdit ? "Tedarikçi Düzenle" : "Yeni Tedarikçi Ekle";
+    bool isEdit = Model != null && Model.Id != Guid.Empty;
+    string title = isEdit ? "Tedarikçi Düzenle" : "Yeni Tedarikçi Ekle";
     string buttonText = isEdit ? "Güncelle" : "Tedarikçiyi Kaydet";
+    
+    // İkonu buraya değişken olarak eklendi. aşağıda tertemiz kullanalım.
+    string buttonIcon = isEdit ? "save" : "check-circle";
 }
 
-@* ─── MODAL HEADER ─── *@
-<div class="ws-modal-header">
-    <h5 class="ws-modal-title">@title</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat">
-        <i data-lucide="x"></i>
-    </button>
-</div>
-
-@* ─── FORM ─── *@
-<form id="supplierForm">
+@* Formu modal-content yaparak sticky header/footer sistemini çalıştırıyoruz *@
+<form asp-action="@(isEdit ? "Edit" : "Create")" id="supplierForm" class="modal-content" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="CreatedDate" />
 
-    <div class="ws-modal-body">
+    @* ─── 1. SABİT HEADER ─── *@
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">@title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+    </div>
 
-        @* Row 1 — Tedarikçi Adı: full-width via :first-child SCSS rule *@
+    @* ─── 2. KAYDIRILABİLİR BODY ─── *@
+    <div class="ws-modal-body">
+        
+        @* Row 1: Tedarikçi Adı (SCSS kuralınla otomatik tam genişlik olur) *@
         <div class="ws-form-group">
             <label asp-for="Name" class="ws-form-label">Tedarikçi Adı / Firma *</label>
-            <input asp-for="Name"
-                   class="ws-input-premium"
-                   placeholder="Örn: Global Lojistik A.Ş."
-                   required />
+            <div class="ws-filter-item">
+                <i data-lucide="truck"></i>
+                <input asp-for="Name" class="ws-input-premium ws-filter-el" placeholder="Örn: Global Lojistik A.Ş." required />
+            </div>
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        @* Row 2: Sol — E-Posta *@
+        @* Row 2: E-Posta *@
         <div class="ws-form-group">
             <label asp-for="Email" class="ws-form-label">E-Posta</label>
-            <input asp-for="Email"
-                   type="email"
-                   class="ws-input-premium"
-                   placeholder="destek@firma.com" />
+            <div class="ws-filter-item">
+                <i data-lucide="mail"></i>
+                <input asp-for="Email" type="email" class="ws-input-premium ws-filter-el" placeholder="destek@firma.com" />
+            </div>
         </div>
 
-        @* Row 2: Sağ — Telefon *@
+        @* Row 2: Telefon *@
         <div class="ws-form-group">
             <label asp-for="Phone" class="ws-form-label">Telefon</label>
-            <input asp-for="Phone"
-                   class="ws-input-premium"
-                   placeholder="05xx xxx xx xx" />
+            <div class="ws-filter-item">
+                <i data-lucide="phone"></i>
+                <input asp-for="Phone" class="ws-input-premium ws-filter-el" placeholder="05xx xxx xx xx" />
+            </div>
         </div>
 
-        @* Row 3: Sol — Menşei Ülke *@
+        @* Row 3: Menşei Ülke *@
         <div class="ws-form-group">
             <label asp-for="CountryId" class="ws-form-label">Menşei Ülke</label>
-            <select asp-for="CountryId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.CountryId">
-                <option value="">-- Ülke Seçin --</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="globe"></i>
+                <select asp-for="CountryId" class="ws-input-premium select2-enable ws-filter-el" asp-items="ViewBag.CountryId">
+                    <option value="">-- Ülke Seçin --</option>
+                </select>
+            </div>
         </div>
 
-        @* Row 3: Sağ — Bağlı Depo *@
+        @* Row 3: Bağlı Depo *@
         <div class="ws-form-group">
             <label asp-for="WarehouseId" class="ws-form-label">Bağlı Depo</label>
-            <select asp-for="WarehouseId"
-                    class="ws-input-premium"
-                    asp-items="ViewBag.WarehouseId">
-                <option value="">Depo Seçin (Opsiyonel)</option>
-            </select>
+            <div class="ws-filter-item">
+                <i data-lucide="warehouse"></i>
+                <select asp-for="WarehouseId" class="ws-input-premium select2-enable ws-filter-el" asp-items="ViewBag.WarehouseId">
+                    <option value="">Depo Seçin (Opsiyonel)</option>
+                </select>
+            </div>
         </div>
 
-        @* Info alert — full width *@
-        <div class="ws-info-alert">
-            <i data-lucide="info"></i>
-            <span>Tedarikçi eklendiğinde sistem üzerinden satın alma operasyonları başlatılabilir.</span>
+        @* Info Alert (Full Width) *@
+        <div class="ws-form-group ws-form-group--full">
+            <div class="ws-info-alert">
+                <i data-lucide="info"></i>
+                <span>Tedarikçi eklendiğinde sistem üzerinden satın alma operasyonları başlatılabilir.</span>
+            </div>
         </div>
 
-    </div>@* /.ws-modal-body *@
+    </div>
 
-    @* ─── FOOTER ACTIONS ─── *@
+    @* ─── 3. SABİT FOOTER ─── *@
     <div class="ws-form-actions">
         <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
         <button type="submit" class="ws-btn-main">
-            <i data-lucide="@(isEdit ? "save" : "check")"></i>
+            <i data-lucide="@buttonIcon"></i>
             @buttonText
         </button>
-    </div>
-
+    </div> 
 </form>
