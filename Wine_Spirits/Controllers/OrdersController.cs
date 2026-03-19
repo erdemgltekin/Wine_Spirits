@@ -23,12 +23,11 @@ namespace Wine_Spirits.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             try
             {
-                ViewBag.Customers = new SelectList(_context.Customers.OrderBy(c => c.Name), "Id", "Name");
-                ViewBag.Warehouses = new SelectList(_context.WareHouses.OrderBy(w => w.Name), "Id", "Name");
+                await PopulateSelectListsAsync();
                 
                 // AJAX çağrısı ise sadece Formu (Partial), normal çağrı ise Create.cshtml'i (View) dön
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -83,24 +82,19 @@ namespace Wine_Spirits.Controllers
         {
             try
             {
-                // Fetch dropdown data sequentially to avoid connection pool exhaustion
-                var customers = await _context.Customers?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<Customer>();
-                var warehouses = await _context.WareHouses?.AsNoTracking().OrderBy(x => x.Name).ToListAsync() ?? new List<WareHouse>();
+                // Fetch dropdown data sequentially with AsNoTracking to avoid connection/latency issues
+                var customers = await _context.Customers.AsNoTracking().OrderBy(x => x.Name).ToListAsync();
+                var warehouses = await _context.WareHouses.AsNoTracking().OrderBy(x => x.Name).ToListAsync();
 
-                // Debug için log
-                Console.WriteLine($"Customers count: {customers.Count}");
-                Console.WriteLine($"Warehouses count: {warehouses.Count}");
-
-                ViewBag.Customers = new SelectList(customers, "Id", "FullName", order?.CustomerId);
+                ViewBag.Customers = new SelectList(customers, "Id", "Name", order?.CustomerId);
                 ViewBag.Warehouses = new SelectList(warehouses, "Id", "Name", order?.WarehouseId);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"PopulateSelectListsAsync Error: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 
                 // Fallback to empty lists to prevent modal crash
-                ViewBag.Customers = new SelectList(Enumerable.Empty<Customer>(), "Id", "FullName");
+                ViewBag.Customers = new SelectList(Enumerable.Empty<Customer>(), "Id", "Name");
                 ViewBag.Warehouses = new SelectList(Enumerable.Empty<WareHouse>(), "Id", "Name");
             }
         }

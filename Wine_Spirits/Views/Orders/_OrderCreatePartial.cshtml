@@ -34,7 +34,7 @@
 
             <div class="ws-form-group">
                 <label class="ws-form-label">Sipariş Tarihi *</label>
-                <input asp-for="OrderDate" class="ws-input-premium flatpickr" type="text" placeholder="Tarih seçiniz...">
+                <input asp-for="OrderDate" class="ws-input-premium flatpickr" type="text" placeholder="Tarih seçiniz..." readonly>
                     <span asp-validation-for="OrderDate" class="text-danger"></span>
                 </div>
             </div>
@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div class="ws-form-actions">
+        <div class="ws-modal-footer">
             <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">İptal</button>
             <button type="submit" class="ws-btn-main">Siparişi Onayla ve Kaydet</button>
         </div>

@@ -78,8 +78,11 @@ const OrderManager = {
                 if (removeBtn) {
                     const rows = container.querySelectorAll('.ws-order-item-row');
                     if (rows.length > 1) {
-                        removeBtn.closest('.ws-order-item-row').remove();
-                        this.calculateTotal();
+                        const $row = jQuery(removeBtn.closest('.ws-order-item-row'));
+                        $row.fadeOut(300, function() {
+                            jQuery(this).remove();
+                            OrderManager.calculateTotal();
+                        });
                     } else {
                         alert("Siparişte en az bir ürün bulunmalıdır.");
                     }
@@ -123,11 +126,13 @@ const OrderManager = {
     },
 
     addItemRow: function () {
-        const container = document.getElementById('orderItemsContainer');
+        const container = $( '#orderItemsContainer' );
         const idx = this.itemIndex++;
 
-        // Yeni satırı ekle
-        container.insertAdjacentHTML('beforeend', this.itemTemplate(idx));
+        // Yeni satırı ekle (Gizli olarak ekle ve yavaşça göster)
+        const $newRow = $(this.itemTemplate(idx)).hide();
+        container.append($newRow);
+        $newRow.fadeIn(300);
 
         // Yeni satırın bileşenlerini yükle
         this.loadProductsForSelect(idx);
@@ -140,8 +145,12 @@ const OrderManager = {
         const $sel = jQuery(`.product-select[data-index="${index}"]`);
 
         $sel.select2({
-            dropdownParent: jQuery('.modal').length ? jQuery('.modal') : jQuery(document.body),
-            width: '100%'
+            dropdownParent: jQuery('#createOrderModalForm').closest('.modal'),
+            width: '100%',
+            templateSelection: (data) => {
+                if (!data.id) return data.text;
+                return jQuery(`<span class="fw-medium">${data.text}</span>`);
+            }
         }).on('change', (e) => {
             const selected = e.target.options[e.target.selectedIndex];
             const price = selected ? selected.dataset.price : 0;
