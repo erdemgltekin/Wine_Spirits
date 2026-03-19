@@ -1,4 +1,7 @@
-﻿/* Login Sayfası Özel Stilleri */
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+/* Login Sayfası Özel Stilleri */
 body.login-body {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     height: 100vh;
@@ -33,9 +36,9 @@ body.login-body {
     width: 100%;
     border-radius: 8px;
     transition: 0.3s;
-}
 
-    .btn-login:hover {
+    &:hover {
         background-color: #c62a48;
         color: white;
     }
+}

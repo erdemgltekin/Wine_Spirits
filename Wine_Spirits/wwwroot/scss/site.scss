@@ -9,15 +9,21 @@
 // 3. Layout (Topbar, Sidebar, Main Content)
 @import 'layout/layout';
 
-// 4. Components
+// 4. Components (Reusable UI elements)
 @import 'components/buttons';
 @import 'components/forms';
-@import 'components/cards';
+@import 'components/card';
 @import 'components/tables';
 @import 'components/modals';
 @import 'components/filters';
 @import 'components/dropdowns';
 @import 'components/sidebar';
 @import 'components/datepicker';
+
+// 5. Pages (Specific page logic)
+@import 'pages/login';
+@import 'pages/warehouse';
+@import 'pages/dashboard';
+@import 'pages/product';
+@import 'pages/order'; // High specificity isolated rules for order modal
      
-                                                                                  

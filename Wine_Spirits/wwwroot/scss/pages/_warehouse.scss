@@ -1,5 +1,8 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
 /**
- * @file warehouse-styles.css
+ * @file _warehouses.scss
  * @description Depo Yönetimi sayfası için global premium tasarıma uygun stiller.
  */
 
@@ -11,27 +14,11 @@
     padding-bottom: 2rem;
 }
 
-/* 2. ANA KART TASARIMI */
+/* 2. ANA KART LAYOUT (Visual styles come from components/_cards.scss) */
 .ws-warehouse-card {
-    background: #ffffff;
-    border: 1px solid var(--gray-200);
-    border-radius: 16px; /* Global dile uyum için 16px */
-    padding: 20px;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    cursor: default;
 }
-
-    /* MOR HOVER EFEKTİ (Ürünler sayfasındaki gibi) */
-    .ws-warehouse-card:hover {
-        transform: translateY(-8px);
-        border-color: var(--primary);
-        /* Premium mor parlama */
-        box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.1), 0 10px 10px -6px rgba(124, 58, 237, 0.1) !important;
-    }
 
 /* 3. KART ÜST ALAN (İkon & Başlık) */
 .card-header-flex {
@@ -44,17 +31,17 @@
 .warehouse-icon-box {
     width: 42px;
     height: 42px;
-    background-color: var(--primary-glow);
+    background-color: $primary-light;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary);
+    color: $primary;
     transition: all 0.3s ease;
 }
 
 .ws-warehouse-card:hover .warehouse-icon-box {
-    background-color: var(--primary) !important;
+    background-color: $primary !important;
     color: white !important;
     transform: scale(1.1) rotate(-5deg);
 }
@@ -62,17 +49,17 @@
 .warehouse-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--gray-900);
+    color: $gray-900;
     transition: color 0.3s ease;
 }
 
 .ws-warehouse-card:hover .warehouse-title {
-    color: var(--primary);
+    color: $primary;
 }
 
 .warehouse-code {
     font-size: 0.75rem;
-    color: var(--gray-500);
+    color: $gray-500;
     font-weight: 500;
 }
 
@@ -85,7 +72,7 @@
 .ws-action-btn {
     width: 32px;
     height: 32px;
-    border: 1px solid var(--gray-200);
+    border: 1px solid $gray-200;
     border-radius: 8px;
     background: #fff;
     display: flex;
@@ -102,15 +89,15 @@
 }
 
 .ws-action-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--primary-glow);
+    border-color: $primary;
+    color: $primary;
+    background: $primary-light;
 }
 
 .ws-delete-icon:hover {
-    color: #ef4444 !important;
-    border-color: #fee2e2 !important;
-    background: #fef2f2 !important;
+    color: $danger !important;
+    border-color: rgba($danger, 0.1) !important;
+    background: rgba($danger, 0.05) !important;
 }
 
 /* 5. META VE İSTATİSTİKLER */
@@ -126,7 +113,7 @@
     align-items: center;
     gap: 8px;
     font-size: 0.8rem;
-    color: var(--gray-600);
+    color: $gray-600;
 }
 
 .warehouse-stats {
@@ -134,7 +121,7 @@
     gap: 10px;
     margin-top: auto;
     padding-top: 15px;
-    border-top: 1px dashed var(--gray-200);
+    border-top: 1px dashed $gray-200;
 }
 
 .stat-box {
@@ -145,7 +132,7 @@
 }
 
     .stat-box.purple {
-        background: #fdf4ff;
+        background: $primary-light;
     }
 
     .stat-box.blue {
@@ -155,19 +142,17 @@
 .stat-label {
     font-size: 0.65rem;
     font-weight: 600;
-    color: var(--gray-500);
+    color: $gray-500;
     display: block;
 }
 
 .stat-value {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--gray-900);
+    color: $gray-900;
 }
 
-/* 6. MODAL VE FORM ÖZELLEŞTİRMELERİ (TEMİZLENDİ - GLOBALDEN ALINIR) */
-
-/* İstatistliklerin olduğu o özel i lerin kısımlarını bırakabiliriz ama formunkileri siliyoruz */
+/* 6. MODAL VE FORM ÖZELLEŞTİRMELERİ */
 .ws-warehouse-icon {
     width: 42px;
     height: 42px;
@@ -180,14 +165,14 @@
 .ws-info-badge {
     padding: 0.5rem;
     border-radius: 0.75rem;
-    background-color: var(--bs-light);
+    background-color: $gray-50;
     text-align: center;
-    border: 1px solid var(--bs-border-color);
+    border: 1px solid $gray-200;
 }
 
 .ws-badge-label {
     display: block;
-    color: var(--bs-secondary);
+    color: $gray-500;
     font-size: 10px;
     text-transform: uppercase;
 }

@@ -7,7 +7,8 @@
     Hover: Mor Glow & Derinlik
    ============================================================ */
 
-.ws-card {
+.ws-card,
+.ws-warehouse-card {
     background: #ffffff;
     border-radius: 16px;
     padding: 1.5rem;
@@ -27,6 +28,10 @@
         // Taşan Mor Parıltılı Gölge (Glow)
         box-shadow: 0 15px 40px rgba(124, 58, 237, 0.18), 0 5px 15px rgba(124, 58, 237, 0.08);
     }
+}
+
+.ws-card,
+.ws-warehouse-card {
     // Kart içindeki hafif gradyan yansıması
     &::after {
         content: '';

@@ -1,238 +1,205 @@
 /**
  * Order Manager - Sipariş Yönetimi JS
+ * Kolon sarmallı (div) yapı ve dinamik satır yönetimi
  */
 const OrderManager = {
-    itemIndex: 1, // İlk satır zaten var (index 0)
+    itemIndex: 1,
 
-    // Ürün Satırı Şablonu - _OrderCreatePartial.cshtml uyumlu
+    // YENİ: Kolon yapısıyla (col-product, col-qty vb.) tam uyumlu şablon
     itemTemplate: (index) => `
         <div class="ws-order-item-row" data-item-index="${index}">
-            <div class="ws-filter-item">
-                <i data-lucide="package"></i>
-                <select name="OrderItems[${index}].ProductId" class="ws-filter-el select2-enable product-select" data-index="${index}">
+            <div class="col-product">
+                <select name="OrderItems[${index}].ProductId" class="ws-input-premium product-select" data-index="${index}">
                     <option value="">Ürün seçiniz...</option>
                 </select>
             </div>
-            <div class="ws-filter-item">
-                <i data-lucide="hash"></i>
-                <input type="number" name="OrderItems[${index}].Quantity" class="ws-filter-el quantity-input ws-input-premium" data-index="${index}" min="1" value="1" placeholder="0">
+            <div class="col-qty">
+                <input type="number" name="OrderItems[${index}].Quantity" class="ws-input-premium quantity-input text-center" 
+                       data-index="${index}" min="1" value="1">
             </div>
-            <div class="ws-filter-item">
-                <i data-lucide="banknote"></i>
-                <input type="number" name="OrderItems[${index}].UnitPrice" class="ws-filter-el price-input ws-input-premium" data-index="${index}" step="0.01" min="0" placeholder="0.00">
+            <div class="col-price">
+                <input type="number" name="OrderItems[${index}].UnitPrice" class="ws-input-premium price-input text-end" 
+                       data-index="${index}" step="0.01" min="0">
             </div>
-            <button type="button" class="ws-btn-icon ws-btn-icon-danger remove-item-btn" data-index="${index}">
-                <i data-lucide="trash-2"></i>
-            </button>
+            <div class="col-action">
+                <button type="button" class="remove-item-btn" title="Satırı Sil">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
         </div>
     `,
 
     init: function () {
+        this.attachGlobalEvents();
         this.initializeIcons();
-        this.initializeDatepicker();
-        this.attachEvents();
-        this.refreshStatusStyles();
-        this.initializeOrderCreate(); // Sipariş oluşturma mantığını başlat
+
+        // Modal açıldığında içeriği kur
+        $(document).on('shown.bs.modal', '.modal', () => {
+            this.initializeOrderCreate();
+        });
     },
 
-    initializeOrderCreate: function() {
-        // Sadece sipariş modalında çalış
-        if (document.getElementById('orderItemsContainer')) {
+    initializeOrderCreate: function () {
+        const container = document.getElementById('orderItemsContainer');
+        if (container) {
+            this.itemIndex = 1;
+            // İlk satır için hazırlık (Index 0)
             this.loadProductsForSelect(0);
+            this.initializeSelect2ForRow(0);
             this.calculateTotal();
-            this.attachRowEventListeners(0);
+            this.attachOrderItemEvents();
         }
     },
 
-    initializeIcons: () => { if (typeof lucide !== 'undefined') lucide.createIcons(); },
-
-    initializeDatepicker: function () {
-        const el = document.getElementById('orderDateFilter');
-        if (el && typeof flatpickr !== 'undefined') {
-            flatpickr(el, {
-                locale: 'tr',
-                mode: 'range',
-                dateFormat: 'd.m.Y',
-                disableMobile: true,
-                // Takvimin açıldığında tasarımın üstüne binmemesi için
-                animate: true,
-                onReady: function (selectedDates, dateStr, instance) {
-                    // Takvim açıldığında input'un stilini korumak için gerekirse müdahale
-                    instance.calendarContainer.classList.add('shadow-lg', 'border-0', 'rounded-4');
+    attachGlobalEvents: function () {
+        const createBtn = document.getElementById('btnNewOrder') || document.getElementById('btnCreateOrder');
+        if (createBtn) {
+            createBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (typeof GlobalUI !== 'undefined') {
+                    GlobalUI.openModal('/Orders/Create', 'modal-lg');
                 }
             });
+        }
+    },
+
+    attachOrderItemEvents: function () {
+        const addBtn = document.getElementById('btnAddOrderItem');
+        if (addBtn) {
+            const newAddBtn = addBtn.cloneNode(true);
+            addBtn.parentNode.replaceChild(newAddBtn, addBtn);
+            newAddBtn.addEventListener('click', () => this.addItemRow());
+        }
+
+        const container = document.getElementById('orderItemsContainer');
+        if (container) {
+            container.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-item-btn');
+                if (removeBtn) {
+                    const rows = container.querySelectorAll('.ws-order-item-row');
+                    if (rows.length > 1) {
+                        removeBtn.closest('.ws-order-item-row').remove();
+                        this.calculateTotal();
+                    } else {
+                        alert("Siparişte en az bir ürün bulunmalıdır.");
+                    }
+                }
+            });
+
+            container.addEventListener('input', (e) => {
+                if (e.target.matches('.quantity-input, .price-input')) {
+                    this.calculateTotal();
+                }
+            });
+        }
+
+        // AJAX Form Gönderimi
+        const form = document.getElementById('createOrderModalForm');
+        if (form) {
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || "Bir hata oluştu.");
+                    }
+                } catch (err) {
+                    console.error("Sipariş hatası:", err);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            };
         }
     },
 
     addItemRow: function () {
         const container = document.getElementById('orderItemsContainer');
-        if (!container) return;
+        const idx = this.itemIndex++;
 
-        const html = this.itemTemplate(this.itemIndex++);
-        container.insertAdjacentHTML('beforeend', html);
-        
-        // Select2'yi yeniden başlat
-        this.initializeSelect2ForRow(this.itemIndex - 1);
-        
-        // Ürün listesini yükle
-        this.loadProductsForSelect(this.itemIndex - 1);
-        
-        // Event listener'ları ekle
-        this.attachRowEventListeners(this.itemIndex - 1);
-        
-        // Lucide icon'larını yenile
+        // Yeni satırı ekle
+        container.insertAdjacentHTML('beforeend', this.itemTemplate(idx));
+
+        // Yeni satırın bileşenlerini yükle
+        this.loadProductsForSelect(idx);
+        this.initializeSelect2ForRow(idx);
         this.initializeIcons();
     },
 
-    // Satır event listener'ları
-    attachRowEventListeners: function(index) {
-        // Miktar değişimi
-        const quantityInput = document.querySelector(`.quantity-input[data-index="${index}"]`);
-        if (quantityInput) {
-            quantityInput.addEventListener('input', () => this.calculateTotal());
-        }
-        
-        // Fiyat değişimi
-        const priceInput = document.querySelector(`.price-input[data-index="${index}"]`);
-        if (priceInput) {
-            priceInput.addEventListener('input', () => this.calculateTotal());
-        }
-        
-        // Sil butonu
-        const removeBtn = document.querySelector(`.remove-item-btn[data-index="${index}"]`);
-        if (removeBtn) {
-            removeBtn.addEventListener('click', () => this.removeOrderItemRow(index));
-        }
-    },
-
-    // Satır sil
-    removeOrderItemRow: function(index) {
-        const row = document.querySelector(`.ws-order-item-row[data-item-index="${index}"]`);
-        if (row) {
-            row.remove();
-            this.calculateTotal();
-            this.initializeIcons();
-        }
-    },
-
-    // Select2'yi satır için başlat
-    initializeSelect2ForRow: function(index) {
+    initializeSelect2ForRow: function (index) {
         if (!window.jQuery || !window.jQuery.fn.select2) return;
-        
-        const $select = window.jQuery(`.product-select[data-index="${index}"]`);
-        if ($select.length) {
-            const $modal = $select.closest('.modal');
-            $select.select2({
-                theme: 'default',
-                width: '100%',
-                placeholder: 'Ürün seçiniz...',
-                dropdownParent: $modal.length ? $modal : window.jQuery(document.body)
-            });
+        const $sel = jQuery(`.product-select[data-index="${index}"]`);
+
+        $sel.select2({
+            dropdownParent: jQuery('.modal').length ? jQuery('.modal') : jQuery(document.body),
+            width: '100%'
+        }).on('change', (e) => {
+            const selected = e.target.options[e.target.selectedIndex];
+            const price = selected ? selected.dataset.price : 0;
+            const row = e.target.closest('.ws-order-item-row');
+            if (row) {
+                const priceInput = row.querySelector('.price-input');
+                if (priceInput) {
+                    priceInput.value = price || 0;
+                    this.calculateTotal();
+                }
+            }
+        });
+    },
+
+    loadProductsForSelect: async function (index) {
+        try {
+            const response = await fetch('/api/products/list');
+            const data = await response.json();
+
+            const sel = document.querySelector(`.product-select[data-index="${index}"]`);
+            if (sel && data.products) {
+                sel.innerHTML = '<option value="">Ürün seçiniz...</option>';
+                data.products.forEach(p => {
+                    const opt = new Option(p.name, p.id);
+                    opt.dataset.price = p.price;
+                    sel.add(opt);
+                });
+
+                // Select2 değerleri görmesi için tetikle
+                if (window.jQuery && window.jQuery.fn.select2) {
+                    window.jQuery(sel).trigger('change.select2');
+                }
+            }
+        } catch (error) {
+            console.error('Ürünler yüklenemedi:', error);
         }
     },
 
-    // Ürün listesini yükle
-    loadProductsForSelect: function(index) {
-        fetch('/api/products/list')
-            .then(response => response.json())
-            .then(data => {
-                const select = document.querySelector(`.product-select[data-index="${index}"]`);
-                if (select && data.products) {
-                    select.innerHTML = '<option value="">Ürün seçiniz...</option>';
-                    data.products.forEach(product => {
-                        const option = document.createElement('option');
-                        option.value = product.id;
-                        option.textContent = product.name;
-                        option.dataset.price = product.price;
-                        select.appendChild(option);
-                    });
-                    
-                    // Select2'yi yenile
-                    if (window.jQuery && window.jQuery.fn.select2) {
-                        window.jQuery(select).trigger('change');
-                    }
-                }
-            })
-            .catch(error => console.error('Products load error:', error));
-    },
-
-    // Toplam tutarı hesapla
-    calculateTotal: function() {
-        const rows = document.querySelectorAll('.ws-order-item-row');
+    calculateTotal: function () {
         let total = 0;
-        
-        rows.forEach(row => {
-            const quantity = parseFloat(row.querySelector('.quantity-input')?.value) || 0;
-            const price = parseFloat(row.querySelector('.price-input')?.value) || 0;
-            total += quantity * price;
+        document.querySelectorAll('.ws-order-item-row').forEach(row => {
+            const q = parseFloat(row.querySelector('.quantity-input')?.value) || 0;
+            const p = parseFloat(row.querySelector('.price-input')?.value) || 0;
+            total += q * p;
         });
-        
-        const totalElement = document.getElementById('totalAmount');
-        if (totalElement) {
-            totalElement.textContent = `₺${total.toFixed(2)}`;
+
+        const el = document.getElementById('totalAmount');
+        if (el) {
+            el.textContent = `₺${total.toLocaleString('tr-TR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
         }
     },
 
-    recalculateTotal: function () {
-        this.calculateTotal(); // Yeni hesaplama metodunu çağır
-    },
-
-    applyStatusColor: function (select) {
-        select.classList.remove('st-active', 'st-completed', 'st-cancelled');
-        if (select.value === 'active') select.classList.add('st-active');
-        if (select.value === 'completed') select.classList.add('st-completed');
-        if (select.value === 'cancelled') select.classList.add('st-cancelled');
-    },
-
-    refreshStatusStyles: function () {
-        document.querySelectorAll('.ws-status-select-minimal').forEach(s => this.applyStatusColor(s));
-    },
-
-    attachEvents: function () {
-        // Yeni Satır Ekle
-        document.getElementById('btnAddOrderItem')?.addEventListener('click', () => this.addItemRow());
-
-        // Satır İçindeki Değişimler (Delegation)
-        document.getElementById('orderItemsContainer')?.addEventListener('click', (e) => {
-            if (e.target.closest('.ws-order-item-delete')) {
-                const rows = document.querySelectorAll('.ws-order-item-row');
-                if (rows.length > 1) {
-                    e.target.closest('.ws-order-item-row').remove();
-                    this.recalculateTotal();
-                }
-            }
-        });
-
-        document.getElementById('orderItemsContainer')?.addEventListener('change', (e) => {
-            if (e.target.classList.contains('ws-order-product-select')) {
-                const price = e.target.options[e.target.selectedIndex].dataset.price || 0;
-                const row = e.target.closest('.ws-order-item-row');
-                row.querySelector('.ws-order-price-input').value = price;
-                this.recalculateTotal();
-            }
-        });
-
-        document.getElementById('orderItemsContainer')?.addEventListener('input', (e) => {
-            if (e.target.classList.contains('ws-order-qty-input') || e.target.classList.contains('ws-order-price-input')) {
-                this.recalculateTotal();
-            }
-        });
-
-        // Durum Değişikliği
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('ws-status-select-minimal')) {
-                this.applyStatusColor(e.target);
-            }
-        });
-
+    initializeIcons: () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
-};
-
-// Global Köprü
-window.updateOrderFilter = function (type, value) {
-    const label = document.getElementById('selectedStatus');
-    if (label) label.innerText = value;
-    // AJAX Filtreleme buraya gelecek
 };
 
 document.addEventListener('DOMContentLoaded', () => OrderManager.init());

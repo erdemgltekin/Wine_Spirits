@@ -1,0 +1,146 @@
+@import '../abstracts/_variables.scss';
+@import '../abstracts/_mixins.scss';
+
+// SCSS Isolation - All styles wrapped in the specific form ID to prevent style bleeding
+#createOrderModalForm {
+
+    // 1. Genel Modal Ayarları Overrides
+    .ws-modal-body {
+        padding: 24px !important;
+
+        .ws-master-grid,
+        .ws-order-section,
+        .ws-order-summary {
+            grid-column: 1 / -1 !important; // Force full width in any grid
+        }
+
+        .ws-master-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 20px !important;
+            margin-bottom: 25px !important;
+        }
+    }
+
+    // 2. Sipariş Kalemleri Bölümü
+    .ws-order-section {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        margin-bottom: 24px !important;
+
+        .ws-section-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 15px !important;
+        }
+    }
+
+    // 3. KRİTİK: Kolon Genişlikleri ve Yan Yana Dizilim
+    .ws-order-item-header,
+    .ws-order-item-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
+
+        // Reset any potential child block rules applied by global form styles
+        & > div {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .col-product {
+        flex: 0 0 45% !important;
+    }
+
+    .col-qty {
+        flex: 0 0 15% !important;
+    }
+
+    .col-price {
+        flex: 0 0 25% !important;
+    }
+
+    .col-action {
+        flex: 0 0 45px !important;
+        text-align: center;
+    }
+
+    // 4. Input Reset Strategy
+    .ws-order-item-row {
+        margin-bottom: 12px !important;
+
+        .ws-input-premium {
+            all: unset !important; // Clear global form inheritance
+            display: block !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            height: 40px !important;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            padding: 0 12px !important;
+            font-size: 14px !important;
+            color: #1e293b !important;
+
+            &:focus {
+                border-color: #6366f1 !important;
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+            }
+        }
+    }
+
+    // 5. Alt Toplam Kartı
+    .ws-summary-grid {
+        display: grid !important;
+        grid-template-columns: 1.5fr 1fr !important;
+        gap: 30px !important;
+        align-items: end !important;
+    }
+
+    .ws-total-card {
+        background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%) !important;
+        padding: 16px 20px !important;
+        border-radius: 12px !important;
+        color: white !important;
+        text-align: right !important;
+
+        .ws-total-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .ws-total-amount {
+            font-size: 26px;
+            font-weight: 800;
+            display: block;
+        }
+    }
+
+    // 6. Silme Butonu
+    .remove-item-btn {
+        all: unset !important;
+        cursor: pointer !important;
+        width: 38px !important;
+        height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #fef2f2 !important;
+        color: #ef4444 !important;
+        border-radius: 8px !important;
+
+        &:hover {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+    }
+}
