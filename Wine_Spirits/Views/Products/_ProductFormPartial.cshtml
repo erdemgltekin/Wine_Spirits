@@ -1,0 +1,131 @@
+@model Wine_Spirits.Models.Product
+
+@{
+    bool isEdit = Model != null && Model.Id != Guid.Empty;
+    string title = isEdit ? "Ürün Bilgilerini Güncelle" : "Yeni Ürün Kaydı";
+    string buttonText = isEdit ? "Değişiklikleri Kaydet" : "Ürünü Envantere Ekle";
+    string buttonIcon = isEdit ? "save" : "check-circle";
+}
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" id="productForm" class="modal-content" method="post" autocomplete="off">
+    @Html.AntiForgeryToken()
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+
+    <div class="ws-modal-header">
+        <h5 class="ws-modal-title">@title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+    </div>
+
+    <div class="ws-modal-body">
+        <div class="ws-master-grid">
+            
+            @* Ürün Adı & Talep Butonu *@
+            <div class="ws-form-group ws-form-group--full">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label asp-for="ProductDefinitionId" class="ws-form-label mb-0">Ürün Adı *</label>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Tanım', 'Ürün Adı')">
+                        <i data-lucide="plus-circle" class="ws-icon-14"></i> Talep Et
+                    </button>
+                </div>
+                <div class="ws-filter-item">
+                    <i data-lucide="tag"></i>
+                    <select asp-for="ProductDefinitionId" class="ws-filter-el select2-enable" asp-items="ViewBag.ProductDefinitionId" required>
+                        <option value="">Ürün Seçiniz...</option>
+                    </select>
+                </div>
+                <span asp-validation-for="ProductDefinitionId" class="text-danger small"></span>
+            </div>
+
+            @* Kategori *@
+            <div class="ws-form-group">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label asp-for="ProductCategoryId" class="ws-form-label mb-0">Kategori</label>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Kategori', 'Kategori')">
+                        <i data-lucide="plus-circle" class="ws-icon-14"></i>
+                    </button>
+                </div>
+                <div class="ws-filter-item">
+                    <i data-lucide="layers"></i>
+                    <select asp-for="ProductCategoryId" class="ws-filter-el select2-enable" asp-items="ViewBag.ProductCategoryId" required></select>
+                </div>
+            </div>
+
+            @* Menşei Ülke *@
+            <div class="ws-form-group">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label asp-for="CountryId" class="ws-form-label mb-0">Menşei Ülke</label>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Ülke', 'Ülke')">
+                        <i data-lucide="plus-circle" class="ws-icon-14"></i>
+                    </button>
+                </div>
+                <div class="ws-filter-item">
+                    <i data-lucide="globe"></i>
+                    <select asp-for="CountryId" class="ws-filter-el select2-enable" asp-items="ViewBag.CountryId" required></select>
+                </div>
+            </div>
+
+            @* Üretim Yılı *@
+            <div class="ws-form-group">
+                <label asp-for="Year" class="ws-form-label">Üretim Yılı</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="calendar"></i>
+                    <select asp-for="Year" class="ws-filter-el select2-enable" asp-items="ViewBag.Years" required>
+                        <option value="">Yıl Seçiniz...</option>
+                    </select>
+                </div>
+            </div>
+
+            @* Birim Fiyat *@
+            <div class="ws-form-group">
+                <label asp-for="Price" class="ws-form-label">Birim Fiyat (₺)</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="banknote"></i>
+                    <input asp-for="Price" class="ws-filter-el" required />
+                </div>
+            </div>
+
+            @* Birim *@
+            <div class="ws-form-group">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label asp-for="UnitId" class="ws-form-label mb-0">Birim</label>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none text-muted small" onclick="sendSupportRequest('Birim', 'Ölçü Birimi')">
+                        <i data-lucide="plus-circle" class="ws-icon-14"></i>
+                    </button>
+                </div>
+                <div class="ws-filter-item">
+                    <i data-lucide="box"></i>
+                    <select asp-for="UnitId" class="ws-filter-el select2-enable" asp-items="ViewBag.UnitId" required></select>
+                </div>
+            </div>
+
+            @* Stok *@
+            <div class="ws-form-group">
+                <label asp-for="StockQuantity" class="ws-form-label">Mevcut Stok</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="database"></i>
+                    <input asp-for="StockQuantity" class="ws-filter-el" type="number" required />
+                </div>
+            </div>
+
+            @* Tedarikçi *@
+            <div class="ws-form-group ws-form-group--full">
+                <label asp-for="SupplierId" class="ws-form-label">Tedarikçi</label>
+                <div class="ws-filter-item">
+                    <i data-lucide="truck"></i>
+                    <select asp-for="SupplierId" class="ws-filter-el select2-enable" asp-items="ViewBag.SupplierId" required></select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ws-form-actions">
+        <button type="button" class="ws-btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+        <button type="submit" class="ws-btn-main">
+            <i data-lucide="@buttonIcon"></i> @buttonText
+        </button>
+    </div>
+</form>

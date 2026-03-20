@@ -1,214 +1,233 @@
+@charset "UTF-8";
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
+/* ============================================================
+    WS PREMIUM SUPPLIER MANAGEMENT PAGE
+    - Grid & Flex Logic (Pure Architecture)
+    - Card V3 Implementation
+    - Responsive Compatibility
+   ============================================================ */
+
 .ws-suppliers-container {
-    padding: 2rem;
-
+    padding: 1.5rem;
+    /* 1. Sayfa Başlığı Yerleşimi */
     .ws-page-header {
-        @include flex-between;
-        margin-bottom: 2rem;
-    }
-
-    .ws-filter-container {
         display: flex !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        border: 1px solid $gray-200 !important;
-        border-radius: 12px !important;
-        overflow: hidden !important;
-        height: 52px !important;
-        margin-bottom: 2rem !important;
-        padding: 0 !important;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
 
-        .ws-filter-item {
-            flex: 1 !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-            padding: 0 20px !important;
-            border-right: 1px solid $gray-100 !important;
-            height: 100% !important;
-
-            i, svg {
-                color: $gray-400 !important;
-                flex-shrink: 0 !important;
+        .ws-header-content {
+            .ws-page-title {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: $gray-900;
+                margin: 0 0 4px 0;
             }
 
-            .ws-filter-el {
-                border: none !important;
-                background: transparent !important;
-                height: 100% !important;
-                padding: 0 !important;
-                font-size: 14px !important;
-                color: $gray-700 !important;
-                outline: none !important;
-                width: 100% !important;
-
-                &::placeholder {
-                    color: $gray-400 !important;
-                }
-            }
-        }
-
-        .dropdown {
-            flex: 0.6 !important;
-            height: 100% !important;
-
-            .ws-btn-filter-action {
-                background: $gray-50 !important;
-                border: none !important;
-                border-radius: 0 !important;
-                height: 100% !important;
-                padding: 0 25px !important;
-                color: $gray-600 !important;
-                font-weight: 600 !important;
-                font-size: 14px !important;
-                width: 100% !important;
-
-                &:hover {
-                    background: $gray-100 !important;
-                }
+            .ws-page-subtitle {
+                font-size: 0.9rem;
+                color: $gray-500;
+                margin: 0;
             }
         }
     }
+    /* 2. Üst İstatistik Gridi */
+    .ws-stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 1.25rem !important;
+        margin-bottom: 2rem !important;
 
+        @media (max-width: 1200px) {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    /* 3. Filtreleme Alanı (Görsel Uyum) */
+    .ws-filter-container {
+        margin-bottom: 2rem !important;
+        // _filters.scss zaten genel yapıyı kuruyor, buraya ek kural gerekirse yazılır
+    }
+    /* 4. Tedarikçi Kart Gridi */
     .ws-supplier-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 25px;
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        gap: 1.5rem !important;
         padding-bottom: 3rem;
     }
-
+    /* 5. Tedarikçi Kartı Detayları */
     .ws-supplier-card {
-        @extend .ws-card;
+        @extend .ws-card; // _card.scss'deki premium gölge ve hover efektini miras alır
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        padding: 1.5rem;
+        min-height: 380px;
 
-        .card-header-v3 {
-            @include flex-between;
-            margin-bottom: 1.5rem;
+        .ws-supplier-header {
+            display: flex;
+            justify-content: space-between;
             align-items: flex-start;
+            margin-bottom: 1.5rem;
 
-            .supplier-avatar-box {
+            .ws-supplier-profile {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .ws-supplier-avatar {
                 width: 48px;
                 height: 48px;
-                border-radius: 12px;
-                background: $primary-light;
-                color: $primary;
+                background: rgba(124, 58, 237, 0.1); // $primary-soft
+                color: #7c3aed; // $primary
+                border-radius: 14px;
                 @include flex-center;
-            }
 
-            .supplier-info-v3 {
-                .supplier-name-v3 {
-                    font-size: 1rem;
-                    font-weight: 750;
-                    color: $gray-900;
-                    margin-bottom: 2px;
-                }
-
-                .supplier-code-v3 {
-                    font-size: 0.75rem;
-                    color: $gray-500;
-                    font-weight: 600;
+                i, svg {
+                    width: 24px;
+                    height: 24px;
                 }
             }
 
-            .card-actions-v3 {
+            .ws-supplier-name {
+                font-size: 1rem;
+                font-weight: 700;
+                color: $gray-900;
+                margin: 0;
+                line-height: 1.2;
+            }
+
+            .ws-supplier-id {
+                font-size: 0.75rem;
+                color: $gray-400;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+        }
+
+        .ws-supplier-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+
+            .ws-info-row {
                 display: flex;
-                gap: 8px;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.85rem;
+                color: $gray-600;
 
-                .ws-btn-icon-v3 {
-                    width: 32px;
-                    height: 32px;
-                    border: 1px solid $gray-100;
-                    border-radius: 8px;
-                    background: #fff;
-                    @include flex-center;
-                    transition: all 0.2s ease;
+                i, svg {
+                    width: 15px;
+                    height: 15px;
                     color: $gray-400;
+                }
+            }
+        }
 
-                    &:hover {
-                        border-color: $primary;
-                        color: $primary;
-                        background: $primary-light;
+        .ws-supplier-footer {
+            margin-top: auto;
+
+            .ws-kpi-group {
+                display: flex;
+                background: $gray-50;
+                padding: 14px;
+                border-radius: 14px;
+                margin-bottom: 1.25rem;
+
+                .ws-kpi-item {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+
+                    &.align-end {
+                        align-items: flex-end;
+                        text-align: right;
+                    }
+
+                    .ws-kpi-label {
+                        font-size: 9px;
+                        font-weight: 800;
+                        color: $gray-400;
+                        letter-spacing: 0.05em;
+                        margin-bottom: 4px;
+                    }
+
+                    .ws-kpi-value {
+                        font-size: 0.95rem;
+                        font-weight: 750;
+                        color: $gray-800;
+                    }
+
+                    .ws-status-text {
+                        font-size: 0.85rem;
+                        font-weight: 800;
+
+                        &.success {
+                            color: #10b981;
+                        }
+                        // $emerald yerine güvenli kod
+                        &.danger {
+                            color: #e11d48;
+                        }
+                        // $rose yerine güvenli kod
+                    }
+                }
+            }
+
+            .ws-progress-wrapper {
+                .ws-progress-labels {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 6px;
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: $gray-500;
+                }
+
+                .ws-progress-bar {
+                    height: 8px;
+                    background: #f3f4f6;
+                    border-radius: 10px;
+                    overflow: hidden;
+
+                    .ws-progress-fill {
+                        height: 100%;
+                        background: #10b981; // Güvenli Yeşil
+                        border-radius: 10px;
+                        @include transition(width, 1s, ease-in-out);
                     }
                 }
             }
         }
-
-        .supplier-details-v3 {
-            margin-bottom: 1.5rem;
+        /* Aksiyon Butonları */
+        .ws-supplier-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            gap: 8px;
 
-            .detail-row {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.825rem;
-                color: $gray-600;
+            .ws-action-btn {
+                width: 34px;
+                height: 34px;
+                background: #ffffff;
+                border: 1.5px solid $gray-100;
+                border-radius: 10px;
+                @include flex-center;
+                @include transition;
+                color: $gray-400;
 
-                i, svg {
-                    width: 14px;
-                    height: 14px;
-                    opacity: 0.6;
+                &:hover {
+                    border-color: #7c3aed;
+                    color: #7c3aed;
+                    background: rgba(124, 58, 237, 0.05);
+                    transform: translateY(-2px);
                 }
             }
-        }
-
-        .supplier-footer-v3 {
-            margin-top: auto;
-            display: flex;
-            background: $gray-50;
-            border-radius: 12px;
-            padding: 12px;
-
-            .kpi-box {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-
-                .kpi-label {
-                    font-size: 9px;
-                    font-weight: 800;
-                    color: $gray-500;
-                    text-transform: uppercase;
-                    margin-bottom: 2px;
-                }
-
-                .kpi-value {
-                    font-size: 0.9rem;
-                    font-weight: 750;
-                    color: $gray-900;
-                }
-            }
-        }
-    }
-}
-
-/* ─── MODAL SELECT2 FIX (Görseldeki v v v hatası çözümü) ─── */
-.modal-content {
-    .select2-container--default {
-        width: 100% !important;
-
-        .select2-selection--single {
-            border: none !important;
-            background: transparent !important;
-            height: 40px !important;
-            display: flex;
-            align-items: center;
-
-            .select2-selection__rendered {
-                padding-left: 0 !important;
-                color: $gray-700 !important;
-            }
-
-            .select2-selection__arrow {
-                display: none !important;
-            }
-            // Select2'nin kendi okunu gizle
         }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Product Management Module - Pure Logic & Data
+ * Product Management Module - Pure Logic, Data & Form Handling
  */
 const ProductManager = {
     allProducts: [],
@@ -9,16 +9,21 @@ const ProductManager = {
     init: function () {
         this.loadProducts();
         this.attachEvents();
+        this.initFormHandler();
     },
 
     loadProducts: function () {
-        fetch('/Products/GetProductsData', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        fetch('/Products/GetProductsData', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
             .then(r => r.json())
             .then(res => {
                 this.allProducts = res.products || [];
                 this.filteredProducts = [...this.allProducts];
                 this.renderTable(this.filteredProducts);
-            });
+                this.populateCategories();
+            })
+            .catch(err => console.error("Veri yükleme hatası:", err));
     },
 
     renderTable: function (products) {
@@ -36,8 +41,8 @@ const ProductManager = {
             const isCritical = p.stockQuantity <= 10;
             return `
             <tr>
-                <td><strong>${p.productCode}</strong></td>
-                <td><b>${p.name}</b></td>
+                <td><strong>${p.productCode || 'N/A'}</strong></td>
+                <td><b>${p.name || 'İsimsiz'}</b></td>
                 <td>${p.categoryName || '-'}</td>
                 <td><small>${p.supplierName || '-'}</small></td>
                 <td><strong>${priceStr}</strong></td>
@@ -45,15 +50,62 @@ const ProductManager = {
                 <td><span class="status-pill ${isCritical ? 'status-danger' : 'status-success'}">${isCritical ? 'Kritik Stok' : 'Stokta Var'}</span></td>
                 <td class="text-end">
                     <div class="ws-table-actions">
-                        <button onclick="ProductManager.view('${p.id}')" class="ws-action-btn"><i data-lucide="eye"></i></button>
-                        <button onclick="ProductManager.edit('${p.id}')" class="ws-action-btn"><i data-lucide="edit-2"></i></button>
-                        <button onclick="ProductManager.delete('${p.id}')" class="ws-action-btn text-danger"><i data-lucide="trash-2"></i></button>
+                        <button onclick="ProductManager.view('${p.id}')" class="ws-action-btn" title="Görüntüle"><i data-lucide="eye"></i></button>
+                        <button onclick="ProductManager.edit('${p.id}')" class="ws-action-btn" title="Düzenle"><i data-lucide="edit-2"></i></button>
+                        <button onclick="ProductManager.delete('${p.id}')" class="ws-action-btn text-danger" title="Sil"><i data-lucide="trash-2"></i></button>
                     </div>
                 </td>
             </tr>`;
         }).join('');
 
         GlobalUI?.refreshLucide();
+    },
+
+    initFormHandler: function () {
+        document.addEventListener('submit', async (e) => {
+            if (e.target && e.target.id === 'productForm') {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const url = form.getAttribute('action');
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (response.headers.get("content-type")?.includes("application/json")) {
+                        const result = await response.json();
+                        if (result.success) {
+                            // Modal kapatma (GlobalUI metodunu veya bootstrap'i kullanıyoruz)
+                            if (typeof GlobalUI !== 'undefined' && GlobalUI.closeModal) {
+                                GlobalUI.closeModal();
+                            } else {
+                                const modalEl = document.querySelector('.modal.show');
+                                if (modalEl) bootstrap.Modal.getInstance(modalEl)?.hide();
+                            }
+
+                            Swal.fire({ icon: 'success', title: 'Başarılı!', text: 'İşlem tamamlandı.', timer: 1500, showConfirmButton: false });
+                            this.loadProducts();
+                        }
+                    } else {
+                        const errorHtml = await response.text();
+                        // Hata durumunda modal içeriğini güncelle (ID'nin doğruluğundan emin ol)
+                        const contentDiv = document.getElementById('GlobalModalContent') || document.getElementById('productModalContent');
+                        if (contentDiv) {
+                            contentDiv.innerHTML = errorHtml;
+                            GlobalUI?.refreshLucide();
+                            if (typeof GlobalUI !== 'undefined' && GlobalUI.initSelect2) GlobalUI.initSelect2();
+                        }
+                    }
+                } catch (err) {
+                    console.error("Form gönderim hatası:", err);
+                    Swal.fire('Hata', 'İşlem sırasında bir hata oluştu.', 'error');
+                }
+            }
+        });
     },
 
     filterCategory: function (val, text) {
@@ -93,16 +145,12 @@ const ProductManager = {
         catMenu.innerHTML = html;
     },
 
-    sort: function (type) {
-        if (type === 'name-asc') this.filteredProducts.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        else if (type === 'price-desc') this.filteredProducts.sort((a, b) => b.price - a.price);
-        else if (type === 'stock-desc') this.filteredProducts.sort((a, b) => b.stockQuantity - a.stockQuantity);
-        this.renderTable(this.filteredProducts);
-    },
-
     attachEvents: function () {
+        // Arama kutusu dinleyici
         document.getElementById('inventorySearch')?.addEventListener('input', () => this.applyFilters());
-        document.getElementById('btnCreateNew')?.addEventListener('click', (e) => {
+
+        // Yeni Ürün Ekle Butonu (ID: btnCreateNew)
+        $(document).on('click', '#btnCreateNew', (e) => {
             e.preventDefault();
             GlobalUI?.openModal('/Products/Create');
         });
@@ -110,5 +158,32 @@ const ProductManager = {
 
     view: function (id) { GlobalUI?.openModal(`/Products/Details/${id}`); },
     edit: function (id) { GlobalUI?.openModal(`/Products/Edit/${id}`); },
-    delete: function (id) { if (confirm('Bu ürünü silmek istediğine emin misin?')) console.log("Delete:", id); }
+    delete: function (id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu ürün envanterden silinecek!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/Products/Delete/${id}`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success) {
+                            this.loadProducts();
+                            Swal.fire('Silindi!', 'Ürün başarıyla kaldırıldı.', 'success');
+                        }
+                    });
+            }
+        });
+    }
 };
+
+document.addEventListener('DOMContentLoaded', () => ProductManager.init());

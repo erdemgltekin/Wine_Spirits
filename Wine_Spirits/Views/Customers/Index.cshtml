@@ -8,78 +8,99 @@
     var culture = new System.Globalization.CultureInfo("tr-TR");
 }
 
-
 <div class="ws-customers-container">
-    @* --- Üst Başlık --- *@
-    <div class="ws-page-header mb-4">
-        <div>
-            <h2 class="ws-page-title fs-4 fw-bold text-dark mb-1">Müşteri Yönetimi</h2>
-            <p class="ws-page-subtitle text-muted mb-0 opacity-75">Müşteri portföyünüzü ve ticari bilgileri yönetin.</p>
+    @* --- ÜST BAŞLIK --- *@
+    <header class="ws-page-header">
+        <div class="ws-header-content">
+            <h2 class="ws-page-title">Müşteri Yönetimi</h2>
+            <p class="ws-page-subtitle">Müşteri portföyünüzü ve ticari bilgileri yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" id="btnCreateCustomer">
-            <i data-lucide="user-plus"></i> Yeni Müşteri Ekle
-        </button>
-    </div>
-
-    @* --- İstatistik Kartları --- *@
-    <div class="ws-summary-grid-4 mb-4">
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "total", Label = "Toplam Müşteri", Value = Model.Stats.TotalCustomers.ToString(), Icon = "users", IconClass = "ws-icon-indigo" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "active", Label = "Aktif Müşteri", Value = Model.Stats.ActiveCustomers.ToString(), Icon = "user-check", IconClass = "ws-icon-emerald" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "orders", Label = "Toplam Sipariş", Value = Model.Stats.TotalOrders.ToString(), Icon = "package", IconClass = "ws-icon-indigo" }' />
-        <partial name="Partials/_StatCard" model='new StatCardViewModel { StatKey = "revenue", Label = "Toplam Ciro", Value = Model.Stats.TotalRevenue, Icon = "trending-up", IconClass = "ws-icon-emerald" }' />
-    </div>
-
-    @* --- FİLTRELEME BAR --- *@
-    <div class="ws-filter-container d-flex align-items-stretch shadow-sm mb-4">
-        @* Arama Kutusu *@
-        <div class="ws-filter-item flex-fill">
-            <i data-lucide="search" class="text-muted"></i>
-            <input type="text" class="ws-filter-el w-100" placeholder="Müşteri adı veya e-posta ara..." id="customerSearch">
-        </div>
-
-        @* Durum Filtre Kutusu *@
-        <div class="ws-filter-item">
-            <i data-lucide="filter" class="text-muted"></i>
-            <select class="form-select border-0 shadow-none bg-transparent p-0 fs-sm cursor-pointer" id="filterStatus">
-                <option value="">Tüm Durumlar</option>
-                <option value="active">Aktif</option>
-                <option value="inactive">Pasif</option>
-            </select>
-        </div>
-
-        @* Tarih Aralığı Kutusu *@
-        <div class="ws-filter-item">
-            <i data-lucide="calendar" class="text-muted"></i>
-            <input type="text" class="ws-filter-el ws-datepicker cursor-pointer" id="filterDate" placeholder="Kayıt Tarihi Aralığı" readonly>
-        </div>
-
-        @* Filtrele / Sırala Butonu *@
-        <div class="dropdown">
-            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="sliders-horizontal" class="text-muted"></i>
-                <span>Sırala</span>
+        <div class="ws-header-actions">
+            @* JS: closest('#btnCreateCustomer') bunu bekliyor *@
+            <button type="button" class="ws-btn-main" id="btnCreateCustomer">
+                <i data-lucide="user-plus"></i>
+                <span>Yeni Müşteri Ekle</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
-                <li><h6 class="dropdown-header">Sıralama</h6></li>
-                <li><a class="dropdown-item fs-sm" href="#">A'dan Z'ye</a></li>
-                <li><a class="dropdown-item fs-sm" href="#">Z'den A'ya</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item fs-sm" href="#">En Yüksek Ciro</a></li>
-                <li><a class="dropdown-item fs-sm" href="#">Son Eklenenler</a></li>
-            </ul>
+        </div>
+    </header>
+
+    @* --- İSTATİSTİK KARTLARI (ws-stat-card mimarisi) --- *@
+    <div class="ws-stats-grid">
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo"><i data-lucide="users"></i></div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Müşteri</span>
+                <span class="ws-stat-value">@Model.Stats.TotalCustomers</span>
+            </div>
+        </div>
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald"><i data-lucide="user-check"></i></div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Aktif Müşteri</span>
+                <span class="ws-stat-value">@Model.Stats.ActiveCustomers</span>
+            </div>
+        </div>
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-blue"><i data-lucide="package"></i></div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Sipariş</span>
+                <span class="ws-stat-value">@Model.Stats.TotalOrders</span>
+            </div>
+        </div>
+        <div class="ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-rose"><i data-lucide="trending-up"></i></div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Ciro</span>
+                <span class="ws-stat-value">@Model.Stats.TotalRevenue</span>
+            </div>
         </div>
     </div>
 
-    @* --- Modern Tablo --- *@
+    @* --- FİLTRELEME BARI (_filters.scss uyumlu) --- *@
+    <div class="ws-filter-container">
+        <div class="ws-filter-item">
+            <i data-lucide="search"></i>
+            <input type="text" class="ws-filter-el" placeholder="Müşteri ara..." id="customerSearch">
+        </div>
+
+        <div class="ws-filter-item">
+            <i data-lucide="calendar"></i>
+            <input type="text" class="ws-filter-el ws-datepicker" id="filterDate" data-mode="range" placeholder="Kayıt Tarihi" readonly>
+        </div>
+
+        @* Dropdown: _dropdowns.scss içindeki .ws-dropdown-premium yapısı *@
+        <div class="dropdown">
+            <div class="ws-filter-item" data-bs-toggle="dropdown" aria-expanded="false">
+                <i data-lucide="filter"></i>
+                <div class="ws-filter-el">
+                    <span id="selectedStatusText">Durum</span>
+                    <i data-lucide="chevron-down" class="ws-filter-chevron"></i>
+                </div>
+            </div>
+            <div class="dropdown-menu ws-dropdown-premium">
+                <div class="ws-dropdown-option active" onclick="document.getElementById('filterStatus').value=''; filterTable();">
+                    <i data-lucide="layers"></i> Tüm Durumlar
+                </div>
+                <div class="ws-dropdown-option" onclick="document.getElementById('filterStatus').value='active'; filterTable();">
+                    <i data-lucide="user-check"></i> Aktifler
+                </div>
+                <div class="ws-dropdown-option" onclick="document.getElementById('filterStatus').value='inactive'; filterTable();">
+                    <i data-lucide="user-minus"></i> Pasifler
+                </div>
+            </div>
+            <input type="hidden" id="filterStatus" value="">
+        </div>
+    </div>
+
+    @* --- TABLO (_tables.scss uyumlu) --- *@
     <div class="ws-table-wrapper">
-        <table class="ws-table-premium align-middle mb-0" id="reportTable">
+        <table class="ws-table-premium" id="reportTable">
             <thead>
                 <tr>
                     <th class="ps-4">MÜŞTERİ KODU</th>
                     <th>MÜŞTERİ BİLGİSİ</th>
                     <th>İLETİŞİM</th>
                     <th>VERGİ BİLGİLERİ</th>
-                    <th>SİPARİŞ / HARCAMA</th>
                     <th class="text-center">DURUM</th>
                     <th class="text-end pe-4">İŞLEMLER</th>
                 </tr>
@@ -87,53 +108,47 @@
             <tbody id="customersTableBody">
                 @foreach (var customer in Model.Customers)
                 {
-                    <tr class="ws-table-row">
+                    @* HATA ÇÖZÜMÜ: Eğer modelinde tarih yoksa data-date="" olarak kalabilir *@
+                    <tr data-date="">
                         <td class="ps-4">
-                            <span class="text-muted fs-xs fw-medium">#@customer.Id.ToString().Substring(0, 8).ToUpper()</span>
+                            <strong class="ws-td-id">#@customer.Id.ToString().Substring(0, 8).ToUpper()</strong>
                         </td>
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="avatar-circle">
-                                    @customer.Name[0]@customer.Lastname[0]
+                            <div class="ws-order-info-cell">
+                                <div class="avatar-circle">@customer.Name[0]@customer.Lastname[0]</div>
+                                <div class="ws-order-texts">
+                                    <span class="ws-td-main-text">@customer.Name @customer.Lastname</span>
                                 </div>
-                                <div class="fw-bold text-dark fs-sm">@customer.Name @customer.Lastname</div>
                             </div>
                         </td>
                         <td>
-                            <div class="d-flex flex-column">
-                                <span class="text-dark fs-sm fw-medium">@customer.Email</span>
-                                <small class="text-muted fs-xs">@customer.Phone</small>
+                            <div class="ws-info-stack">
+                                <span class="ws-td-main-text">@customer.Email</span>
+                                <small class="ws-td-sub-text">@customer.Phone</small>
                             </div>
                         </td>
                         <td>
-                            <div class="d-flex flex-column">
-                                <span class="text-dark fs-sm">@customer.TaxOffice</span>
-                                <small class="text-muted fs-xs">No: @customer.TaxNumber</small>
-                            </div>
-                        </td>
-                        <td>
-                            @{
-                                var orderCount = customer.Orders?.Count ?? 0;
-                                var totalSpent = customer.Orders?.SelectMany(o => o.OrderDetails).Sum(od => (decimal?)od.TotalPrice) ?? 0;
-                            }
-                            <div class="d-flex flex-column">
-                                <span class="text-dark fs-sm fw-bold">@orderCount Adet Sipariş</span>
-                                <span class="text-primary fs-xs fw-medium">@totalSpent.ToString("C2", culture)</span>
+                            <div class="ws-info-stack">
+                                <span class="ws-td-main-text">@customer.TaxOffice</span>
+                                <small class="ws-td-sub-text">No: @customer.TaxNumber</small>
                             </div>
                         </td>
                         <td class="text-center">
-                            <span class="status-pill @(customer.IsActive ? "status-success" : "status-warning")" id="badge-@customer.Id">
-                                <i data-lucide="@(customer.IsActive ? "check-circle" : "minus-circle")" style="width:14px"></i>
+                            @* JS: badge-${id} üzerinden güncelleme yapar *@
+                            <span id="badge-@customer.Id" class="ws-status-pill @(customer.IsActive ? "ws-status-success" : "ws-status-warning")">
+                                <i data-lucide="@(customer.IsActive ? "check-circle" : "minus-circle")"></i>
                                 @(customer.IsActive ? "Aktif" : "Pasif")
                             </span>
                         </td>
                         <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <button class="ws-action-btn btn-toggle-status" data-id="@customer.Id" title="Durum Değiştir">
-                                    <i data-lucide="power" class="@(customer.IsActive ? "text-success" : "text-muted")" style="width: 16px;"></i>
+                            <div class="ws-table-actions">
+                                @* JS'deki .btn-toggle-status ve .btn-delete-customer sınıfları eklendi *@
+                                <button class="ws-action-btn btn-toggle-status" data-id="@customer.Id">
+                                    <i data-lucide="power" class="@(customer.IsActive ? "text-success" : "text-muted")"></i>
                                 </button>
-                                <button class="ws-action-btn" title="Düzenle"><i data-lucide="edit-3" style="width: 16px;"></i></button>
-                                <button class="ws-action-btn text-danger btn-delete-customer" data-id="@customer.Id" title="Sil"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                                <button class="ws-action-btn btn-delete-customer" data-id="@customer.Id">
+                                    <i data-lucide="trash-2" class="text-danger"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -143,15 +158,16 @@
     </div>
 </div>
 
-<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 shadow-lg rounded-4"></div>
+@* Modal Yapısı - _modals.scss ve JS uyumlu *@
+<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        @* ws-modal-custom sınıfı _modals.scss içindeki premium tasarımı tetikler *@
+        <div class="modal-content ws-modal-custom">
+            @* AJAX ile yüklenecek *@
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
     <script src="~/js/customer/customer.js" asp-append-version="true"></script>
 }

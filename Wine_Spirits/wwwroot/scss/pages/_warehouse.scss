@@ -1,206 +1,173 @@
 @import '../abstracts/_variables.scss';
 @import '../abstracts/_mixins.scss';
 
-/**
- * @file _warehouses.scss
- * @description Depo Yönetimi sayfası için global premium tasarıma uygun stiller.
- */
+/* ============================================================
+    WS WAREHOUSE MANAGEMENT STYLES - FINAL STABLE
+    Not: Kartların görsel tasarımı (Glow, Hover, Border) 
+    global card.scss dosyasından gelmektedir.
+   ============================================================ */
 
-/* 1. GRID YAPILARI */
-.ws-warehouse-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 20px;
-    padding-bottom: 2rem;
+/* 1. GLOBAL PAGE STRUCTURE */
+.ws-page-container {
+    width: 100%;
+    display: block;
+    overflow: hidden;
 }
 
-// Üst İstatistik Kartları İçin 4'lü Grid
-.ws-summary-grid-4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+/* 2. SUMMARY (STAT) CARDS - Üstteki 4'lü Özet Yapısı */
+.ws-summary-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
+    margin-bottom: 30px;
+    width: 100%;
+    // Kartların tasarımı card.scss'den geliyor, burada sadece yerleşim (flex) bıraktık.
+    .ws-stat-card {
+        flex: 1 1 calc(25% - 20px) !important;
+        min-width: 240px !important;
+        // Görsel kodlar (border, bg, shadow) kaldırıldı, çakışma engellendi.
+    }
 
     @media (max-width: 1200px) {
-        grid-template-columns: repeat(2, 1fr);
+        .ws-stat-card {
+            flex: 1 1 calc(50% - 20px) !important;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ws-stat-card {
+            flex: 1 1 100% !important;
+        }
+    }
+}
+
+/* 3. WAREHOUSE CARDS GRID - Alttaki Büyük Depo Kartları */
+.ws-warehouse-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 24px !important;
+    padding-bottom: 2rem;
+
+    .ws-warehouse-card {
+        flex: 1 1 calc(33.333% - 24px) !important;
+        min-width: 320px !important;
+        // Görsel kodlar kaldırıldı; global card.scss'deki glow efekti artık çalışacak.
+    }
+
+    @media (max-width: 1100px) {
+        .ws-warehouse-card {
+            flex: 1 1 calc(50% - 24px) !important;
+        }
     }
 
     @media (max-width: 768px) {
-        grid-template-columns: 1fr;
+        .ws-warehouse-card {
+            flex: 1 1 100% !important;
+        }
     }
 }
 
-/* 2. ANA KART LAYOUT (Visual styles come from components/_cards.scss) */
-.ws-warehouse-card {
+/* 4. CARD INTERNAL ELEMENTS - Kart İçeriği Detayları */
+.ws-card-header {
+    margin-bottom: 20px;
+
+    .ws-card-info {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        .ws-card-icon-box {
+            width: 45px;
+            height: 45px;
+            background: rgba(124, 58, 237, 0.08); // Global mor ile uyumlu
+            color: #7c3aed;
+            border-radius: 12px;
+            @include flex-center;
+        }
+
+        .ws-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+    }
+}
+
+.ws-card-actions {
     display: flex;
-    flex-direction: column;
-}
-
-/* 3. KART ÜST ALAN (İkon & Başlık) */
-.card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.warehouse-icon-box {
-    width: 42px;
-    height: 42px;
-    background-color: $primary-light;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $primary;
-    transition: all 0.3s ease;
-}
-
-.ws-warehouse-card:hover .warehouse-icon-box {
-    background-color: $primary !important;
-    color: white !important;
-    transform: scale(1.1) rotate(-5deg);
-}
-
-.warehouse-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: $gray-900;
-    transition: color 0.3s ease;
-}
-
-.ws-warehouse-card:hover .warehouse-title {
-    color: $primary;
-}
-
-.warehouse-code {
-    font-size: 0.75rem;
-    color: $gray-500;
-    font-weight: 500;
-}
-
-/* 4. AKSİYON BUTONLARI (Edit/Delete) */
-.card-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.ws-action-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid $gray-200;
-    border-radius: 8px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    opacity: 0; /* Normalde gizli */
-    transform: translateX(10px);
-}
-
-.ws-warehouse-card:hover .ws-action-btn {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.ws-action-btn:hover {
-    border-color: $primary;
-    color: $primary;
-    background: $primary-light;
-}
-
-.ws-delete-icon:hover {
-    color: $danger !important;
-    border-color: rgba($danger, 0.1) !important;
-    background: rgba($danger, 0.05) !important;
-}
-
-/* 5. META VE İSTATİSTİKLER */
-.warehouse-meta {
-    margin-bottom: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.meta-item {
-    display: flex;
-    align-items: center;
     gap: 8px;
-    font-size: 0.8rem;
-    color: $gray-600;
+
+    .ws-btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid #f1f5f9;
+        background: #fff;
+        @include flex-center;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: #f8fafc;
+            color: #7c3aed;
+            border-color: #7c3aed;
+        }
+    }
 }
 
-.warehouse-stats {
+.ws-badge-container {
     display: flex;
-    gap: 10px;
-    margin-top: auto;
-    padding-top: 15px;
-    border-top: 1px dashed $gray-200;
+    gap: 12px;
+    margin: 20px 0;
+
+    .ws-info-badge {
+        flex: 1;
+        background: #f8fafc;
+        padding: 10px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid transparent;
+
+        label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        span {
+            font-size: 1rem;
+            font-weight: 750;
+            color: #1e293b;
+        }
+    }
 }
 
-.stat-box {
-    flex: 1;
-    padding: 8px;
-    border-radius: 10px;
-    text-align: center;
-}
+/* 5. PROGRESS BAR */
+.ws-progress-section {
+    margin-top: 15px;
 
-    .stat-box.purple {
-        background: $primary-light;
+    .ws-progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #64748b;
     }
 
-    .stat-box.blue {
-        background: #f0f9ff;
+    .ws-progress-bar-container {
+        height: 8px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        overflow: hidden;
+
+        .ws-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa); // Mor gradient
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
     }
-
-.stat-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: $gray-500;
-    display: block;
-}
-
-.stat-value {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: $gray-900;
-}
-
-/* 6. MODAL VE FORM ÖZELLEŞTİRMELERİ */
-.ws-warehouse-icon {
-    width: 42px;
-    height: 42px;
-}
-.ws-warehouse-icon i {
-    width: 20px;
-}
-
-/* Ürün Bilgi Rozetleri */
-.ws-info-badge {
-    padding: 0.5rem;
-    border-radius: 0.75rem;
-    background-color: $gray-50;
-    text-align: center;
-    border: 1px solid $gray-200;
-}
-
-.ws-badge-label {
-    display: block;
-    color: $gray-500;
-    font-size: 10px;
-    text-transform: uppercase;
-}
-
-/* Progress Bar Özelleştirme */
-.ws-warehouse-progress {
-    height: 6px;
-    border-radius: 10px;
-    background-color: #eee;
-}
-
-.ws-warehouse-progress .progress-bar {
-    width: var(--fill-rate, 0%);
-    border-radius: 10px;
-    transition: width 0.8s ease;
 }

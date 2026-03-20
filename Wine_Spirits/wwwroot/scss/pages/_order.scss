@@ -1,153 +1,289 @@
+@charset "UTF-8";
 @import '../abstracts/variables';
 @import '../abstracts/mixins';
 
-/* ==========================================================================
-   ORDERS MODULE STYLES (Consolidated: List Page & Create Modal)
-   ========================================================================== */
+/* ============================================================
+   1. GLOBAL PAGE & GRID SYSTEM (Kusursuz 4'lü Dizi) 
+   ============================================================ */
+.ws-page-container {
+    padding: 1.5rem;
 
-/* 1. ORDERS LIST PAGE (wwwroot/Orders/Index) */
-.ws-orders-container {
-    padding: 2rem;
+    .ws-summary-grid-4 {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 1.5rem !important;
+        margin-bottom: 2rem !important;
 
-    .ws-page-header {
-        @include flex-between;
-        margin-bottom: 2rem;
-
-        .ws-page-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: $gray-900;
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.02em;
+        @media (max-width: 1200px) {
+            grid-template-columns: repeat(2, 1fr) !important;
         }
 
-        .ws-page-subtitle {
-            font-size: 0.875rem;
-            color: $gray-500;
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr !important;
+        }
+    }
+}
+
+/* ============================================================
+   2. PREMIUM STAT CARDS (İkon Solda, Yazı Sağda)
+   ============================================================ */
+.ws-stat-card {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    border: 1.5px solid rgba(229, 231, 235, 0.6) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    @include transition(all, 0.4s, cubic-bezier(0.165, 0.84, 0.44, 1));
+
+    &:hover {
+        transform: translateY(-8px);
+        border-color: rgba(124, 58, 237, 0.45) !important;
+        box-shadow: 0 15px 40px rgba(124, 58, 237, 0.18);
+
+        .ws-stat-icon-wrapper {
+            transform: scale(1.1) rotate(-3deg);
         }
     }
 
-    .ws-filter-container {
+    .ws-stat-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        @include flex-center;
+        flex-shrink: 0;
+        @include transition;
+
+        &.ws-icon-indigo {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+        }
+
+        &.ws-icon-emerald {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        &.ws-icon-rose {
+            background: rgba(225, 29, 72, 0.1);
+            color: #e11d48;
+        }
+
+        i, svg {
+            width: 26px;
+            height: 26px;
+            stroke-width: 2.2px;
+        }
+    }
+
+    .ws-stat-content {
+        .ws-stat-label {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.2rem;
+        }
+
+        .ws-stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.04em;
+        }
+    }
+}
+
+/* ============================================================
+   3. FILTER SYSTEM & DROPDOWN FIXES (site.js Uyumlu)
+   ============================================================ */
+.ws-filter-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(124, 58, 237, 0.15);
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 100;
+
+    .ws-filter-item {
+        flex: 1;
         display: flex !important;
         align-items: center !important;
         background: #ffffff !important;
-        border: 1px solid $gray-200 !important;
+        border: 1.5px solid #e5e7eb !important;
         border-radius: 12px !important;
-        overflow: hidden !important;
-        height: 52px !important;
-        margin-bottom: 2rem !important;
-        padding: 0 !important;
+        padding: 0 18px !important;
+        height: 50px !important;
+        @include transition;
 
-        .ws-filter-item {
-            flex: 1 !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-            padding: 0 20px !important;
-            border-right: 1px solid $gray-100 !important;
-            height: 100% !important;
+        &:hover, &.is-active {
+            border-color: #7c3aed !important;
+            background: #fcfaff !important;
+        }
 
-            i, svg {
-                color: $gray-400 !important;
-                flex-shrink: 0 !important;
-            }
-
-            .ws-filter-el {
-                border: none !important;
-                background: transparent !important;
-                height: 100% !important;
-                padding: 0 !important;
-                font-size: 14px !important;
-                color: $gray-700 !important;
-                outline: none !important;
-                width: 100% !important;
-
-                &::placeholder {
-                    color: $gray-400 !important;
-                }
-            }
+        i, svg {
+            color: #94a3b8;
+            margin-right: 10px;
+            width: 18px;
         }
     }
 
-    .status-active {
-        background: rgba($success, 0.1) !important;
-        color: $success !important;
+    .ws-filter-el {
+        border: none !important;
+        background: transparent !important;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        width: 100%;
+        outline: none !important;
     }
+    /* Yenileme Butonu - Dönme Sorunu Fix */
+    .ws-btn-filter-action {
+        width: 50px !important;
+        height: 50px !important;
+        flex: 0 0 50px !important;
+        border-radius: 12px !important;
+        border: 1.5px solid #e5e7eb !important;
+        background: #fff !important;
+        @include flex-center;
+        @include transition(all, 0.3s);
+        transform: none !important; // site.js'in trigger ettiği hatalı dönüşü engeller
 
-    .status-pending {
-        background: rgba($warning, 0.1) !important;
-        color: $warning !important;
-    }
+        &:hover {
+            background: #7c3aed !important;
+            border-color: #7c3aed !important;
+            color: #fff !important;
+            transform: none !important;
 
-    .ws-table-premium {
-        .ws-order-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            .ws-order-icon {
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
-                background: rgba($primary, 0.05);
-                color: $primary;
-                @include flex-center;
-            }
-
-            .ws-order-details {
-                display: flex;
-                flex-direction: column;
-
-                strong {
-                    font-size: 14px;
-                    color: $gray-900;
-                }
-
-                small {
-                    font-size: 12px;
-                    color: $gray-500;
-                }
+            i, svg {
+                transform: rotate(180deg);
             }
         }
     }
 }
 
-/* 2. ORDER CREATE MODAL (Unified & Fixed for Smart Scroll) */
-// Not: Formun kendisi modal-content sınıfına sahip olduğu için bu kapsayıcı ona hükmeder.
-.modal-content {
-    .ws-modal-body {
-        display: block !important; // Gridlerin çakışmaması için block şart
-        flex: 1 1 auto !important; // Orta alanı doldurur
-        overflow-y: auto !important; // Sadece burası kayar
-        padding: 1.5rem 2rem !important;
+/* CUSTOM DROPDOWN (Görsel Kayma Engellendi) */
+.ws-custom-dropdown {
+    position: relative;
+    flex: 1;
+
+    &.is-active .ws-dropdown-content {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    .ws-dropdown-content {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
         width: 100%;
-        box-sizing: border-box;
-        /* İnce Scrollbar */
-        &::-webkit-scrollbar {
-            width: 5px;
+        min-width: 220px;
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid rgba(124, 58, 237, 0.15);
+        box-shadow: 0 12px 30px rgba(124, 58, 237, 0.2);
+        padding: 8px;
+        z-index: 1100;
+        opacity: 0;
+        transform: translateY(10px);
+        @include transition;
+    }
+
+    .ws-dropdown-option {
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        @include transition;
+
+        &:hover {
+            background: #f5f3ff;
+            color: #7c3aed;
+            transform: translateX(4px);
         }
 
-        &::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
+        &.active {
+            background: #7c3aed;
+            color: #ffffff;
+        }
+
+        i {
+            margin-right: 10px;
+            width: 14px;
         }
     }
-    // Üst Bölüm: Müşteri, Depo, Tarih Grid
-    .ws-master-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-        margin-bottom: 1.5rem;
+}
 
-        .ws-form-group {
-            margin: 0 !important;
+/* ============================================================
+   4. TABLE SYSTEM (Premium Hover Effects)
+   ============================================================ */
+.ws-table-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+
+    .ws-table-premium {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            padding: 16px 20px;
+            border-bottom: 1.5px solid #e2e8f0;
         }
 
-            .ws-form-group:first-child {
-                grid-column: span 2;
+        tbody tr {
+            @include transition;
+
+            &:hover {
+                background: #fcfaff;
+
+                td {
+                    color: #7c3aed;
+                }
             }
+
+            td {
+                padding: 16px 20px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+        }
     }
-    // Ürün Kalemleri Paneli
+}
+
+/* ============================================================
+   5. ORDER MODAL DESIGN (image_9a381f.png Tasarımı)
+   ============================================================ */
+.modal-content {
+    border-radius: 24px !important;
+    border: none !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+
+    .ws-modal-body {
+        padding: 1.5rem 2rem !important;
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
     .ws-order-section {
         background: #fcfcfd;
         border: 1px solid #edf2f7;
@@ -155,186 +291,76 @@
         padding: 1.25rem !important;
         margin-bottom: 1.5rem !important;
 
-        .ws-section-header {
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem !important;
+            gap: 8px;
 
-            .ws-section-title {
-                font-size: 1.1rem !important;
-                font-weight: 700 !important;
-                color: $gray-800;
-                margin: 0;
-            }
-
-            .ws-btn-sm {
-                padding: 10px 18px !important;
-                height: 40px !important;
-                background: $primary !important;
-                border-radius: 12px !important;
-                color: white !important;
-                font-weight: 600 !important;
-                @include flex-center;
-                gap: 8px;
-                border: none !important;
-                transition: all 0.25s ease !important;
-
-                &:hover {
-                    background: darken($primary, 5%) !important;
-                    transform: translateY(-2px);
-                }
+            i {
+                color: #7c3aed;
+                width: 16px;
             }
         }
     }
-    // Ürün Satır Hizalamaları (Bozulmayı önleyen kritik kısım)
-    .ws-order-item-header, .ws-order-item-row {
+
+    .ws-order-item-row {
         display: flex;
         gap: 0.75rem;
-        align-items: center; // Elemanları dikeyde ortalar
+        align-items: center;
         margin-bottom: 0.75rem;
-        width: 100%;
 
         .col-product {
             flex: 4;
-            min-width: 0;
         }
 
         .col-qty {
             width: 90px !important;
-            flex-shrink: 0;
         }
 
         .col-price {
             width: 130px !important;
-            flex-shrink: 0;
         }
 
-        .col-action {
-            width: 45px;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
+        .remove-item-btn {
+            width: 34px !important;
+            height: 34px !important;
+            background: rgba(244, 63, 94, 0.08) !important;
+            color: #f43f5e !important;
+            border: none !important;
+            border-radius: 10px;
+            @include flex-center;
+            @include transition;
+
+            &:hover {
+                background: #f43f5e !important;
+                color: #fff !important;
+                transform: scale(1.1) rotate(9deg);
+            }
         }
-    }
-
-    .ws-order-item-header {
-        border-bottom: 1px solid #edf2f7;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
-
-        .ws-order-header-cell {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: $gray-400;
-            text-transform: uppercase;
-        }
-    }
-    // Input Tasarımları
-    .ws-input-premium, .ws-textarea {
-        background: #ffffff !important;
-        border: 1.5px solid #e2e8f0 !important;
-        height: 44px !important;
-        border-radius: 10px !important;
-        font-size: 0.875rem !important;
-        width: 100% !important;
-        padding: 0 12px !important;
-
-        &:focus {
-            border-color: $primary !important;
-            box-shadow: 0 4px 12px rgba($primary, 0.08) !important;
-            outline: none !important;
-        }
-    }
-
-    .ws-textarea {
-        height: auto !important;
-        padding: 12px !important;
-    }
-
-    .remove-item-btn {
-        width: 38px !important;
-        height: 38px !important;
-        background: #fff !important;
-        border: 1.5px solid #fee2e2 !important;
-        color: #ef4444 !important;
-        border-radius: 10px;
-        @include flex-center;
-        cursor: pointer;
-
-        &:hover {
-            background: #ffe4e6;
-            transform: scale(1.05);
-        }
-    }
-    // Özet Bölümü (Açıklama & Toplam)
-    .ws-summary-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-        align-items: flex-start;
-        margin-top: 1rem;
     }
 
     .ws-total-card {
         background: #f8fafc !important;
-        border: 2px solid $primary !important;
-        padding: 0.75rem 1.5rem !important;
+        border: 2px solid #3b82f6 !important;
+        padding: 10px 20px !important;
         border-radius: 14px !important;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 64px !important;
+        text-align: center;
 
         .ws-total-label {
-            font-size: 0.75rem !important;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: $primary !important;
+            color: #3b82f6;
             text-transform: uppercase;
-            margin-bottom: 2px;
         }
 
         .ws-total-amount {
-            font-size: 1.25rem !important;
-            font-weight: 850;
-            color: $primary !important;
-        }
-    }
-    // Sabit Footer Hizalaması
-    .ws-modal-footer {
-        flex-shrink: 0 !important; // Asla kaybolmaz
-        background: #ffffff !important;
-        border-top: 1px solid #f1f5f9 !important;
-        padding: 1.25rem 2rem 1.5rem !important;
-        display: flex !important;
-        justify-content: center !important;
-        gap: 1.5rem !important;
-        z-index: 20;
-
-        .ws-btn-main, .ws-btn-secondary {
-            height: 48px !important;
-            min-width: 160px !important;
-            border-radius: 12px !important;
-            font-weight: 600 !important;
-            @include flex-center;
-            transition: all 0.3s ease !important;
-
-            &:hover {
-                transform: translateY(-2px);
-            }
-        }
-
-        .ws-btn-main {
-            background: $primary !important;
-            color: white !important;
-            border: none !important;
-        }
-
-        .ws-btn-secondary {
-            background: #f8fafc !important;
-            color: $gray-600 !important;
-            border: 1.5px solid #e2e8f0 !important;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #3b82f6;
         }
     }
 }

@@ -3,24 +3,27 @@
 @{
     ViewData["Title"] = "Depo Yönetimi";
     Layout = "_Layout";
-    // Türkçe tarih formatı için CultureInfo tanımlıyoruz
     var turkishCulture = new System.Globalization.CultureInfo("tr-TR");
 }
 
-
-<div class="ws-main-container p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-dark m-0">Depo Yönetimi</h2>
-            <p class="text-muted small mb-0">Depo lokasyonlarını ve kapasite durumlarını yönetin.</p>
+<div class="ws-page-container">
+    <header class="ws-page-header">
+        <div class="ws-header-content">
+            <h2 class="ws-page-title">Depo Yönetimi</h2>
+            <p class="ws-page-subtitle">Depo lokasyonlarını ve kapasite durumlarını yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" onclick="GlobalUI.openModal('/Warehouses/Create')">
-            <i data-lucide="warehouse"></i>Yeni Depo Ekle
-        </button>
-    </div>
+        <div class="ws-header-actions">
+            <button type="button" class="ws-btn-main" onclick="GlobalUI.openModal('/Warehouses/Create')">
+                <i data-lucide="warehouse"></i>
+                <span>Yeni Depo Ekle</span>
+            </button>
+        </div>
+    </header>
 
-    <div class="ws-summary-grid-4 mb-4">
-        <div class="ws-stat-card">
+    @* 1. ÖZET İSTATİSTİK KARTLARI (card.scss hover uyumlu) *@
+    <div class="ws-summary-grid">
+        @* .ws-card sınıfı hover efektini tetiklemek için eklendi *@
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="building-2"></i>
             </div>
@@ -30,7 +33,7 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-emerald">
                 <i data-lucide="navigation"></i>
             </div>
@@ -40,8 +43,8 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
-            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+        <div class="ws-card ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-blue">
                 <i data-lucide="package-check"></i>
             </div>
             <div class="ws-stat-content">
@@ -50,7 +53,7 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-rose">
                 <i data-lucide="alert-circle"></i>
             </div>
@@ -61,90 +64,109 @@
         </div>
     </div>
 
-    <div class="ws-filter-container shadow-sm mb-4">
-        <div class="ws-filter-item flex-grow-1">
+    @* 2. GLOBAL FİLTRE VE DROP DOWN SİSTEMİ (filter.scss & dropdown.scss uyumlu) *@
+    <div class="ws-filter-container">
+        @* Arama Alanı *@
+        <div class="ws-filter-item">
             <i data-lucide="search"></i>
-            <input type="text" id="warehouseSearch" class="ws-filter-el" placeholder="Depo adı veya lokasyon ara...">
+            <input type="text" id="warehouseSearch" class="ws-filter-el" placeholder="Depo veya lokasyon ara...">
         </div>
-        <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i data-lucide="map-pin"></i> <span id="selectedRegionText">Bölge Seçin</span>
-                </button>
-                <ul class="dropdown-menu border-0 shadow-lg">
-                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('all')">Tüm Bölgeler</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    @foreach (var loc in Model.Select(x => x.Location).Distinct())
-                    {
-                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('@loc')">@loc</a></li>
-                    }
-                </ul>
+        
+        @* Bölge Filtresi (Hizalaması Düzeltildi) *@
+        <div class="ws-custom-dropdown dropdown">
+            <div class="ws-filter-item" data-bs-toggle="dropdown" aria-expanded="false" id="regionFilterTrigger">
+                <i data-lucide="map-pin"></i>
+                <span class="ws-filter-el" id="selectedRegionText">Bölge Seçin</span>
+                <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
             </div>
-            <div class="dropdown">
-                <button class="ws-btn-filter-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i data-lucide="bar-chart-3"></i> Durum
-                </button>
-                <ul class="dropdown-menu border-0 shadow-lg">
-                    <li><a class="dropdown-item" href="javascript:void(0)">Aktif</a></li>
-                    <li><a class="dropdown-item" href="javascript:void(0)">Kritik Doluluk</a></li>
-                </ul>
+            <ul class="dropdown-menu ws-dropdown-premium">
+                <li>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('all')">
+                        <i data-lucide="layers"></i> Tüm Bölgeler
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                @foreach (var loc in Model.Select(x => x.Location).Distinct())
+                {
+                    <li>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="WarehouseManager.filterByValue('@loc')">
+                            <i data-lucide="map-pin"></i> @loc
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        @* Durum Filtresi *@
+        <div class="ws-custom-dropdown dropdown">
+            <div class="ws-filter-item" data-bs-toggle="dropdown" aria-expanded="false">
+                <i data-lucide="bar-chart-3"></i>
+                <span class="ws-filter-el">Durum</span>
+                <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
             </div>
+            <ul class="dropdown-menu ws-dropdown-premium">
+                <li><a class="dropdown-item" href="javascript:void(0)"><i data-lucide="check-circle"></i> Aktif</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)"><i data-lucide="alert-triangle"></i> Kritik Doluluk</a></li>
+            </ul>
         </div>
     </div>
 
+    @* 3. DEPO KARTLARI (card.scss hover uyumlu) *@
     <div class="ws-warehouse-grid">
         @foreach (var item in Model)
         {
             var shortCode = item.Id.ToString().Substring(0, 4).ToUpper();
             var fillRate = 75;
-
-            <div class="ws-warehouse-card-wrapper" data-location-filter="@item.Location">
-                <div class="ws-warehouse-card shadow-sm" data-name="@item.Name" data-location="@item.Location">
-                    <div class="card-header-flex d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="ws-stat-icon-box ws-warehouse-icon bg-indigo-50 text-primary">
-                                <i data-lucide="warehouse"></i>
-                            </div>
-                            <div>
-                                <h6 class="fw-bold m-0 text-dark">@item.Name</h6>
-                                <span class="text-muted small">DPO-@shortCode</span>
-                            </div>
+            @* .ws-card ve .ws-warehouse-card birlikte kullanıldı *@
+            <div class="ws-card ws-warehouse-card" data-location="@item.Location" data-name="@item.Name">
+                <div class="ws-card-header">
+                    <div class="ws-card-info">
+                        <div class="ws-card-icon-box">
+                            <i data-lucide="warehouse"></i>
                         </div>
-                        <div class="d-flex gap-1">
-                            <button type="button" onclick="GlobalUI.openModal('/Warehouses/Edit/@item.Id')" class="ws-action-btn" title="Düzenle">
-                                <i data-lucide="edit-3"></i>
-                            </button>
-                            <button type="button" onclick="WarehouseManager.deleteWarehouse('@item.Id')" class="ws-action-btn" title="Sil">
-                                <i data-lucide="trash-2" class="text-danger"></i>
-                            </button>
+                        <div class="ws-card-texts">
+                            <h6 class="ws-card-title">@item.Name</h6>
+                            <span class="ws-card-subtitle">DPO-@shortCode</span>
+                        </div>
+                    </div>
+                    <div class="ws-card-actions">
+                        <button onclick="GlobalUI.openModal('/Warehouses/Edit/@item.Id')" class="ws-btn-icon" title="Düzenle">
+                            <i data-lucide="edit-3"></i>
+                        </button>
+                        <button onclick="WarehouseManager.deleteWarehouse('@item.Id')" class="ws-btn-icon text-danger" title="Sil">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ws-card-body">
+                    <div class="ws-info-row">
+                        <i data-lucide="map-pin"></i>
+                        <span>@item.Location</span>
+                    </div>
+                    <div class="ws-info-row">
+                        <i data-lucide="clock"></i>
+                        <span>Kayıt: @item.CreatedDate.ToString("dd MMMM yyyy", turkishCulture)</span>
+                    </div>
+
+                    <div class="ws-badge-container">
+                        <div class="ws-info-badge">
+                            <label>ÜRÜN TİPİ</label>
+                            <span>124</span>
+                        </div>
+                        <div class="ws-info-badge">
+                            <label>TOPLAM STOK</label>
+                            <span>1.250</span>
                         </div>
                     </div>
 
-                    <div class="warehouse-info-list mb-4">
-                        <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
-                            <i data-lucide="map-pin" class="size-14"></i>
-                            <span class="text-truncate">@item.Location</span>
+                    <div class="ws-progress-section">
+                        <div class="ws-progress-label">
+                            <span>Doluluk Oranı</span>
+                            <span class="ws-progress-percent">@fillRate%</span>
                         </div>
-                        <div class="d-flex align-items-center gap-2 text-muted small">
-                            <i data-lucide="clock" class="size-14"></i>
-                            <span>Kayıt: @item.CreatedDate.ToString("dd MMMM yyyy", turkishCulture)</span>
-                        </div>
-                    </div>
-
-                    <div class="row g-2 mt-auto">
-                        <div class="col-6"><div class="ws-info-badge"><small class="ws-badge-label">ÜRÜN TİPİ</small><span class="fw-bold">124</span></div></div>
-                        <div class="col-6"><div class="ws-info-badge"><small class="ws-badge-label">TOPLAM STOK</small><span class="fw-bold">1.250</span></div></div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span class="text-muted">Doluluk</span>
-                            <span class="fw-bold">@fillRate%</span>
-                        </div>
-                        <div class="progress ws-warehouse-progress">
-                            <div class="progress-bar bg-primary shadow-none"
-                                 role="progressbar"
-                                 style="--fill-rate: @(fillRate)%;"></div>
+                        <div class="ws-progress-bar-container">
+                            <div class="ws-progress-bar" style="width: @(fillRate)%"></div>
                         </div>
                     </div>
                 </div>

@@ -1,37 +1,38 @@
-@using Wine_Spirits.Models.ViewModels
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<Wine_Spirits.Models.StockMovement>
+
 @{
     ViewData["Title"] = "Stok Hareketleri";
     Layout = "_Layout";
 }
 
-
-
-<div class="ws-stock-movements-container">
+<div class="ws-page-container">
     @* --- SAYFA BAŞLIĞI --- *@
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h2 class="fw-bold mb-1" style="color: var(--gray-900); letter-spacing: -0.02em;">Stok Hareketleri</h2>
-            <p class="text-muted mb-0 small">Tüm depo giriş, çıkış ve transfer süreçlerini buradan yönetin.</p>
+    <header class="ws-page-header">
+        <div class="ws-header-content">
+            <h2 class="ws-page-title">Stok Hareketleri</h2>
+            <p class="ws-page-subtitle">Tüm depo giriş, çıkış ve transfer süreçlerini buradan yönetin.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" onclick="GlobalUI.openModal('/StockMovement/Create')">
-            <i data-lucide="trending-up"></i>Yeni Hareket Ekle
-        </button>
-    </div>
+        <div class="ws-header-actions">
+            <button type="button" class="ws-btn-main" onclick="GlobalUI.openModal('/StockMovement/Create')">
+                <i data-lucide="trending-up"></i>
+                <span>Yeni Hareket Ekle</span>
+            </button>
+        </div>
+    </header>
 
-    @* --- GLOBAL STAT KARTLARI --- *@
-    <div class="ws-summary-grid-4 mb-4">
-        <div class="ws-stat-card">
+    @* --- 1. İSTATİSTİK KARTLARI (card.scss uyumlu) --- *@
+    <div class="ws-summary-grid">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="activity"></i>
             </div>
             <div class="ws-stat-content">
                 <span class="ws-stat-label">Toplam Hareket</span>
-                <span class="ws-stat-value">1.248</span>
+                <span class="ws-stat-value">@Model.Count()</span>
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-emerald">
                 <i data-lucide="calendar"></i>
             </div>
@@ -41,7 +42,7 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-rose">
                 <i data-lucide="x-circle"></i>
             </div>
@@ -51,8 +52,8 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
-            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+        <div class="ws-card ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-blue">
                 <i data-lucide="clock"></i>
             </div>
             <div class="ws-stat-content">
@@ -62,110 +63,94 @@
         </div>
     </div>
 
-    @* --- 10. GLOBAL FILTER BAR --- *@
-    <div class="ws-filter-container shadow-sm d-flex align-items-stretch">
+    @* --- 2. FİLTRELEME BARINDA RESPONSIVE YAPI (filter.scss & dropdown.scss uyumlu) --- *@
+    <div class="ws-filter-container">
         @* Arama *@
-        <div class="ws-filter-item flex-fill">
+        <div class="ws-filter-item">
             <i data-lucide="search"></i>
-            <input type="text" class="ws-filter-el w-100" placeholder="Hareket No veya Ürün ara..." id="movementSearch">
+            <input type="text" class="ws-filter-el" placeholder="Hareket No veya Ürün ara..." id="movementSearch">
         </div>
 
-        @* Hareket Tipi (Dropdown Yapıldı) *@
-        <div class="dropdown flex-fill">
-            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button" aria-expanded="false" style="cursor: pointer;">
-                <div class="d-flex align-items-center gap-2">
-                    <i data-lucide="layers"></i>
-                    <span id="selectedMovementType" class="ws-filter-label">Tüm Tipler</span>
-                </div>
-                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
+        @* Hareket Tipi *@
+        <div class="ws-custom-dropdown dropdown">
+            <div class="ws-filter-item" data-bs-toggle="dropdown" id="typeFilterTrigger">
+                <i data-lucide="layers"></i>
+                <span id="selectedMovementType" class="ws-filter-el">Tüm Tipler</span>
+                <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
             </div>
-            <ul class="dropdown-menu shadow-lg border-0 w-100">
-                <li><a class="dropdown-item active" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Tüm Tipler')">Tüm Tipler</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Giriş')">Giriş</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Çıkış')">Çıkış</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('MovementType', 'Transfer')">Transfer</a></li>
+            <ul class="dropdown-menu ws-dropdown-premium">
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('MovementType', 'all')"><i data-lucide="layers"></i> Tüm Tipler</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('MovementType', 'Giriş')"><i data-lucide="log-in"></i> Giriş</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('MovementType', 'Çıkış')"><i data-lucide="log-out"></i> Çıkış</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('MovementType', 'Transfer')"><i data-lucide="shuffle"></i> Transfer</a></li>
             </ul>
         </div>
 
-        @* Depo (Dropdown Yapıldı) *@
-        <div class="dropdown flex-fill">
-            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button" style="cursor: pointer;">
-                <div class="d-flex align-items-center gap-2">
-                    <i data-lucide="warehouse"></i>
-                    <span id="selectedWarehouse" class="ws-filter-label">Tüm Depolar</span>
-                </div>
-                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
+        @* Depo Seçimi *@
+        <div class="ws-custom-dropdown dropdown">
+            <div class="ws-filter-item" data-bs-toggle="dropdown" id="warehouseFilterTrigger">
+                <i data-lucide="warehouse"></i>
+                <span id="selectedWarehouse" class="ws-filter-el">Tüm Depolar</span>
+                <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
             </div>
-            <ul class="dropdown-menu shadow-lg border-0 w-100">
-                <li><a class="dropdown-item active" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Tüm Depolar')">Tüm Depolar</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Ana Depo')">Ana Depo</a></li>
-                <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Warehouse', 'Şube Depo A')">Şube Depo A</a></li>
+            <ul class="dropdown-menu ws-dropdown-premium">
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('Warehouse', 'all')"><i data-lucide="layers"></i> Tüm Depolar</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="javascript:void(0)" onclick="StockMovementManager.updateFilter('Warehouse', 'Ana Depo')"><i data-lucide="database"></i> Ana Depo</a></li>
             </ul>
         </div>
 
-        @* Tarih *@
-        <div class="ws-filter-item flex-fill">
+        @* Tarih Filtresi *@
+        <div class="ws-filter-item">
             <i data-lucide="calendar"></i>
-            <input type="text" class="ws-filter-el ws-datepicker w-100" id="dateFilter" placeholder="Tarih Seçin" readonly>
-        </div>
-
-        @* Sırala *@
-        <div class="dropdown">
-            <button class="ws-btn-filter-action dropdown-toggle border-0 h-100 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="sliders-horizontal"></i>
-                <span>Sırala</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
-                <li><a class="dropdown-item active" href="#" data-sort="newest">Yeniden Eskiye</a></li>
-                <li><a class="dropdown-item" href="#" data-sort="oldest">Eskiden Yeniye</a></li>
-                <li><hr class="dropdown-divider opacity-50"></li>
-                <li><a class="dropdown-item" href="#" data-sort="qty-desc">Miktar (Yüksek)</a></li>
-            </ul>
+            <input type="text" class="ws-filter-el ws-datepicker" id="dateFilter" placeholder="Tarih Seçin" readonly>
         </div>
     </div>
 
-    @* --- TABLO YAPISI --- *@
+    @* --- 3. PREMIUM TABLO YAPISI (table.scss uyumlu) --- *@
     <div class="ws-table-wrapper">
         <table class="ws-table-premium">
             <thead>
                 <tr>
-                    <th class="ps-4">HAREKET NO</th>
+                    <th>HAREKET NO</th>
                     <th>ÜRÜN / KOD</th>
                     <th>DEPO</th>
                     <th>TİP</th>
                     <th>MİKTAR</th>
                     <th>TARİH</th>
                     <th>DURUM</th>
-                    <th class="text-end pe-4">İŞLEMLER</th>
+                    <th class="ws-table-actions">İŞLEMLER</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="ps-4 text-primary fw-bold">#SH-@item.Id.ToString().Substring(0, 4).ToUpper()</td>
+                        <td class="ws-td-bold">#SH-@item.Id.ToString().Substring(0, 4).ToUpper()</td>
                         <td>
-                            <div class="fw-bold text-dark">@(item.Product?.ProductDefinition?.Name ?? "Belirsiz Ürün")</div>
+                            <div class="ws-td-main-text">@(item.Product?.ProductDefinition?.Name ?? "Belirsiz Ürün")</div>
+                            <small class="text-muted">SKU-@item.ProductId</small>
                         </td>
-                        <td>Ana Depo</td> @* Depo bilgisi modelde yok, statik veya ilişkili çekilmeli *@
+                        <td>Ana Depo</td>
                         <td>
                             @{
-                                string statusClass = item.MovementType == "Giriş" ? "status-success" : (item.MovementType == "Çıkış" ? "status-danger" : "status-warning");
-                                string icon = item.MovementType == "Giriş" ? "trending-up" : (item.MovementType == "Çıkış" ? "trending-down" : "shuffle");
+                                string statusClass = item.MovementType == "Giriş" ? "ws-status-success" : (item.MovementType == "Çıkış" ? "ws-status-danger" : "ws-status-warning");
+                                string moveIcon = item.MovementType == "Giriş" ? "trending-up" : (item.MovementType == "Çıkış" ? "trending-down" : "shuffle");
                             }
-                            <span class="status-pill @statusClass">
-                                <i data-lucide="@icon" class="ws-icon-14"></i> @item.MovementType
+                            <span class="ws-status-pill @statusClass">
+                                <i data-lucide="@moveIcon"></i> @item.MovementType
                             </span>
                         </td>
-                        <td><span class="fw-bold text-dark">@item.Quantity</span></td>
+                        <td><span class="ws-td-bold" style="font-size: 15px;">@item.Quantity Adet</span></td>
                         <td>@item.CreatedDate?.ToString("dd.MM.yyyy")</td>
-                        <td><span class="status-pill status-success">Tamamlandı</span></td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" onclick="GlobalUI.openModal('/StockMovement/Edit/@item.Id')" class="ws-action-btn" title="Düzenle">
+                        <td><span class="ws-status-pill ws-status-success">Tamamlandı</span></td>
+                        <td>
+                            <div class="ws-table-actions">
+                                <button onclick="GlobalUI.openModal('/StockMovement/Edit/@item.Id')" class="ws-btn-icon ws-action-btn" title="Düzenle">
                                     <i data-lucide="edit-3"></i>
                                 </button>
-                                <button type="button" onclick="StockMovementManager.deleteMovement('@item.Id')" class="ws-action-btn" title="Sil">
+                                <button onclick="StockMovementManager.deleteMovement('@item.Id')" class="ws-btn-icon ws-action-btn text-danger" title="Sil">
                                     <i data-lucide="trash-2"></i>
                                 </button>
                             </div>
@@ -178,12 +163,5 @@
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/stock-movement/stock-movement.js" asp-append-version="true"></script>
-
 }

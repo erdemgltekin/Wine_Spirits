@@ -2,7 +2,24 @@ const WarehouseManager = (function () {
 
     function init() {
         bindSearch();
+        bindFilterVisuals(); // Modern görsel efektler için eklendi
         console.log("WarehouseManager: Business logic initialized.");
+    }
+
+    // Filtre kutularına tıklandığında veya değer seçildiğinde mor border efekti
+    function bindFilterVisuals() {
+        const filterItems = document.querySelectorAll('.ws-filter-item');
+
+        filterItems.forEach(item => {
+            // Eğer içinde input varsa (Arama kutusu gibi)
+            const input = item.querySelector('input');
+            if (input) {
+                input.addEventListener('focus', () => item.classList.add('is-active'));
+                input.addEventListener('blur', () => {
+                    if (input.value === "") item.classList.remove('is-active');
+                });
+            }
+        });
     }
 
     function bindSearch() {
@@ -11,24 +28,39 @@ const WarehouseManager = (function () {
 
         input.addEventListener('keyup', function () {
             const term = this.value.toLowerCase().trim();
+            const parent = this.closest('.ws-filter-item');
+
+            // Arama yapılıyorsa kutuyu "is-active" yap (Ürünler sayfasındaki gibi)
+            if (term.length > 0) parent.classList.add('is-active');
+            else parent.classList.remove('is-active');
+
             applyFilters(term, null);
         });
     }
 
     function applyFilters(searchTerm = '', regionValue = 'all') {
-        const items = document.querySelectorAll('.ws-warehouse-card-wrapper');
-        const currentSearch = searchTerm || document.getElementById('warehouseSearch').value.toLowerCase().trim();
+        // Senin orijinal .ws-warehouse-card yapın üzerinden gidiyoruz
+        const items = document.querySelectorAll('.ws-warehouse-card');
+        const currentSearch = searchTerm !== null ? searchTerm : document.getElementById('warehouseSearch').value.toLowerCase().trim();
+        const activeRegion = regionValue !== null ? regionValue : (document.getElementById('selectedRegionText').innerText === 'Tüm Bölgeler' ? 'all' : document.getElementById('selectedRegionText').innerText);
 
-        items.forEach(item => {
-            const card = item.querySelector('.ws-warehouse-card');
+        items.forEach(card => {
             const name = card.getAttribute('data-name').toLowerCase();
             const loc = card.getAttribute('data-location').toLowerCase();
-            const regionAttr = item.getAttribute('data-location-filter');
+            const regionAttr = card.getAttribute('data-location'); // card.scss ile uyumlu attribute
 
             const matchesSearch = name.includes(currentSearch) || loc.includes(currentSearch);
-            const matchesRegion = (regionValue === 'all' || regionValue === null || regionAttr === regionValue);
+            const matchesRegion = (activeRegion === 'all' || regionAttr === activeRegion);
 
-            item.style.display = (matchesSearch && matchesRegion) ? '' : 'none';
+            // Görsel geçiş (Display ve Opacity bir arada)
+            if (matchesSearch && matchesRegion) {
+                card.style.display = 'flex';
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+            } else {
+                card.style.display = 'none';
+                card.style.opacity = '0';
+            }
         });
     }
 
@@ -38,27 +70,48 @@ const WarehouseManager = (function () {
         deleteWarehouse: function (id) {
             Swal.fire({
                 title: 'Emin misiniz?',
-                text: "Bu depo silindiğinde geri alınamaz!",
+                text: "Bu depo silindiğinde bağlı tüm veriler etkilenebilir!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#7c3aed',
+                confirmButtonColor: '#7c3aed', // Senin mor rengin
                 cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Evet, sil!',
-                cancelButtonText: 'Vazgeç'
+                cancelButtonText: 'Vazgeç',
+                borderRadius: '15px'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.post('/Warehouses/Delete/' + id, function (res) {
-                        window.location.reload();
-                    });
+                    // GlobalUI standartına uygun AJAX çağrısı
+                    $.post('/Warehouses/Delete/' + id)
+                        .done(function (res) {
+                            if (res.success) {
+                                Swal.fire('Silindi!', 'Depo başarıyla kaldırıldı.', 'success')
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire('Hata!', res.message || 'Silme işlemi başarısız.', 'error');
+                            }
+                        })
+                        .fail(function () {
+                            Swal.fire('Hata!', 'Sunucuyla bağlantı kurulamadı.', 'error');
+                        });
                 }
             });
         },
 
         filterByValue: function (value) {
             const filterText = document.getElementById('selectedRegionText');
+            const trigger = filterText?.closest('.ws-filter-item');
+
             if (filterText) {
                 filterText.innerText = value === 'all' ? 'Tüm Bölgeler' : value;
             }
+
+            // Değer seçildiyse "is-active" sınıfını yönet (Mor çerçeve kontrolü)
+            if (value !== 'all') {
+                trigger?.classList.add('is-active');
+            } else {
+                trigger?.classList.remove('is-active');
+            }
+
             applyFilters(null, value);
         }
     };

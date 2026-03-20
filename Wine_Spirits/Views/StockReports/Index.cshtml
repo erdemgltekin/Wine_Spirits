@@ -1,37 +1,40 @@
 @using Wine_Spirits.Models.ViewModels
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<dynamic>
+
 @{
     ViewData["Title"] = "Stok Raporu";
     Layout = "_Layout";
 }
 
-
-<div class="ws-stock-reports-container">
+<div class="ws-page-container">
     @* --- SAYFA BAŞLIĞI --- *@
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h2 class="fw-bold mb-1" style="color: var(--gray-900); letter-spacing: -0.02em;">Stok Raporu</h2>
-            <p class="text-muted mb-0 small">Anlık stok durumu, değer analizi ve kritik seviye takibi.</p>
+    <header class="ws-page-header">
+        <div class="ws-header-content">
+            <h2 class="ws-page-title">Stok Raporu</h2>
+            <p class="ws-page-subtitle">Anlık stok durumu, değer analizi ve kritik seviye takibi.</p>
         </div>
-        <button type="button" class="ws-btn-secondary" id="btnDownloadReport">
-            <i data-lucide="download"></i>
-            <span>Excel Olarak İndir</span>
-        </button>
-    </div>
+        <div class="ws-header-actions">
+            @* Global ikincil buton sınıfımız *@
+            <button type="button" class="ws-btn-secondary" id="btnDownloadReport">
+                <i data-lucide="download"></i>
+                <span>Excel Olarak İndir</span>
+            </button>
+        </div>
+    </header>
 
-    @* --- İSTATİSTİK KARTLARI (Global StatCard Yapısı) --- *@
-    <div class="ws-summary-grid-3 mb-4">
-        <div class="ws-stat-card">
+    @* --- 1. İSTATİSTİK KARTLARI (3'lü Grid + ws-card Glow Efekti) --- *@
+    <div class="ws-summary-grid">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="boxes"></i>
             </div>
             <div class="ws-stat-content">
                 <span class="ws-stat-label">Toplam Stok Miktarı</span>
-                <span class="ws-stat-value">12.480 <small class="text-muted fw-normal">Adet</small></span>
+                <span class="ws-stat-value">12.480 <small class="ws-unit">Adet</small></span>
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-emerald">
                 <i data-lucide="banknote"></i>
             </div>
@@ -41,123 +44,105 @@
             </div>
         </div>
 
-        <div class="ws-stat-card">
+        <div class="ws-card ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-rose">
                 <i data-lucide="alert-triangle"></i>
             </div>
             <div class="ws-stat-content">
                 <span class="ws-stat-label">Kritik Seviye</span>
-                <span class="ws-stat-value">14 <small class="text-muted fw-normal">Kalem</small></span>
+                <span class="ws-stat-value">14 <small class="ws-unit">Kalem</small></span>
             </div>
         </div>
     </div>
 
-    @* --- FİLTRELEME BAR --- *@
-    <div class="ws-filter-container d-flex align-items-stretch shadow-sm mb-4">
-        @* 1. Ürün Arama *@
-        <div class="ws-filter-item flex-fill">
-            <i data-lucide="search" class="ws-icon-18 text-muted"></i>
-            <input type="text" class="ws-filter-el w-100" placeholder="Ürün veya Kod ara..." id="reportSearch">
+    @* --- 2. FİLTRELEME BARI (Dinamik & Responsive) --- *@
+    <div class="ws-filter-container">
+        @* Ürün Arama *@
+        <div class="ws-filter-item">
+            <i data-lucide="search"></i>
+            <input type="text" class="ws-filter-el" placeholder="Ürün veya Kod ara..." id="reportSearch">
         </div>
 
-        @* 2. Depo Seçimi *@
-        <div class="dropdown flex-fill">
-            <div class="ws-filter-item d-flex align-items-center justify-content-between h-100" data-bs-toggle="dropdown" role="button">
-                <div class="d-flex align-items-center gap-2">
+        <div class="ws-filter-group-right">
+            @* Depo Seçimi *@
+            <div class="ws-custom-dropdown dropdown">
+                <div class="ws-filter-item" data-bs-toggle="dropdown" id="warehouseFilterTrigger">
                     <i data-lucide="warehouse"></i>
-                    <span id="selectedWarehouse" class="ws-filter-label text-truncate">Tüm Depolar</span>
+                    <span id="selectedWarehouse" class="ws-filter-el">Tüm Depolar</span>
+                    <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
                 </div>
-                <i data-lucide="chevron-down" class="ws-icon-14 opacity-50"></i>
+                <ul class="dropdown-menu ws-dropdown-premium">
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="ReportManager.updateWarehouse('all')"><i data-lucide="layers"></i> Tüm Depolar</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="ReportManager.updateWarehouse('Ana Depo')"><i data-lucide="database"></i> Ana Depo</a></li>
+                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="ReportManager.updateWarehouse('Şube Depo A')"><i data-lucide="building"></i> Şube Depo A</a></li>
+                </ul>
             </div>
-            <ul class="dropdown-menu shadow-lg border-0 w-100 mt-2">
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Tüm Depolar')">Tüm Depolar</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Ana Depo')">Ana Depo</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Şube Depo A')">Şube Depo A</a></li>
-                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="updateWarehouse('Şantiye Deposu')">Şantiye Deposu</a></li>
-            </ul>
-        </div>
 
-        @* 3. Tarih Aralığı *@
-        <div class="ws-filter-item flex-fill">
-            <i data-lucide="calendar-range"></i>
-            <input type="text" class="ws-filter-el ws-datepicker w-100" id="reportDateRange" placeholder="Tarih Aralığı" readonly>
-        </div>
+            @* Tarih Aralığı *@
+            <div class="ws-filter-item">
+                <i data-lucide="calendar-range"></i>
+                <input type="text" class="ws-filter-el ws-datepicker" id="reportDateRange" data-mode="range" placeholder="Tarih Aralığı" readonly>
+            </div>
 
-        @* 4. Filtrele / Sırala *@
-        <div class="dropdown">
-            <button class="ws-btn-filter-action dropdown-toggle h-100 border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                <i data-lucide="sliders-horizontal"></i>
-                <span>Filtrele</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
-                <li><h6 class="dropdown-header text-primary fw-bold">Stok Durumu</h6></li>
-                <li><a class="dropdown-item active" href="#" data-sort="all">Tümü</a></li>
-                <li><a class="dropdown-item" href="#" data-sort="critical">Kritik Stoklar</a></li>
-                <li><hr class="dropdown-divider opacity-50"></li>
-                <li><h6 class="dropdown-header text-primary fw-bold">Sıralama</h6></li>
-                <li><a class="dropdown-item" href="#" data-sort="value-desc">Değer: Yüksek</a></li>
-                <li><a class="dropdown-item" href="#" data-sort="value-asc">Değer: Düşük</a></li>
-            </ul>
+            @* Filtrele / Sırala *@
+            <div class="ws-custom-dropdown dropdown">
+                <div class="ws-filter-item" data-bs-toggle="dropdown">
+                    <i data-lucide="sliders-horizontal"></i>
+                    <span class="ws-filter-el">Sırala</span>
+                    <i data-lucide="chevron-down" class="ws-filter-chevron ws-dropdown-icon"></i>
+                </div>
+                <ul class="dropdown-menu ws-dropdown-premium">
+                    <li><h6 class="dropdown-header">Stok Durumu</h6></li>
+                    <li><a class="dropdown-item" href="#" data-sort="all"><i data-lucide="check-square"></i> Tümü</a></li>
+                    <li><a class="dropdown-item" href="#" data-sort="critical"><i data-lucide="alert-circle"></i> Kritik Stoklar</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><h6 class="dropdown-header">Sıralama</h6></li>
+                    <li><a class="dropdown-item" href="#" data-sort="value-desc"><i data-lucide="arrow-down-narrow-wide"></i> Değer: Yüksek</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    @* --- RAPOR TABLOSU --- *@
+    @* --- 3. PREMIUM RAPOR TABLOSU (table.scss Uyumlu) --- *@
     <div class="ws-table-wrapper">
         <table class="ws-table-premium" id="reportTable">
             <thead>
                 <tr>
-                    <th class="ps-4">ÜRÜN BİLGİSİ</th>
+                    <th>ÜRÜN BİLGİSİ</th>
                     <th>KATEGORİ</th>
                     <th>DEPO</th>
                     <th>STOK MİKTARI</th>
                     <th>BİRİM FİYAT</th>
                     <th>TOPLAM DEĞER</th>
-                    <th class="text-center">DURUM</th>
+                    <th class="ws-text-center">DURUM</th>
                 </tr>
             </thead>
             <tbody>
-                @* Örnek Satır 1 *@
+                @* Örnek dinamik satır yapısı *@
                 <tr>
-                    <td class="ps-4">
-                        <div class="fw-bold text-dark">Chardonnay Reserve 2022</div>
-                        <div class="text-muted extra-small">ID: #PRD-001</div>
+                    <td>
+                        <div class="ws-td-main-text">Chardonnay Reserve 2022</div>
+                        <div class="ws-td-sub-text">ID: #PRD-001</div>
                     </td>
-                    <td><span class="badge bg-light text-dark fw-medium border">Beyaz Şarap</span></td>
+                    <td><span class="ws-tag">Beyaz Şarap</span></td>
                     <td>Ana Depo</td>
-                    <td><span class="fw-bold text-danger">8 Adet</span></td>
+                    <td><span class="ws-td-bold ws-text-danger">8 Adet</span></td>
                     <td>₺485,00</td>
-                    <td class="fw-bold text-dark">₺3.880,00</td>
-                    <td class="text-center">
-                        <span class="status-pill status-danger">
-                            <i data-lucide="alert-circle" style="width:14px; height:14px;"></i> Kritik
-                        </span>
-                    </td>
-                </tr>
-                @* Örnek Satır 2 *@
-                <tr>
-                    <td class="ps-4">
-                        <div class="fw-bold text-dark">Vintage Cognac 50cl</div>
-                        <div class="text-muted extra-small">ID: #PRD-003</div>
-                    </td>
-                    <td><span class="badge bg-light text-dark fw-medium border">Sert Alkol</span></td>
-                    <td>Şube Depo A</td>
-                    <td><span class="fw-bold text-dark">124 Adet</span></td>
-                    <td>₺1.250,00</td>
-                    <td class="fw-bold text-dark">₺155.000,00</td>
-                    <td class="text-center">
-                        <span class="status-pill status-success">
-                            <i data-lucide="check-circle" style="width:14px; height:14px;"></i> Yeterli
+                    <td class="ws-td-bold">₺3.880,00</td>
+                    <td class="ws-text-center">
+                        <span class="ws-status-pill ws-status-danger">
+                            <i data-lucide="alert-circle"></i> KRİTİK
                         </span>
                     </td>
                 </tr>
             </tbody>
-            @* Özet Satırı *@
-            <tfoot style="background-color: var(--gray-50);">
-                <tr class="fw-bold" style="border-top: 2px solid var(--gray-200);">
-                    <td class="ps-4" colspan="3">GENEL TOPLAM</td>
-                    <td class="text-primary">132 Adet</td>
+            <tfoot class="ws-table-footer">
+                <tr>
+                    <td colspan="3" class="ws-footer-label">GENEL TOPLAM</td>
+                    <td class="ws-text-primary ws-td-bold">132 Adet</td>
                     <td>—</td>
-                    <td class="text-primary">₺158.880,00</td>
+                    <td class="ws-text-primary ws-td-bold">₺158.880,00</td>
                     <td></td>
                 </tr>
             </tfoot>
@@ -166,12 +151,5 @@
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/report/report.js" asp-append-version="true"></script>
-
+    <script src="~/js/stock-reports/stockreport-manager.js" asp-append-version="true"></script>
 }

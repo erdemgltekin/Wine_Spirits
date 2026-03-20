@@ -5,27 +5,27 @@
 @{
     ViewData["Title"] = "Sipariş Yönetimi";
     Layout = "_Layout";
-
     int totalOrders = Model?.Count() ?? 0;
     int activeOrders = Model?.Count(o => o.IsActive) ?? 0;
 }
 
-@section Styles {
-    @* Sayfaya özel ek CSS gerekirse buraya, ama main.css her şeyi çözüyor *@
-}
-
-<div class="ws-orders-container">
-    <div class="ws-page-header">
-        <div>
+<div class="ws-page-container">
+    @* --- SAYFA BAŞLIĞI --- *@
+    <header class="ws-page-header">
+        <div class="ws-header-content">
             <h2 class="ws-page-title">Sipariş Yönetimi</h2>
             <p class="ws-page-subtitle">Sipariş akışını izleyin ve durumları güncelleyin.</p>
         </div>
-        <button type="button" class="ws-btn-main shadow-sm" id="btnCreateOrder">
-            <i data-lucide="shopping-cart"></i>Yeni Sipariş 
-        </button>
-    </div>
+        <div class="ws-header-actions">
+            <button type="button" class="ws-btn-main shadow-sm" id="btnCreateOrder">
+                <i data-lucide="shopping-cart"></i>
+                <span>Yeni Sipariş</span>
+            </button>
+        </div>
+    </header>
 
-    <div class="ws-summary-grid-4 mb-4">
+    @* --- 1. İSTATİSTİK KARTLARI (ws-summary-grid-4) --- *@
+    <div class="ws-summary-grid-4">
         <div class="ws-stat-card">
             <div class="ws-stat-icon-wrapper ws-icon-indigo">
                 <i data-lucide="shopping-bag"></i>
@@ -67,41 +67,48 @@
         </div>
     </div>
 
-    <div class="ws-filter-container d-flex align-items-stretch">
+    @* --- 2. FİLTRELEME BARI (Mimarideki flex yapısına tam uyumlu) --- *@
+    <div class="ws-filter-container">
+        @* Arama (flex: 1) *@
         <div class="ws-filter-item">
             <i data-lucide="search"></i>
             <input type="text" id="orderSearch" class="ws-filter-el" placeholder="Sipariş No veya Müşteri ara...">
         </div>
+
+        @* Tarih Aralığı (flex: 1) *@
         <div class="ws-filter-item">
             <i data-lucide="calendar"></i>
-            <input type="text" id="orderDateFilter" class="ws-filter-el ws-datepicker" placeholder="Tarih Aralığı" readonly>
+            <input type="text" id="orderDateFilter" class="ws-filter-el ws-datepicker" data-mode="range" placeholder="Tarih Aralığı" readonly>
         </div>
-        <div class="ws-dropdown">
-            <button class="ws-dropdown-trigger" type="button">
+
+        @* Durum Dropdown (flex: 1) *@
+        <div class="ws-custom-dropdown">
+            <div class="ws-filter-item">
                 <i data-lucide="activity"></i>
-                <span id="selectedStatusText">Tüm Durumlar</span>
-                <i data-lucide="chevron-down"></i>
-            </button>
-            <div class="ws-dropdown-menu">
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="filterOrders('', 'Tüm Durumlar')">Tüm Durumlar</a>
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="filterOrders('Pending', 'Beklemede')">Beklemede</a>
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="filterOrders('Completed', 'Tamamlandı')">Tamamlandı</a>
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="filterOrders('Cancelled', 'İptal Edildi')">İptal Edildi</a>
+                <div class="ws-filter-el">
+                    <span id="selectedStatusText">Tüm Durumlar</span>
+                </div>
+                <i data-lucide="chevron-down" class="ws-dropdown-icon"></i>
             </div>
-        </div>
-        <div class="ws-dropdown">
-            <button class="ws-dropdown-trigger" type="button">
-                <i data-lucide="sliders-horizontal"></i>
-                <span>Sırala</span>
-            </button>
-            <div class="ws-dropdown-menu px-2 py-2">
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="sortOrders('date-desc')"><i data-lucide="calendar"></i> Yeniden Eskiye</a>
-                <a class="ws-dropdown-item" href="javascript:void(0)" onclick="sortOrders('amount-desc')"><i data-lucide="trending-up"></i> Tutar (Yüksek)</a>
+            <div class="ws-dropdown-content">
+                <div class="ws-dropdown-option active" onclick="OrderManager.filter('all', 'Tüm Durumlar')">
+                    <i data-lucide="layers"></i> Tüm Durumlar
+                </div>
+                <div class="ws-dropdown-option" onclick="OrderManager.filter('Pending', 'Beklemede')">
+                    <i data-lucide="clock"></i> Beklemede
+                </div>
+                <div class="ws-dropdown-option" onclick="OrderManager.filter('Completed', 'Tamamlandı')">
+                    <i data-lucide="check-circle"></i> Tamamlandı
+                </div>
+                <div class="ws-dropdown-option" onclick="OrderManager.filter('Cancelled', 'İptal Edildi')">
+                    <i data-lucide="x-circle"></i> İptal Edildi
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="ws-table-wrapper">
+    @* --- 3. SİPARİŞ TABLOSU --- *@
+    <div class="ws-table-wrapper" id="ordersTableContainer">
         <table class="ws-table-premium">
             <thead>
                 <tr>
@@ -115,48 +122,48 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null)
+                @if (Model != null && Model.Any())
                 {
                     @foreach (var item in Model)
                     {
                         <tr>
                             <td class="ps-4">
-                                <div class="ws-order-info">
-                                    <div class="ws-order-icon">
+                                <div class="ws-order-info-cell">
+                                    <div class="ws-order-icon-box">
                                         <i data-lucide="package"></i>
                                     </div>
-                                    <div class="ws-order-details">
-                                        <strong>#ORD-@item.Id.ToString().Substring(0, 6).ToUpper()</strong>
-                                        <small>@item.Description</small>
+                                    <div class="ws-order-texts">
+                                        <strong class="ws-td-id">#ORD-@item.Id.ToString().Substring(0, 6).ToUpper()</strong>
+                                        <small class="ws-td-sub-text">@item.Description</small>
                                     </div>
                                 </div>
                             </td>
+                            <td><div class="ws-td-main-text">@item.Customer?.Name @item.Customer?.Lastname</div></td>
                             <td>
-                                <div class="fw-bold text-dark">@item.Customer?.Name @item.Customer?.Lastname</div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <i data-lucide="warehouse" class="text-muted" style="width:14px;"></i>
-                                    @(item.Warehouse?.Name ?? "Merkez")
+                                <div class="ws-td-warehouse">
+                                    <i data-lucide="warehouse"></i>
+                                    <span>@(item.Warehouse?.Name ?? "Merkez")</span>
                                 </div>
                             </td>
                             <td>
-                                <div class="text-dark">@item.OrderDate.ToString("dd.MM.yyyy")</div>
-                                <small class="text-muted">@item.OrderDate.ToString("HH:mm")</small>
+                                <div class="ws-td-main-text">@item.OrderDate.ToString("dd.MM.yyyy")</div>
+                                <small class="ws-td-sub-text">@item.OrderDate.ToString("HH:mm")</small>
                             </td>
+                            <td><div class="ws-td-bold">₺@((item.OrderDetails?.Sum(od => od.TotalPrice) ?? 0).ToString("N2"))</div></td>
                             <td>
-                                <div class="fw-bold text-dark">₺@((item.OrderDetails?.Sum(od => od.TotalPrice) ?? 0).ToString("N2"))</div>
-                            </td>
-                            <td>
-                                <span class="status-pill @(item.IsActive ? "status-success" : "status-warning")">
-                                    <i data-lucide="@(item.IsActive ? "check-circle" : "clock")" style="width:14px;"></i>
+                                <span class="ws-status-pill @(item.IsActive ? "ws-status-success" : "ws-status-warning")">
+                                    <i data-lucide="@(item.IsActive ? "check-circle" : "clock")"></i>
                                     @(item.IsActive ? "Aktif" : "Beklemede")
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="ws-action-btn" title="Detay"><i data-lucide="eye"></i></button>
-                                    <button class="ws-action-btn" title="Sil"><i data-lucide="trash-2" class="text-danger"></i></button>
+                                <div class="ws-table-actions">
+                                    <button class="ws-action-btn" onclick="OrderManager.viewDetail('@item.Id')">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                    <button class="ws-action-btn text-danger" onclick="OrderManager.delete('@item.Id')">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -168,6 +175,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/order/order.js" asp-append-version="true"></script>
 }
