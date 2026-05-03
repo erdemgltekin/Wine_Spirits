@@ -1,17 +1,255 @@
+@using Wine_Spirits.Models.ViewModels
+@model ReportsIndexViewModel
+
 @{
-    ViewData["Title"] = "Raporlar";
+    ViewData["Title"] = "Raporlar ve Analiz";
     Layout = "_Layout";
 }
 
-<div class="container-fluid py-4">
-    <div class="card shadow-sm border-0 text-center p-5">
-        <div class="card-body">
-            <i data-lucide="pie-chart" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-            <h3 class="h4 text-gray-800">Raporlar</h3>
-            <p class="text-muted">Bu modül yapım aşamasındadır.</p>
+<div class="ws-page-container reports-page">
+
+    @* ══════════════════════════════════════════════════════════
+       1. SAYFA BAŞLIĞI + AKSİYON BUTONLARI
+       ══════════════════════════════════════════════════════════ *@
+    <header class="ws-page-header ws-reports-header">
+        <div class="ws-header-content">
+            <h1 class="ws-header-title">Raporlar ve Analiz</h1>
+            <p class="ws-header-subtitle">Satış, gelir ve müşteri raporlarını görüntüleyin</p>
+        </div>
+        <div class="ws-header-actions">
+            <button type="button" class="ws-btn-secondary ws-btn-date-filter" id="btnDateFilter">
+                <i data-lucide="calendar"></i>
+                <span>Tarih Filtrele</span>
+            </button>
+            <button type="button" class="ws-btn-primary" id="btnDownloadReport">
+                <i data-lucide="download"></i>
+                <span>Rapor İndir</span>
+            </button>
+        </div>
+    </header>
+
+    @* ══════════════════════════════════════════════════════════
+       2. İSTATİSTİK KARTLARI — 4'lü ws-stats-grid
+       ══════════════════════════════════════════════════════════ *@
+    <section class="ws-stats-grid" id="statsGrid">
+
+        @* KART 1 — Toplam Gelir (Mor Gradient) *@
+        <div class="ws-reports-hero-card">
+            <div class="ws-reports-hero-icon">
+                <i data-lucide="trending-up"></i>
+            </div>
+            <div class="ws-reports-hero-badge">+@Model.RevenueChangePercent.ToString("0.#")%</div>
+            <div class="ws-reports-hero-label">Toplam Gelir (6 Ay)</div>
+            <div class="ws-reports-hero-value">
+                ₺@(Model.TotalRevenue >= 1000
+                    ? (Model.TotalRevenue / 1000m).ToString("0.#") + "K"
+                    : Model.TotalRevenue.ToString("N0"))
+            </div>
+        </div>
+
+        @* KART 2 — Ortalama Sipariş Değeri *@
+        <div class="ws-card ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-blue">
+                <i data-lucide="shopping-cart"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Ortalama Sipariş Değeri</span>
+                <span class="ws-stat-value">₺@Model.AvgOrderValue.ToString("N0")</span>
+                <span class="ws-stat-trend ws-trend-up">+@Model.AvgOrderChangePercent.ToString("0.#")% önceki aya göre</span>
+            </div>
+        </div>
+
+        @* KART 3 — Toplam Ürün Satışı *@
+        <div class="ws-card ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-emerald">
+                <i data-lucide="package"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Toplam Ürün Satışı</span>
+                <span class="ws-stat-value">@Model.TotalUnitsSold.ToString("N0")</span>
+                <span class="ws-stat-trend ws-trend-up">+@Model.UnitsSoldChangePercent.ToString("0.#")% önceki aya göre</span>
+            </div>
+        </div>
+
+        @* KART 4 — Müşteri Memnuniyeti *@
+        <div class="ws-card ws-stat-card">
+            <div class="ws-stat-icon-wrapper ws-icon-indigo">
+                <i data-lucide="star"></i>
+            </div>
+            <div class="ws-stat-content">
+                <span class="ws-stat-label">Müşteri Memnuniyeti</span>
+                <span class="ws-stat-value">@Model.CustomerSatisfaction.ToString("0.0")/5.0</span>
+                <span class="ws-stat-trend ws-trend-up">+@Model.SatisfactionChangePercent.ToString("0.#") önceki aya göre</span>
+            </div>
+        </div>
+
+    </section>
+
+    @* ══════════════════════════════════════════════════════════
+       3. GRAFİK SATIRI — Bar Chart + Line Chart
+       ══════════════════════════════════════════════════════════ *@
+    <section class="rp-charts-row" id="chartsRow">
+
+        @* ── Sol: Kategori Bazlı Satışlar (Bar) ──────────────── *@
+        <div class="ws-card rp-chart-card">
+            <div class="rp-chart-header">
+                <h2 class="rp-chart-title">Kategori Bazlı Satışlar</h2>
+                <button class="rp-download-btn" id="btnDownloadBarChart" title="İndir">
+                    <i data-lucide="download"></i>
+                    <span>İndir</span>
+                </button>
+            </div>
+            <div class="rp-chart-body">
+                <canvas id="barChart" aria-label="Kategori Bazlı Satışlar Grafiği"></canvas>
+            </div>
+            <div class="rp-chart-legend" id="barLegend"></div>
+        </div>
+
+        @* ── Sağ: Gelir Trendi (Line) ─────────────────────────── *@
+        <div class="ws-card rp-chart-card">
+            <div class="rp-chart-header">
+                <h2 class="rp-chart-title">Gelir Trendi</h2>
+                <button class="rp-download-btn" id="btnDownloadLineChart" title="İndir">
+                    <i data-lucide="download"></i>
+                    <span>İndir</span>
+                </button>
+            </div>
+            <div class="rp-chart-body">
+                <canvas id="lineChart" aria-label="Gelir Trendi Grafiği"></canvas>
+            </div>
+            <div class="rp-chart-legend" id="lineLegend"></div>
+        </div>
+
+    </section>
+
+    @* ══════════════════════════════════════════════════════════
+       4. LİSTE KARTLARI — En Çok Satan + En Değerli Müşteriler
+       ══════════════════════════════════════════════════════════ *@
+    <section class="rp-lists-row" id="listsRow">
+
+        @* ── Sol: En Çok Satan Ürünler ───────────────────────── *@
+        <div class="ws-card rp-list-card">
+            <div class="rp-chart-header">
+                <h2 class="rp-chart-title">En Çok Satan Ürünler</h2>
+                <button class="rp-download-btn" id="btnDownloadTopProducts" title="İndir">
+                    <i data-lucide="download"></i>
+                    <span>İndir</span>
+                </button>
+            </div>
+            <div id="topProductsList" class="rp-list-body">
+                <div class="rp-list-skeleton">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="rp-skeleton-row"></div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @* ── Sağ: En Değerli Müşteriler ──────────────────────── *@
+        <div class="ws-card rp-list-card">
+            <div class="rp-chart-header">
+                <h2 class="rp-chart-title">En Değerli Müşteriler</h2>
+                <button class="rp-download-btn" id="btnDownloadTopCustomers" title="İndir">
+                    <i data-lucide="download"></i>
+                    <span>İndir</span>
+                </button>
+            </div>
+            <div id="topCustomersList" class="rp-list-body">
+                <div class="rp-list-skeleton">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="rp-skeleton-row"></div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    @* ══════════════════════════════════════════════════════════
+       5. HIZLI RAPOR İNDİRME
+       ══════════════════════════════════════════════════════════ *@
+    <section class="ws-card rp-quick-downloads" id="quickDownloads">
+        <h2 class="rp-chart-title rp-section-title">Hızlı Rapor İndirme</h2>
+        <div class="rp-quick-grid">
+            <button class="rp-quick-btn"
+                    data-report-type="sales"
+                    data-report-label="Aylık Satış Raporu">
+                <i data-lucide="file-bar-chart"></i>
+                <span>Aylık Satış Raporu</span>
+            </button>
+            <button class="rp-quick-btn"
+                    data-report-type="inventory"
+                    data-report-label="Envanter Raporu">
+                <i data-lucide="package-search"></i>
+                <span>Envanter Raporu</span>
+            </button>
+            <button class="rp-quick-btn"
+                    data-report-type="customer"
+                    data-report-label="Müşteri Raporu">
+                <i data-lucide="users"></i>
+                <span>Müşteri Raporu</span>
+            </button>
+            <button class="rp-quick-btn"
+                    data-report-type="supplier"
+                    data-report-label="Tedarikçi Raporu">
+                <i data-lucide="truck"></i>
+                <span>Tedarikçi Raporu</span>
+            </button>
+            <button class="rp-quick-btn"
+                    data-report-type="profitloss"
+                    data-report-label="Kâr-Zarar Raporu">
+                <i data-lucide="trending-up"></i>
+                <span>Kâr-Zarar Raporu</span>
+            </button>
+            <button class="rp-quick-btn"
+                    data-report-type="yearly"
+                    data-report-label="Yıllık Özet">
+                <i data-lucide="calendar-range"></i>
+                <span>Yıllık Özet</span>
+            </button>
+        </div>
+    </section>
+
+    @* ══════════════════════════════════════════════════════════
+       6. RAPOR MODAL — Varsayılan gizli, JS tarafından yönetilir
+       ══════════════════════════════════════════════════════════ *@
+    <div class="rp-modal-backdrop" id="rpModalBackdrop" aria-hidden="true">
+        <div class="rp-modal" id="rpModal" role="dialog" aria-modal="true" aria-labelledby="rpModalTitle">
+
+            @* ── Modal Başlık ─────────────────────────────────── *@
+            <div class="rp-modal-header">
+                <div class="rp-modal-title-group">
+                    <span class="rp-modal-icon" id="rpModalIcon">
+                        <i data-lucide="file-bar-chart" id="rpModalIconSvg"></i>
+                    </span>
+                    <h3 class="rp-modal-title" id="rpModalTitle">Rapor Filtreleri</h3>
+                </div>
+                <button class="rp-modal-close" id="rpModalClose" aria-label="Kapat">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            @* ── Modal Gövde — dinamik filtreler JS tarafından enjekte edilir *@
+            <div class="rp-modal-body" id="rpModalBody">
+            </div>
+
+            @* ── Modal Alt Bar ────────────────────────────────── *@
+            <div class="rp-modal-footer">
+                <button class="rp-modal-btn-cancel" id="rpModalCancel">Vazgeç</button>
+                <button class="rp-modal-btn-download" id="rpModalDownload">
+                    <i data-lucide="download"></i>
+                    <span>İndir</span>
+                </button>
+            </div>
+
         </div>
     </div>
+
 </div>
 
-
-dsdsddd
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="~/js/report/report.js" asp-append-version="true"></script>
+}
