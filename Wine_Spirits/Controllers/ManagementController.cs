@@ -7,7 +7,7 @@ using Wine_Spirits.Models.ViewModels;
 
 namespace Wine_Spirits.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin,Admin,Sistem Yöneticisi,Yönetici")]
     public class ManagementController : Controller
     {
         private readonly WineSpiritsContext _context;

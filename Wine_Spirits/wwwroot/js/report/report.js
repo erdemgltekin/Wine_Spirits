@@ -26,6 +26,8 @@ const ReportDashboard = (() => {
 
     // Aktif modal rapor tipi
     let _activeReportType = null;
+    let _currentStartDate = null;
+    let _currentEndDate = null;
 
     // ─── Başlatıcı ────────────────────────────────────────────────────────
     function init() {
@@ -33,6 +35,7 @@ const ReportDashboard = (() => {
         _bindDownloadButtons();
         _bindQuickButtons();
         _bindModal();
+        _bindDateFilter();
     }
 
     // =========================================================
@@ -41,7 +44,11 @@ const ReportDashboard = (() => {
 
     async function _fetchDashboardData() {
         try {
-            const res  = await fetch('/Reports/GetDashboardData');
+            let url = '/Reports/GetDashboardData';
+            if (_currentStartDate && _currentEndDate) {
+                url += `?startDate=${_currentStartDate}&endDate=${_currentEndDate}`;
+            }
+            const res  = await fetch(url);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
@@ -170,7 +177,54 @@ const ReportDashboard = (() => {
         document.getElementById('btnDownloadTopCustomers')
             ?.addEventListener('click', () => _showToast('En değerli müşteriler listesi hazırlanıyor...'));
         document.getElementById('btnDownloadReport')
-            ?.addEventListener('click', () => _showToast('Genel rapor indirme başlatıldı...'));
+            ?.addEventListener('click', () => {
+                let msg = 'Genel rapor indirme başlatıldı...';
+                if (_currentStartDate && _currentEndDate) {
+                    msg += ` (${_formatDateTr(_currentStartDate)} - ${_formatDateTr(_currentEndDate)})`;
+                }
+                _showToast(msg);
+            });
+    }
+
+    function _formatDateTr(isoString) {
+        if (!isoString) return '';
+        const parts = isoString.split('-');
+        if (parts.length !== 3) return isoString;
+        return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+
+    function _bindDateFilter() {
+        const btn = document.getElementById('btnDateFilter');
+        if (!btn || typeof flatpickr === 'undefined') return;
+
+        flatpickr(btn, {
+            mode: 'range',
+            dateFormat: 'd.m.Y',
+            locale: 'tr',
+            onReady: function(selectedDates, dateStr, instance) {
+                if (instance && instance.calendarContainer) {
+                    instance.calendarContainer.classList.add('rp-custom-flatpickr');
+                }
+            },
+            onClose: function(selectedDates, dateStr) {
+                if (selectedDates.length === 2) {
+                    const btnSpan = btn.querySelector('span');
+                    if (btnSpan) btnSpan.textContent = dateStr.replace(' to ', ' - ');
+                    
+                    // iso format for backend
+                    _currentStartDate = new Date(selectedDates[0].getTime() - (selectedDates[0].getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                    _currentEndDate = new Date(selectedDates[1].getTime() - (selectedDates[1].getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                    
+                    _fetchDashboardData();
+                } else if (selectedDates.length === 0) {
+                    const btnSpan = btn.querySelector('span');
+                    if (btnSpan) btnSpan.textContent = 'Tarih Filtrele';
+                    _currentStartDate = null;
+                    _currentEndDate = null;
+                    _fetchDashboardData();
+                }
+            }
+        });
     }
 
     function _downloadChart(chartInstance, filename) {
@@ -190,62 +244,61 @@ const ReportDashboard = (() => {
      * icon  : Lucide ikon adı
      * build : Modal body HTML'ini döndüren fonksiyon
      */
+    // ─── Tarih input HTML yardımcısı ──────────────────────────────────────
+    function _dateField(id, label, defaultVal) {
+        return `
+            <div class="rp-modal-field-group">
+                <label class="rp-modal-label" for="${id}">${label}</label>
+                <div class="rp-modal-date-wrapper">
+                    <i data-lucide="calendar" class="rp-modal-date-icon"></i>
+                    <input type="text" id="${id}" class="ws-input-premium ws-datepicker rp-modal-dateinput"
+                           placeholder="GG.AA.YYYY" readonly value="${defaultVal}" />
+                </div>
+            </div>`;
+    }
+
+    // ─── Select HTML yardımcısı ────────────────────────────────────────────
+    function _selectField(id, label, options, fullWidth) {
+        const cls = fullWidth ? 'rp-modal-field-group rp-modal-field-full' : 'rp-modal-field-group';
+        return `
+            <div class="${cls}">
+                <label class="rp-modal-label" for="${id}">${label}</label>
+                <select id="${id}" class="ws-input-premium select2-enable">${options}</select>
+            </div>`;
+    }
+
     const REPORT_CONFIG = {
 
         sales: {
             icon: 'file-bar-chart',
-            build: () => `
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-dateFrom">Başlangıç Tarihi</label>
-                    <input type="date" id="rmf-dateFrom" class="rp-modal-input"
-                           value="${_defaultFrom()}" />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-dateTo">Bitiş Tarihi</label>
-                    <input type="date" id="rmf-dateTo" class="rp-modal-input"
-                           value="${_today()}" />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-category">Kategori</label>
-                    <select id="rmf-category" class="rp-modal-select">
-                        <option value="">Tüm Kategoriler</option>
-                        <option value="Kırmızı Şarap">Kırmızı Şarap</option>
-                        <option value="Beyaz Şarap">Beyaz Şarap</option>
-                        <option value="Rosé">Rosé</option>
-                        <option value="Şampanya">Şampanya</option>
-                    </select>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-format">Dosya Formatı</label>
-                    <select id="rmf-format" class="rp-modal-select">
-                        <option value="excel">Excel (.xlsx)</option>
-                        <option value="pdf">PDF</option>
-                        <option value="csv">CSV</option>
-                    </select>
-                </div>`,
+            build: () =>
+                _dateField('rmf-dateFrom', 'Başlangıç Tarihi', _defaultFromFmt()) +
+                _dateField('rmf-dateTo',   'Bitiş Tarihi',     _todayFmt()) +
+                _selectField('rmf-category', 'Kategori', `
+                    <option value="">Tüm Kategoriler</option>
+                    <option value="Kırmızı Şarap">Kırmızı Şarap</option>
+                    <option value="Beyaz Şarap">Beyaz Şarap</option>
+                    <option value="Rosé">Rosé</option>
+                    <option value="Şampanya">Şampanya</option>`) +
+                _selectField('rmf-format', 'Dosya Formatı', `
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="pdf">PDF</option>
+                    <option value="csv">CSV</option>`),
         },
 
         inventory: {
             icon: 'package-search',
-            build: () => `
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-invCategory">Kategori</label>
-                    <select id="rmf-invCategory" class="rp-modal-select">
-                        <option value="">Tüm Kategoriler</option>
-                        <option value="Kırmızı Şarap">Kırmızı Şarap</option>
-                        <option value="Beyaz Şarap">Beyaz Şarap</option>
-                        <option value="Rosé">Rosé</option>
-                        <option value="Şampanya">Şampanya</option>
-                    </select>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-invWarehouse">Depo</label>
-                    <select id="rmf-invWarehouse" class="rp-modal-select">
-                        <option value="">Tüm Depolar</option>
-                        <option value="main">Ana Depo</option>
-                        <option value="secondary">İkincil Depo</option>
-                    </select>
-                </div>
+            build: () =>
+                _selectField('rmf-invCategory', 'Kategori', `
+                    <option value="">Tüm Kategoriler</option>
+                    <option value="Kırmızı Şarap">Kırmızı Şarap</option>
+                    <option value="Beyaz Şarap">Beyaz Şarap</option>
+                    <option value="Rosé">Rosé</option>
+                    <option value="Şampanya">Şampanya</option>`) +
+                _selectField('rmf-invWarehouse', 'Depo', `
+                    <option value="">Tüm Depolar</option>
+                    <option value="main">Ana Depo</option>
+                    <option value="secondary">İkincil Depo</option>`) + `
                 <div class="rp-modal-field-group rp-modal-field-full">
                     <label class="rp-modal-label">Stok Durumu</label>
                     <div class="rp-modal-checkbox-group">
@@ -253,96 +306,58 @@ const ReportDashboard = (() => {
                         <label class="rp-modal-checkbox"><input type="checkbox" id="rmf-invOk"  checked /><span>Normal Stok</span></label>
                         <label class="rp-modal-checkbox"><input type="checkbox" id="rmf-invOut"       /><span>Tükenen</span></label>
                     </div>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-invFormat">Dosya Formatı</label>
-                    <select id="rmf-invFormat" class="rp-modal-select">
-                        <option value="excel">Excel (.xlsx)</option>
-                        <option value="pdf">PDF</option>
-                    </select>
-                </div>`,
+                </div>` +
+                _selectField('rmf-invFormat', 'Dosya Formatı', `
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="pdf">PDF</option>`),
         },
 
         customer: {
             icon: 'users',
             build: () => `
-                <div class="rp-modal-field-group">
+                <div class="rp-modal-field-group rp-modal-field-full">
                     <label class="rp-modal-label" for="rmf-custSearch">Müşteri Ara</label>
-                    <input type="text" id="rmf-custSearch" class="rp-modal-input"
-                           placeholder="Ad, soyad veya e-posta..." />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-custSegment">Segment</label>
-                    <select id="rmf-custSegment" class="rp-modal-select">
-                        <option value="">Tüm Segmentler</option>
-                        <option value="vip">VIP (₺50K+)</option>
-                        <option value="regular">Düzenli</option>
-                        <option value="new">Yeni (Son 3 Ay)</option>
-                        <option value="inactive">Pasif</option>
-                    </select>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-custFrom">Başlangıç Tarihi</label>
-                    <input type="date" id="rmf-custFrom" class="rp-modal-input"
-                           value="${_defaultFrom()}" />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-custTo">Bitiş Tarihi</label>
-                    <input type="date" id="rmf-custTo" class="rp-modal-input"
-                           value="${_today()}" />
-                </div>`,
+                    <div class="rp-modal-text-wrapper">
+                        <i data-lucide="search" class="rp-modal-date-icon"></i>
+                        <input type="text" id="rmf-custSearch" class="ws-input-premium rp-modal-dateinput"
+                               placeholder="Ad, soyad veya e-posta..." />
+                    </div>
+                </div>` +
+                _selectField('rmf-custSegment', 'Segment', `
+                    <option value="">Tüm Segmentler</option>
+                    <option value="vip">VIP (₺50K+)</option>
+                    <option value="regular">Düzenli</option>
+                    <option value="new">Yeni (Son 3 Ay)</option>
+                    <option value="inactive">Pasif</option>`) +
+                _dateField('rmf-custFrom', 'Başlangıç Tarihi', _defaultFromFmt()) +
+                _dateField('rmf-custTo',   'Bitiş Tarihi',     _todayFmt()),
         },
 
         supplier: {
             icon: 'truck',
-            build: () => `
-                <div class="rp-modal-field-group rp-modal-field-full">
-                    <label class="rp-modal-label" for="rmf-suppName">Tedarikçi Seç</label>
-                    <select id="rmf-suppName" class="rp-modal-select">
-                        <option value="">Tüm Tedarikçiler</option>
-                        <option value="1">Şato Şarapları A.Ş.</option>
-                        <option value="2">Boğaziçi İthalat</option>
-                        <option value="3">Akdeniz Şarap Evi</option>
-                    </select>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-suppFrom">Başlangıç Tarihi</label>
-                    <input type="date" id="rmf-suppFrom" class="rp-modal-input"
-                           value="${_defaultFrom()}" />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-suppTo">Bitiş Tarihi</label>
-                    <input type="date" id="rmf-suppTo" class="rp-modal-input"
-                           value="${_today()}" />
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-suppFormat">Dosya Formatı</label>
-                    <select id="rmf-suppFormat" class="rp-modal-select">
-                        <option value="excel">Excel (.xlsx)</option>
-                        <option value="pdf">PDF</option>
-                    </select>
-                </div>`,
+            build: () =>
+                _selectField('rmf-suppName', 'Tedarikçi Seç', `
+                    <option value="">Tüm Tedarikçiler</option>
+                    <option value="1">Şato Şarapları A.Ş.</option>
+                    <option value="2">Boğaziçi İthalat</option>
+                    <option value="3">Akdeniz Şarap Evi</option>`, true) +
+                _dateField('rmf-suppFrom', 'Başlangıç Tarihi', _defaultFromFmt()) +
+                _dateField('rmf-suppTo',   'Bitiş Tarihi',     _todayFmt()) +
+                _selectField('rmf-suppFormat', 'Dosya Formatı', `
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="pdf">PDF</option>`),
         },
 
         profitloss: {
             icon: 'trending-up',
-            build: () => `
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-plYear">Yıl</label>
-                    <select id="rmf-plYear" class="rp-modal-select">
-                        ${_yearOptions()}
-                    </select>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-plQuarter">Dönem</label>
-                    <select id="rmf-plQuarter" class="rp-modal-select">
-                        <option value="">Tüm Yıl</option>
-                        <option value="Q1">Q1 (Oca-Mar)</option>
-                        <option value="Q2">Q2 (Nis-Haz)</option>
-                        <option value="Q3">Q3 (Tem-Eyl)</option>
-                        <option value="Q4">Q4 (Eki-Ara)</option>
-                    </select>
-                </div>
+            build: () =>
+                _selectField('rmf-plYear', 'Yıl', _yearOptions()) +
+                _selectField('rmf-plQuarter', 'Dönem', `
+                    <option value="">Tüm Yıl</option>
+                    <option value="Q1">Q1 (Oca-Mar)</option>
+                    <option value="Q2">Q2 (Nis-Haz)</option>
+                    <option value="Q3">Q3 (Tem-Eyl)</option>
+                    <option value="Q4">Q4 (Eki-Ara)</option>`) + `
                 <div class="rp-modal-field-group rp-modal-field-full">
                     <label class="rp-modal-label">Dahil Edilecekler</label>
                     <div class="rp-modal-checkbox-group">
@@ -356,13 +371,8 @@ const ReportDashboard = (() => {
 
         yearly: {
             icon: 'calendar-range',
-            build: () => `
-                <div class="rp-modal-field-group rp-modal-field-full">
-                    <label class="rp-modal-label" for="rmf-yrYear">Yıl Seç</label>
-                    <select id="rmf-yrYear" class="rp-modal-select">
-                        ${_yearOptions()}
-                    </select>
-                </div>
+            build: () =>
+                _selectField('rmf-yrYear', 'Yıl Seç', _yearOptions(), true) + `
                 <div class="rp-modal-field-group rp-modal-field-full">
                     <label class="rp-modal-label">Rapor Bölümleri</label>
                     <div class="rp-modal-checkbox-group">
@@ -372,14 +382,10 @@ const ReportDashboard = (() => {
                         <label class="rp-modal-checkbox"><input type="checkbox" checked /><span>Gelir & Kâr</span></label>
                         <label class="rp-modal-checkbox"><input type="checkbox"       /><span>Tedarikçi Özeti</span></label>
                     </div>
-                </div>
-                <div class="rp-modal-field-group">
-                    <label class="rp-modal-label" for="rmf-yrFormat">Dosya Formatı</label>
-                    <select id="rmf-yrFormat" class="rp-modal-select">
-                        <option value="excel">Excel (.xlsx)</option>
-                        <option value="pdf">PDF</option>
-                    </select>
-                </div>`,
+                </div>` +
+                _selectField('rmf-yrFormat', 'Dosya Formatı', `
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="pdf">PDF</option>`),
         },
     };
 
@@ -441,6 +447,32 @@ const ReportDashboard = (() => {
 
         // Lucide ikonları yenile
         if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // ── Flatpickr: ws-datepicker alanlarını başlat ────────────────────
+        if (typeof flatpickr !== 'undefined') {
+            body.querySelectorAll('.ws-datepicker').forEach(el => {
+                // Önceki instance varsa temizle
+                if (el._flatpickr) el._flatpickr.destroy();
+                flatpickr(el, {
+                    dateFormat: 'd.m.Y',
+                    locale: 'tr',
+                    disableMobile: true,
+                    allowInput: false,
+                });
+            });
+        }
+
+        // ── Select2: ws-input-premium select alanlarını başlat ───────────
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            const $backdrop = $('#rpModalBackdrop');
+            body.querySelectorAll('select.select2-enable').forEach(el => {
+                $(el).select2({
+                    theme: 'default',
+                    width: '100%',
+                    dropdownParent: $backdrop,
+                });
+            });
+        }
 
         // Backdrop göster
         const backdrop = document.getElementById('rpModalBackdrop');
@@ -555,6 +587,20 @@ const ReportDashboard = (() => {
         const d = new Date();
         d.setMonth(d.getMonth() - 6);
         return d.toISOString().split('T')[0];
+    }
+    // Flatpickr formatı için: dd.mm.yyyy
+    function _todayFmt() {
+        const d = new Date();
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        return `${dd}.${mm}.${d.getFullYear()}`;
+    }
+    function _defaultFromFmt() {
+        const d = new Date();
+        d.setMonth(d.getMonth() - 6);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        return `${dd}.${mm}.${d.getFullYear()}`;
     }
     function _yearOptions() {
         const y = new Date().getFullYear();

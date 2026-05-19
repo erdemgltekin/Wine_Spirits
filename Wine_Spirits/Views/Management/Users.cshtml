@@ -1,41 +1,473 @@
-﻿@model IEnumerable<Wine_Spirits.Models.AppUser>
+@model IEnumerable<Wine_Spirits.Models.AppUser>
+@using Wine_Spirits.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Wine_Spirits
+
 @{
-    Layout = "_Layout"; // Bu sayfanın ana temayı kullanmasını sağlar
     ViewData["Title"] = "Ayarlar";
-    ViewData["Subtitle"] = "Sistem ayarlarınızı ve personel listesini yönetin";
+    Layout = "_Layout";
+
+    var currentUsername = User.Identity?.Name;
+    var cu = Model.FirstOrDefault(u => u.Username == currentUsername) ?? new AppUser();
+    var allUsers = Model.ToList();
+
+    bool isAdmin = User.IsInRole("SuperAdmin")
+                || User.IsInRole("Admin")
+                || User.IsInRole("Sistem Yöneticisi")
+                || User.IsInRole("Yönetici")
+                || cu.Role == UserRole.SuperAdmin
+                || cu.Role == UserRole.Admin
+                || string.Equals(User.Identity?.Name, "admin", StringComparison.OrdinalIgnoreCase);
+
+    bool canViewUsers = isAdmin 
+                     || User.IsInRole("Manager")
+                     || User.IsInRole("Müdür")
+                     || cu.Role == UserRole.Manager;
+
+    string roleLabel = cu.Role switch
+    {
+        UserRole.SuperAdmin => "Sistem Yöneticisi",
+        UserRole.Admin      => "Yönetici",
+        UserRole.Manager    => "Müdür",
+        _                   => "Personel"
+    };
+    string roleBadge = cu.Role switch
+    {
+        UserRole.SuperAdmin => "stg-badge--purple",
+        UserRole.Admin      => "stg-badge--blue",
+        UserRole.Manager    => "stg-badge--green",
+        _                   => "stg-badge--gray"
+    };
 }
 
-<partial name="Partials/_PageHeader" />
+<div class="ws-settings-wrapper">
 
-<div class="ws-tabs-wrapper mb-4">
-    <ul class="nav nav-tabs border-0" id="settingsTabs" role="tablist">
-        <li class="nav-item">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileContent" type="button">
-                <i data-lucide="user" class="me-2"></i>Profil
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#usersContent" type="button">
-                <i data-lucide="users" class="me-2"></i>Kullanıcı Listesi
-            </button>
-        </li>
-    </ul>
-</div>
+    @* ── BAŞLIK ─────────────────────────────────────────────────── *@
+    <ws-page-header title="Ayarlar"
+                    subtitle="Profil bilgilerini, şifreni ve sistem tanımlamalarını yönet.">
+        <span class="stg-header-role @roleBadge">
+            <i data-lucide="shield-check"></i>
+            @roleLabel
+        </span>
+    </ws-page-header>
 
-<div class="tab-content">
-    @* Profil Sekmesi *@
-    <div class="tab-pane fade show active" id="profileContent">
-        <div class="ws-card p-4">
-            @* Buraya daha önce verdiğim profil formu kodlarını ekleyebilirsin *@
-            <p>Profil bilgileriniz burada listelenir.</p>
-        </div>
+    @* ── SEKME NAVİGASYONU ───────────────────────────────────────── *@
+    <div class="stg-tabs" role="tablist">
+        <button class="ws-tab-btn active" data-tab="profil" id="stgTabProfile" role="tab">
+            <i data-lucide="user"></i>
+            Profil
+        </button>
+        <button class="ws-tab-btn" data-tab="bildirimler" id="stgTabNotifications" role="tab">
+            <i data-lucide="bell"></i>
+            Bildirimler
+        </button>
+        <button class="ws-tab-btn" data-tab="guvenlik" id="stgTabSecurity" role="tab">
+            <i data-lucide="lock"></i>
+            Güvenlik
+        </button>
+
+        @if (canViewUsers)
+        {
+            <button class="ws-tab-btn" data-tab="sistem" id="stgTabSystem" role="tab">
+                <i data-lucide="globe"></i>
+                Sistem
+            </button>
+        }
+
+        <button class="ws-tab-btn" data-tab="gorunum" id="stgTabAppearance" role="tab">
+            <i data-lucide="palette"></i>
+            Görünüm
+        </button>
     </div>
 
-    @* Kullanıcı Listesi Sekmesi *@
-    <div class="tab-pane fade" id="usersContent">
-        <div class="ws-card p-4">
-            <button class="btn btn-primary mb-3" data-drawer="true" data-url="/Management/CreateUser">Yeni Personel</button>
-            @* Tablo kodların buraya gelecek *@
+    @* ══════════════════════════════════════════════════════════════
+        TAB 1 — PROFİL
+       ══════════════════════════════════════════════════════════════ *@
+    <section class="ws-tab-content active" id="profil" role="tabpanel">
+
+        <div class="ws-card stg-form-card">
+            <div class="stg-card-header">
+                <div class="stg-card-icon stg-card-icon--purple">
+                    <i data-lucide="user-cog"></i>
+                </div>
+                <div>
+                    <h2 class="stg-card-title">Profil Bilgileri</h2>
+                    <p class="stg-card-sub">Ad soyad, iletişim ve pozisyonunu güncelleyebilirsin.</p>
+                </div>
+            </div>
+
+            <form id="formProfile" class="stg-form">
+                @Html.AntiForgeryToken()
+                
+                @* Yuvarlak Profil Resmi Alanı *@
+                <div class="stg-avatar-upload">
+                    <div class="stg-avatar-circle">
+                        @{ string currentUserInitial = string.IsNullOrEmpty(cu.FullName) ? "?" : cu.FullName[..1].ToUpper(); }
+                        <span>@currentUserInitial</span>
+                        <div class="stg-avatar-overlay">
+                            <i data-lucide="camera"></i>
+                        </div>
+                    </div>
+                    <div class="stg-avatar-info">
+                        <button type="button" class="ws-btn-secondary">Fotoğraf Değiştir</button>
+                    </div>
+                </div>
+
+                <div class="stg-form-grid">
+                    <div class="ws-form-group">
+                        <label class="ws-form-label" for="firstName">Ad</label>
+                        <input type="text" id="firstName" name="firstName"
+                               class="ws-input-premium"
+                               value=""
+                               placeholder="Adınız" />
+                    </div>
+                    <div class="ws-form-group">
+                        <label class="ws-form-label" for="lastName">Soyad</label>
+                        <input type="text" id="lastName" name="lastName"
+                               class="ws-input-premium"
+                               value=""
+                               placeholder="Soyadınız" />
+                    </div>
+                    <div class="ws-form-group">
+                        <label class="ws-form-label" for="email">E-posta</label>
+                        <input type="email" id="email" name="email"
+                               class="ws-input-premium"
+                               value=""
+                               placeholder="ornek@sirket.com" />
+                    </div>
+                    <div class="ws-form-group">
+                        <label class="ws-form-label" for="phone">Telefon</label>
+                        <input type="tel" id="phone" name="phone"
+                               class="ws-input-premium"
+                               value=""
+                               placeholder="+90 5XX XXX XX XX" />
+                    </div>
+                    <div class="ws-form-group stg-col-full">
+                        <label class="ws-form-label" for="position">Pozisyon</label>
+                        <input type="text" id="position" name="position"
+                               class="ws-input-premium"
+                               value="@cu.Position"
+                               placeholder="Örn: Satış Uzmanı" />
+                    </div>
+                </div>
+                <div class="stg-form-footer">
+                    <button type="button" class="ws-btn-secondary" id="btnCancelProfile" style="margin-right: 12px;">
+                        <span>İptal</span>
+                    </button>
+                    <button type="submit" class="ws-btn-main" id="btnSaveProfile">
+                        <i data-lucide="save"></i>
+                        <span>Değişiklikleri Kaydet</span>
+                    </button>
+                </div>
+            </form>
         </div>
-    </div>
+    </section>
+
+    @* ══════════════════════════════════════════════════════════════
+        TAB 2 — BİLDİRİMLER
+       ══════════════════════════════════════════════════════════════ *@
+    <section class="ws-tab-content" id="bildirimler" role="tabpanel">
+        <div class="ws-card stg-form-card">
+            <div class="stg-card-header">
+                <div class="stg-card-icon stg-card-icon--info">
+                    <i data-lucide="bell-ring"></i>
+                </div>
+                <div>
+                    <h2 class="stg-card-title">Bildirim Tercihleri</h2>
+                    <p class="stg-card-sub">Hangi bildirimleri almak istediğini seçebilirsin.</p>
+                </div>
+            </div>
+
+            <div class="stg-toggle-list">
+                <div class="stg-toggle-row">
+                    <div class="stg-toggle-info">
+                        <span class="stg-toggle-label">Yeni Sipariş</span>
+                        <span class="stg-toggle-sub">Yeni bir sipariş geldiğinde anında haber ver.</span>
+                    </div>
+                    <label class="stg-switch" for="notifyNewOrder">
+                        <input type="checkbox" id="notifyNewOrder" checked />
+                        <span class="stg-switch-track"></span>
+                    </label>
+                </div>
+                <div class="stg-toggle-row">
+                    <div class="stg-toggle-info">
+                        <span class="stg-toggle-label">Stok Uyarıları</span>
+                        <span class="stg-toggle-sub">Ürün stoğu kritik seviyeye düştüğünde bildirim al.</span>
+                    </div>
+                    <label class="stg-switch" for="notifyLowStock">
+                        <input type="checkbox" id="notifyLowStock" checked />
+                        <span class="stg-switch-track"></span>
+                    </label>
+                </div>
+                <div class="stg-toggle-row">
+                    <div class="stg-toggle-info">
+                        <span class="stg-toggle-label">Teslimat Bildirimleri</span>
+                        <span class="stg-toggle-sub">Siparişler yola çıktığında ve teslim edildiğinde e-posta al.</span>
+                    </div>
+                    <label class="stg-switch" for="notifyDelivery">
+                        <input type="checkbox" id="notifyDelivery" />
+                        <span class="stg-switch-track"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="stg-form-footer">
+                <button type="button" class="ws-btn-main" id="btnSaveNotifications">
+                    <i data-lucide="save"></i>
+                    <span>Tercihleri Kaydet</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    @* ══════════════════════════════════════════════════════════════
+        TAB 3 — GÜVENLİK
+       ══════════════════════════════════════════════════════════════ *@
+    <section class="ws-tab-content" id="guvenlik" role="tabpanel">
+        <div class="ws-card stg-form-card">
+            <div class="stg-card-header">
+                <div class="stg-card-icon stg-card-icon--warning">
+                    <i data-lucide="lock-keyhole"></i>
+                </div>
+                <div>
+                    <h2 class="stg-card-title">Güvenlik ve Şifre</h2>
+                    <p class="stg-card-sub">Hesap güvenliği ve 2FA (İki Faktörlü Doğrulama) ayarlarını yönetin.</p>
+                </div>
+            </div>
+
+            <div class="stg-security-grid">
+                <!-- Şifre Değiştirme Formu -->
+                <div class="stg-security-col">
+                    <h3 class="stg-section-title">Şifre Değiştir</h3>
+                    <form id="formPassword" class="stg-form">
+                        @Html.AntiForgeryToken()
+                        <div class="stg-form-grid stg-form-grid--narrow" style="grid-template-columns: 1fr;">
+                            <div class="ws-form-group stg-col-full">
+                                <label class="ws-form-label" for="currentPassword">Mevcut Şifre</label>
+                                <div class="stg-pw-wrap">
+                                    <input type="password" id="currentPassword" name="currentPassword"
+                                           class="ws-input-premium" placeholder="••••••••"
+                                           autocomplete="current-password" />
+                                    <button type="button" class="stg-eye-btn" data-target="currentPassword">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ws-form-group stg-col-full">
+                                <label class="ws-form-label" for="newPassword">Yeni Şifre</label>
+                                <div class="stg-pw-wrap">
+                                    <input type="password" id="newPassword" name="newPassword"
+                                           class="ws-input-premium" placeholder="••••••••"
+                                           autocomplete="new-password" />
+                                    <button type="button" class="stg-eye-btn" data-target="newPassword">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ws-form-group stg-col-full">
+                                <label class="ws-form-label" for="confirmPassword">Yeni Şifre (Tekrar)</label>
+                                <div class="stg-pw-wrap">
+                                    <input type="password" id="confirmPassword" name="confirmPassword"
+                                           class="ws-input-premium" placeholder="••••••••"
+                                           autocomplete="new-password" />
+                                    <button type="button" class="stg-eye-btn" data-target="confirmPassword">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stg-form-footer" style="justify-content: flex-start; margin-top: 1rem;">
+                            <button type="submit" class="ws-btn-main" id="btnChangePassword">
+                                <i data-lucide="shield-check"></i>
+                                <span>Şifreyi Güncelle</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2FA Alanı -->
+                <div class="stg-security-col stg-2fa-col">
+                    <h3 class="stg-section-title">İki Faktörlü Kimlik Doğrulama (2FA)</h3>
+                    <div class="stg-2fa-box">
+                        <div class="stg-2fa-icon">
+                            <i data-lucide="smartphone"></i>
+                        </div>
+                        <p class="stg-2fa-desc">
+                            Hesabınızı yetkisiz erişimlere karşı daha güvenli hale getirmek için İki Faktörlü Kimlik Doğrulamayı etkinleştirin.
+                        </p>
+                        <div class="stg-toggle-row stg-toggle-row--2fa">
+                            <div class="stg-toggle-info">
+                                <span class="stg-toggle-label">2FA Durumu</span>
+                            </div>
+                            <label class="stg-switch" for="toggle2FA">
+                                <input type="checkbox" id="toggle2FA" />
+                                <span class="stg-switch-track"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ══════════════════════════════════════════════════════════════
+        TAB 4 — SİSTEM
+       ══════════════════════════════════════════════════════════════ *@
+    @if (canViewUsers)
+    {
+    <section class="ws-tab-content" id="sistem" role="tabpanel">
+
+        <div class="stg-users-header">
+            <div>
+                <h2 class="stg-card-title">Sistem ve Personel Yönetimi</h2>
+                <span class="stg-users-count">@allUsers.Count kayıt</span>
+            </div>
+            @if (isAdmin)
+            {
+            <button class="ws-btn-main" id="btnNewUser"
+                    data-drawer="true"
+                    data-url="/Management/CreateUser">
+                <i data-lucide="user-plus"></i>
+                <span>Yeni Personel Ekle</span>
+            </button>
+            }
+        </div>
+
+        <div class="stg-users-grid">
+            @foreach (var u in allUsers)
+            {
+                string uLabel = u.Role switch
+                {
+                    UserRole.SuperAdmin => "Sistem Yöneticisi",
+                    UserRole.Admin      => "Yönetici",
+                    UserRole.Manager    => "Müdür",
+                    _                   => "Personel"
+                };
+                string uBadge = u.Role switch
+                {
+                    UserRole.SuperAdmin => "stg-badge--purple",
+                    UserRole.Admin      => "stg-badge--blue",
+                    UserRole.Manager    => "stg-badge--green",
+                    _                   => "stg-badge--gray"
+                };
+                string initial = string.IsNullOrEmpty(u.FullName) ? "?" : u.FullName[..1].ToUpper();
+
+            <div class="ws-card stg-user-card @(!u.IsActive ? "stg-user-card--inactive" : "")"
+                 id="userCard-@u.Id">
+                <div class="stg-user-top">
+                    <div class="stg-user-avatar">@initial</div>
+                    <div class="stg-user-meta">
+                        <span class="stg-user-name">@u.FullName</span>
+                        <span class="stg-user-uname">@@u.Username</span>
+                        @if (!string.IsNullOrEmpty(u.Position))
+                        {
+                            <span class="stg-user-pos">@u.Position</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="stg-user-badges">
+                    <span class="stg-badge @uBadge">
+                        <i data-lucide="shield"></i>@uLabel
+                    </span>
+                    <span class="stg-status-pill @(u.IsActive ? "stg-status--active" : "stg-status--passive")">
+                        <i data-lucide="@(u.IsActive ? "circle-check" : "circle-x")"></i>
+                        @(u.IsActive ? "Aktif" : "Pasif")
+                    </span>
+                </div>
+
+                @if (isAdmin)
+                {
+                <div class="stg-user-actions">
+                    <select class="ws-input-premium stg-role-select"
+                            data-user-id="@u.Id"
+                            id="roleSelect-@u.Id">
+                        @foreach (UserRole r in Enum.GetValues(typeof(UserRole)))
+                        {
+                            <option value="@((int)r)" selected="@(u.Role == r ? "selected" : null)">
+                                @(r switch
+                                {
+                                    UserRole.SuperAdmin => "Sistem Yöneticisi",
+                                    UserRole.Admin      => "Yönetici",
+                                    UserRole.Manager    => "Müdür",
+                                    _                   => "Personel"
+                                })
+                            </option>
+                        }
+                    </select>
+                    <button class="ws-btn-secondary stg-toggle-btn"
+                            data-user-id="@u.Id"
+                            title="@(u.IsActive ? "Pasif Yap" : "Aktif Yap")">
+                        <i data-lucide="@(u.IsActive ? "toggle-right" : "toggle-left")"></i>
+                    </button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+    </section>
+    }
+
+    @* ══════════════════════════════════════════════════════════════
+        TAB 5 — GÖRÜNÜM
+       ══════════════════════════════════════════════════════════════ *@
+    <section class="ws-tab-content" id="gorunum" role="tabpanel">
+        <div class="ws-card stg-form-card">
+            <div class="stg-card-header">
+                <div class="stg-card-icon stg-card-icon--purple">
+                    <i data-lucide="palette"></i>
+                </div>
+                <div>
+                    <h2 class="stg-card-title">Tema ve Görünüm</h2>
+                    <p class="stg-card-sub">Arayüz tercihini seç ve kaydet.</p>
+                </div>
+            </div>
+
+            <div class="stg-theme-grid">
+                <!-- Açık Tema -->
+                <label class="stg-theme-card">
+                    <input type="radio" name="themeMode" value="light" checked />
+                    <div class="stg-theme-content">
+                        <div class="stg-theme-preview stg-theme-preview--light">
+                            <div class="tp-nav"></div><div class="tp-body"></div>
+                        </div>
+                        <span class="stg-theme-label">Açık</span>
+                    </div>
+                </label>
+                <!-- Koyu Tema -->
+                <label class="stg-theme-card">
+                    <input type="radio" name="themeMode" value="dark" />
+                    <div class="stg-theme-content">
+                        <div class="stg-theme-preview stg-theme-preview--dark">
+                            <div class="tp-nav"></div><div class="tp-body"></div>
+                        </div>
+                        <span class="stg-theme-label">Koyu</span>
+                    </div>
+                </label>
+                <!-- Otomatik Tema -->
+                <label class="stg-theme-card">
+                    <input type="radio" name="themeMode" value="auto" />
+                    <div class="stg-theme-content">
+                        <div class="stg-theme-preview stg-theme-preview--auto">
+                            <div class="tp-nav"></div><div class="tp-body"></div>
+                        </div>
+                        <span class="stg-theme-label">Otomatik</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="stg-form-footer">
+                <button type="button" class="ws-btn-main" id="btnSaveAppearance">
+                    <i data-lucide="save"></i>
+                    <span>Tercihi Kaydet</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
 </div>
+
+@section Scripts {
+    <script src="~/js/settings/settings.js" asp-append-version="true"></script>
+}

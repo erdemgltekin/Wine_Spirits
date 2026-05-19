@@ -629,7 +629,7 @@ body.rp-no-scroll { overflow: hidden; }
     text-transform: uppercase;
 }
 
-// Input & Select ortak stil
+// Input & Select ortak stil (geriye dönük uyumluluk — yeni formlar ws-input-premium kullanır)
 .rp-modal-input,
 .rp-modal-select {
     padding: 0.55rem 0.85rem;
@@ -658,6 +658,48 @@ body.rp-no-scroll { overflow: hidden; }
     background-position: right 0.75rem center;
     padding-right: 2.2rem;
     cursor: pointer;
+}
+
+// ── Tarih Sarmalayıcı (Flatpickr + ikon) ────────────────────────────
+.rp-modal-date-wrapper,
+.rp-modal-text-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .rp-modal-date-icon {
+        position: absolute;
+        left: 14px;
+        width: 16px;
+        height: 16px;
+        color: $primary;
+        stroke-width: 2.2;
+        pointer-events: none;
+        flex-shrink: 0;
+        z-index: 1;
+    }
+
+    // Flatpickr / metin input — ws-input-premium içeride sol ikon kadar padding alır
+    .rp-modal-dateinput {
+        padding-left: 40px !important; // ikon için sol boşluk
+        cursor: pointer;
+    }
+}
+
+// Modal içindeki ws-input-premium select'lerin yüksekliğini küçültüyoruz
+// (Modal compact görünüm — filtre barı gibi 52px değil, 44px)
+.rp-modal-body .ws-input-premium {
+    height: 44px !important;
+    min-height: 44px !important;
+    border-radius: 10px !important;
+    font-size: 0.88rem !important;
+}
+
+// Select2 açılır listesi modal backdrop üstünde görünsün
+.rp-modal-backdrop {
+    .select2-container {
+        z-index: 1060 !important;
+    }
 }
 
 // Checkbox grubu
@@ -787,3 +829,198 @@ body.rp-no-scroll { overflow: hidden; }
 }
 
 .reports-page .ws-filter-container { margin-bottom: 1.75rem; }
+
+/* ── 10. TARİH SEÇİCİ (FLATPICKR) ÖZELLEŞTİRMESİ ────────────── */
+
+.rp-custom-flatpickr {
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 36px rgba(124, 58, 237, 0.15), 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    font-family: inherit !important;
+    padding: 12px !important;
+    margin-top: 8px !important;
+    animation: rp-float 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+
+    &::before, &::after {
+        display: none !important; // okları gizle, tam floating olsun
+    }
+
+    // Üst Navigasyon
+    .flatpickr-months {
+        margin-bottom: 10px;
+
+        .flatpickr-prev-month, .flatpickr-next-month {
+            fill: #7c3aed !important;
+            padding: 8px;
+            border-radius: 10px;
+            @include transition(all, 0.2s);
+
+            &:hover {
+                background: rgba(124, 58, 237, 0.08);
+                fill: #6d28d9 !important;
+            }
+        }
+    }
+
+    // Ay ve Yıl
+    .flatpickr-current-month {
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #1f2937 !important;
+
+        .flatpickr-monthDropdown-months {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            
+            background-color: #f5f3ff !important;
+            border: 1px solid #6366f1 !important;
+            border-radius: 12px !important;
+            padding: 5px 28px 5px 10px !important;
+            font-weight: 800 !important;
+            color: #4c1d95 !important;
+            cursor: pointer !important;
+            
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 8px center !important;
+            
+            position: relative !important;
+            z-index: 10 !important;
+            outline: none !important;
+
+            &:hover {
+                background-color: #ede9fe !important;
+            }
+
+            &:focus {
+                outline: none !important;
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+                border-color: #4f46e5 !important;
+            }
+
+            option {
+                background-color: #f8faff !important;
+                color: #4c1d95 !important;
+                font-weight: 700 !important;
+                padding: 10px 14px !important;
+                font-size: 0.95rem !important;
+                font-family: inherit !important;
+                cursor: pointer !important;
+
+                /* Hover, Focus, Active ve Checked Durumları (Webkit/Blink hack dahil) */
+                &:hover, &:focus, &:active, &:checked {
+                    background-color: #6366f1 !important;
+                    color: #ffffff !important;
+                    /* Chrome/Edge'de option arka planını zorlamak için gradient hack */
+                    background: linear-gradient(#6366f1, #6366f1) !important;
+                }
+            }
+        }
+
+        .numInputWrapper {
+            border-radius: 8px;
+            @include transition(all, 0.2s);
+
+            &:hover {
+                background: rgba(124, 58, 237, 0.08);
+            }
+
+            input.cur-year {
+                font-weight: 800;
+                color: #4b5563 !important;
+            }
+        }
+    }
+
+    // Haftanın Günleri
+    .flatpickr-weekdays {
+        margin-bottom: 8px;
+    }
+    span.flatpickr-weekday {
+        color: #94a3b8 !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem;
+    }
+
+    // Günler
+    .flatpickr-innerContainer {
+        border-radius: 12px;
+    }
+
+    .flatpickr-day {
+        border-radius: 12px !important;
+        color: #4b5563;
+        font-weight: 600;
+        border: 2px solid transparent !important;
+        @include transition(all, 0.2s);
+
+        &:hover {
+            background: rgba(124, 58, 237, 0.1) !important;
+            color: #7c3aed !important;
+        }
+
+        // Seçili, Başlangıç, Bitiş
+        &.selected,
+        &.startRange,
+        &.endRange,
+        &.selected.startRange,
+        &.selected.endRange {
+            background: #7c3aed !important;
+            border-color: #7c3aed !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35) !important;
+            z-index: 2;
+            font-weight: 800;
+        }
+
+        // İki tarih arası
+        &.inRange,
+        &.prevMonthDay.inRange,
+        &.nextMonthDay.inRange,
+        &.today.inRange {
+            background: rgba(124, 58, 237, 0.08) !important;
+            border-color: transparent !important;
+            color: #7c3aed !important;
+            box-shadow: none !important;
+            border-radius: 0 !important; // Süreklilik için
+        }
+
+        // Range başlangıç/bitiş kenar düzeltmeleri
+        &.startRange {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+        &.endRange {
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+
+        // Bugün
+        &.today {
+            border-color: rgba(124, 58, 237, 0.4) !important;
+            color: #7c3aed !important;
+
+            &:hover {
+                background: #7c3aed !important;
+                color: #fff !important;
+            }
+        }
+    }
+}
+
+@keyframes rp-float {
+    0% {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

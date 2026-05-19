@@ -91,10 +91,13 @@ public class ReportsController : Controller
     // Tüm dashboard grafikleri için JSON verisi döner.
     // ─────────────────────────────────────────────────────────────────────────
     [HttpGet]
-    public async Task<IActionResult> GetDashboardData()
+    public async Task<IActionResult> GetDashboardData(DateTime? startDate, DateTime? endDate)
     {
         var now          = DateTime.Today;
         var sixMonthsAgo = now.AddMonths(-5).AddDays(-(now.Day - 1)); // ilk ayın 1'i
+        
+        var from = startDate ?? sixMonthsAgo;
+        var to = endDate ?? now;
 
         // ── Tüm gerekli verileri tek sorguda çek ─────────────────────────────
         var rawData = await _context.OrderDetails
@@ -105,7 +108,7 @@ public class ReportsController : Controller
                 .ThenInclude(p => p.ProductDefinition)
             .Include(od => od.Order)
                 .ThenInclude(o => o!.Customer)
-            .Where(od => od.Order!.CreatedDate >= sixMonthsAgo)
+            .Where(od => od.Order!.CreatedDate >= from && od.Order.CreatedDate <= to.AddDays(1))
             .ToListAsync();
 
         // ── 1. KATEGORİ BAZLI AYLIK SATIŞLAR ─────────────────────────────────
@@ -113,12 +116,17 @@ public class ReportsController : Controller
         var monthLabels = new[] { "Oca", "Şub", "Mar", "Nis", "May", "Haz",
                                   "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara" };
 
-        // Son 6 ayın etiketleri
-        var months = Enumerable.Range(0, 6)
-            .Select(i => now.AddMonths(-(5 - i)))
-            .ToList();
+        // Dinamik ay etiketleri
+        var months = new List<DateTime>();
+        var currentMonth = new DateTime(from.Year, from.Month, 1);
+        var endMonth = new DateTime(to.Year, to.Month, 1);
+        while (currentMonth <= endMonth)
+        {
+            months.Add(currentMonth);
+            currentMonth = currentMonth.AddMonths(1);
+        }
 
-        var labels = months.Select(m => monthLabels[m.Month - 1]).ToList();
+        var labels = months.Select(m => monthLabels[m.Month - 1] + (m.Year != now.Year ? " '" + m.Year.ToString().Substring(2) : "")).ToList();
 
         // Kategori listesi (DB'deki gerçek isimler)
         var categoryNames = new[] { "Kırmızı Şarap", "Beyaz Şarap", "Rosé", "Şampanya" };
