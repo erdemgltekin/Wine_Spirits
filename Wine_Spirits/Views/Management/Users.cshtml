@@ -72,12 +72,11 @@
                 <i data-lucide="globe"></i>
                 Sistem
             </button>
+            <button class="ws-tab-btn" data-tab="tanimlamalar" id="stgTabDefinitions" role="tab">
+                <i data-lucide="database"></i>
+                Tanımlamalar
+            </button>
         }
-
-        <button class="ws-tab-btn" data-tab="gorunum" id="stgTabAppearance" role="tab">
-            <i data-lucide="palette"></i>
-            Görünüm
-        </button>
     </div>
 
     @* ══════════════════════════════════════════════════════════════
@@ -410,61 +409,269 @@
     }
 
     @* ══════════════════════════════════════════════════════════════
-        TAB 5 — GÖRÜNÜM
+        TAB 5 — TANIMLAMALAR
        ══════════════════════════════════════════════════════════════ *@
-    <section class="ws-tab-content" id="gorunum" role="tabpanel">
-        <div class="ws-card stg-form-card">
+    @if (canViewUsers)
+    {
+    <section class="ws-tab-content" id="tanimlamalar" role="tabpanel">
+        <div class="ws-card stg-form-card stg-def-card">
+
+            <!-- Kart Başlığı -->
             <div class="stg-card-header">
                 <div class="stg-card-icon stg-card-icon--purple">
-                    <i data-lucide="palette"></i>
+                    <i data-lucide="database"></i>
                 </div>
                 <div>
-                    <h2 class="stg-card-title">Tema ve Görünüm</h2>
-                    <p class="stg-card-sub">Arayüz tercihini seç ve kaydet.</p>
+                    <h2 class="stg-card-title">Sistem Tanımlamaları</h2>
+                    <p class="stg-card-sub">Sisteme yeni ülke, şehir ve ürün kategorisi ekle; mevcut kayıtları görüntüle.</p>
                 </div>
             </div>
 
-            <div class="stg-theme-grid">
-                <!-- Açık Tema -->
-                <label class="stg-theme-card">
-                    <input type="radio" name="themeMode" value="light" checked />
-                    <div class="stg-theme-content">
-                        <div class="stg-theme-preview stg-theme-preview--light">
-                            <div class="tp-nav"></div><div class="tp-body"></div>
-                        </div>
-                        <span class="stg-theme-label">Açık</span>
-                    </div>
-                </label>
-                <!-- Koyu Tema -->
-                <label class="stg-theme-card">
-                    <input type="radio" name="themeMode" value="dark" />
-                    <div class="stg-theme-content">
-                        <div class="stg-theme-preview stg-theme-preview--dark">
-                            <div class="tp-nav"></div><div class="tp-body"></div>
-                        </div>
-                        <span class="stg-theme-label">Koyu</span>
-                    </div>
-                </label>
-                <!-- Otomatik Tema -->
-                <label class="stg-theme-card">
-                    <input type="radio" name="themeMode" value="auto" />
-                    <div class="stg-theme-content">
-                        <div class="stg-theme-preview stg-theme-preview--auto">
-                            <div class="tp-nav"></div><div class="tp-body"></div>
-                        </div>
-                        <span class="stg-theme-label">Otomatik</span>
-                    </div>
-                </label>
-            </div>
+            <!-- Üç Blok: Ülke / Şehir / Kategori -->
+            <div class="stg-def-grid">
 
-            <div class="stg-form-footer">
-                <button type="button" class="ws-btn-main" id="btnSaveAppearance">
-                    <i data-lucide="save"></i>
-                    <span>Tercihi Kaydet</span>
-                </button>
-            </div>
-        </div>
+                <!-- ── ÜLKE YÖNETİMİ ── -->
+                <div class="stg-def-block" id="defBlockCountry">
+                    <div class="stg-def-block-header">
+                        <div class="stg-def-block-icon stg-def-icon--purple">
+                            <i data-lucide="flag"></i>
+                        </div>
+                        <div>
+                            <h3 class="stg-def-title">Ülke Yönetimi</h3>
+                            <p class="stg-def-sub">Sisteme tanımlı ülkeleri yönet.</p>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-add-form" id="defFormCountry">
+                        <div class="stg-def-input-row">
+                            <input type="text" id="inputCountryName"
+                                   class="ws-input-premium stg-def-input"
+                                   placeholder="Yeni ülke adı..." />
+                            <button type="button" class="ws-btn-main stg-def-save-btn"
+                                    id="btnSaveCountry"
+                                    data-type="country"
+                                    data-input="inputCountryName"
+                                    data-list="listCountries">
+                                <i data-lucide="plus"></i>
+                                <span>Ekle</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-table-wrapper">
+                        <table class="stg-def-table">
+                            <thead>
+                                <tr>
+                                    <th>Ülke Adı</th>
+                                    <th class="stg-table-actions-hdr">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listCountries">
+                                <tr data-val="Türkiye">
+                                    <td class="stg-def-name">Türkiye</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="country"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="country"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="İtalya">
+                                    <td class="stg-def-name">İtalya</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="country"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="country"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Fransa">
+                                    <td class="stg-def-name">Fransa</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="country"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="country"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="İspanya">
+                                    <td class="stg-def-name">İspanya</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="country"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="country"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Arjantin">
+                                    <td class="stg-def-name">Arjantin</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="country"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="country"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ── ŞEHİR YÖNETİMİ ── -->
+                <div class="stg-def-block" id="defBlockCity">
+                    <div class="stg-def-block-header">
+                        <div class="stg-def-block-icon stg-def-icon--indigo">
+                            <i data-lucide="building-2"></i>
+                        </div>
+                        <div>
+                            <h3 class="stg-def-title">Şehir Yönetimi</h3>
+                            <p class="stg-def-sub">Sisteme tanımlı şehirleri yönet.</p>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-add-form" id="defFormCity">
+                        <div class="stg-def-input-row">
+                            <input type="text" id="inputCityName"
+                                   class="ws-input-premium stg-def-input"
+                                   placeholder="Yeni şehir adı..." />
+                            <button type="button" class="ws-btn-main stg-def-save-btn"
+                                    id="btnSaveCity"
+                                    data-type="city"
+                                    data-input="inputCityName"
+                                    data-list="listCities">
+                                <i data-lucide="plus"></i>
+                                <span>Ekle</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-table-wrapper">
+                        <table class="stg-def-table">
+                            <thead>
+                                <tr>
+                                    <th>Şehir Adı</th>
+                                    <th class="stg-table-actions-hdr">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listCities">
+                                <tr data-val="İstanbul">
+                                    <td class="stg-def-name">İstanbul</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="city"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="city"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Ankara">
+                                    <td class="stg-def-name">Ankara</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="city"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="city"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="İzmir">
+                                    <td class="stg-def-name">İzmir</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="city"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="city"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Bordeaux">
+                                    <td class="stg-def-name">Bordeaux</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="city"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="city"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Barselona">
+                                    <td class="stg-def-name">Barselona</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="city"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="city"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ── KATEGORİ YÖNETİMİ ── -->
+                <div class="stg-def-block" id="defBlockCategory">
+                    <div class="stg-def-block-header">
+                        <div class="stg-def-block-icon stg-def-icon--green">
+                            <i data-lucide="tag"></i>
+                        </div>
+                        <div>
+                            <h3 class="stg-def-title">Kategori Yönetimi</h3>
+                            <p class="stg-def-sub">Ürün kategorilerini tanımla ve yönet.</p>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-add-form" id="defFormCategory">
+                        <div class="stg-def-input-row">
+                            <input type="text" id="inputCategoryName"
+                                   class="ws-input-premium stg-def-input"
+                                   placeholder="Yeni kategori adı..." />
+                            <button type="button" class="ws-btn-main stg-def-save-btn"
+                                    id="btnSaveCategory"
+                                    data-type="category"
+                                    data-input="inputCategoryName"
+                                    data-list="listCategories">
+                                <i data-lucide="plus"></i>
+                                <span>Ekle</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stg-def-table-wrapper">
+                        <table class="stg-def-table">
+                            <thead>
+                                <tr>
+                                    <th>Kategori Adı</th>
+                                    <th class="stg-table-actions-hdr">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listCategories">
+                                <tr data-val="Kırmızı Şarap">
+                                    <td class="stg-def-name">Kırmızı Şarap</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Beyaz Şarap">
+                                    <td class="stg-def-name">Beyaz Şarap</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Roze Şarap">
+                                    <td class="stg-def-name">Roze Şarap</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Köpüklü Şarap">
+                                    <td class="stg-def-name">Köpüklü Şarap</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Viski">
+                                    <td class="stg-def-name">Viski</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <tr data-val="Konyak">
+                                    <td class="stg-def-name">Konyak</td>
+                                    <td class="stg-def-actions">
+                                        <button type="button" class="stg-def-action-btn stg-btn-edit" title="Düzenle" data-type="category"><i data-lucide="edit-2"></i></button>
+                                        <button type="button" class="stg-def-action-btn stg-btn-delete" title="Sil" data-type="category"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- /.stg-def-grid -->
+        </div><!-- /.ws-card -->
     </section>
+    }
 
 </div>
 
