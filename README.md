@@ -4,6 +4,16 @@
 
 > **AI-Native geliştirme:** Bu proje; **Claude Code, Cursor ve Antigravity** gibi yapay zeka destekli geliştirme araçlarıyla tasarlanıp geliştirildi. Gereksinim analizi, veri modeli, mimari kararlar, yapay zekanın yönlendirilmesi ve çıktının test edilmesi tarafımdan yürütüldü.
 
+## 📸 Ekran Görüntüleri
+
+| Depo Yönetimi | Ürün Envanteri |
+|---|---|
+| ![Depo Yönetimi](docs/screenshots/04-depo-yonetimi.png) | ![Ürün Envanteri](docs/screenshots/03-urun-envanteri.png) |
+| **Yeni Ürün Kaydı** | **Yeni Depo Ekleme** |
+| ![Yeni Ürün](docs/screenshots/06-yeni-urun.png) | ![Yeni Depo](docs/screenshots/05-yeni-depo.png) |
+| **Giriş Ekranı** | **Ayarlar** |
+| ![Giriş](docs/screenshots/01-giris.png) | ![Ayarlar](docs/screenshots/08-ayarlar.png) |
+
 ---
 
 ## ✨ Özellikler
@@ -43,6 +53,8 @@ Wine_Spirits/
 ├── TagHelpers/           # Yeniden kullanılabilir UI bileşenleri
 ├── Helpers/              # Parola hash'leme yardımcıları
 └── wwwroot/              # SCSS/CSS, JavaScript ve statik dosyalar
+database/
+└── WineSpirits_schema.sql  # Veritabanı şeması (14 tablo, ilişkiler ve varsayılan değerler)
 ```
 
 ## 🔌 API Endpoint'leri
@@ -61,8 +73,8 @@ git clone https://github.com/erdemgltekin/Wine_Spirits.git
 cd Wine_Spirits/Wine_Spirits
 ```
 
-1. `appsettings.json` içindeki `ConnectionStrings:DefaultConnection` değerini kendi SQL Server örneğinize göre düzenleyin.
-2. Proje Database-First yaklaşımıyla geliştirildiği için veritabanı şemasını SQL Server üzerinde oluşturun.
+1. Veritabanını oluşturun: [`database/WineSpirits_schema.sql`](database/WineSpirits_schema.sql) dosyasını SQL Server Management Studio'da açıp çalıştırın. Script `WineSpirits` veritabanını, 14 tabloyu, ilişkileri ve varsayılan değerleri oluşturur.
+2. `appsettings.json` içindeki `ConnectionStrings:DefaultConnection` değerini kendi SQL Server örneğinize göre düzenleyin.
 3. Uygulamayı çalıştırın:
 
 ```bash
