@@ -89,4 +89,4 @@ dotnet run
 **Kadir Erdem Gültekin** – Junior Full-Stack Developer · AI-Native Geliştirme
 
 - LinkedIn: [linkedin.com/in/kadir-erdem-gültekin-27a090282](https://www.linkedin.com/in/kadir-erdem-g%C3%BCltekin-27a090282/)
-- Diğer canlı projeler: [aesmartsystems.com](https://www.aesmartsystems.com) · [cetinkayahair.com](https://cetinkayahair.com)
+- Diğer canlı projeler: [aesmartsystems.com](https://www.aesmartsystems.com) · [cetinkayahealth.com](https://cetinkayahealth.com) · [aseitex.com](http://aseitex.com)
